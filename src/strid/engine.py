@@ -18,8 +18,8 @@ DEFAULT_ENTITIES = [
     "US_DRIVER_LICENSE",
     "US_PASSPORT",
     "LOCATION",
-    "DATE_TIME",
     "URL",
+    "IN_DOB",
     # Indian banking PII
     "IN_BANK_ACCOUNT",
     "IN_IFSC",

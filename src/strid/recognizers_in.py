@@ -192,6 +192,26 @@ IN_UPI_NARRATION = PatternRecognizer(
 )
 
 
+# Date of birth: only flag dates near birth/dob context, not transaction dates
+IN_DOB = PatternRecognizer(
+    supported_entity="IN_DOB",
+    name="Date of Birth Recognizer",
+    patterns=[
+        Pattern(
+            name="dob_dd_mm_yyyy",
+            regex=r"\b\d{1,2}[/\-\.]\d{1,2}[/\-\.]\d{2,4}\b",
+            score=0.3,
+        ),
+        Pattern(
+            name="dob_written",
+            regex=r"\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{2,4}\b",
+            score=0.3,
+        ),
+    ],
+    context=["birth", "dob", "born", "date of birth", "d.o.b", "d/o/b", "birthday"],
+)
+
+
 ALL_IN_RECOGNIZERS = [
     IN_BANK_ACCOUNT,
     IN_IFSC,
@@ -205,4 +225,5 @@ ALL_IN_RECOGNIZERS = [
     IN_BRANCH_CODE,
     IN_TXN_REF,
     IN_UPI_NARRATION,
+    IN_DOB,
 ]
