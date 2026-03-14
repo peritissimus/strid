@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strid — On-Device PII Redaction</title>
+  <meta name="description" content="The first open source CLI and iOS app for on-device PII detection and redaction. Your documents. Your data. Your device.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="draft-badge">Open Source</div>
+        <h1>Your data.<br>Your <span>device.</span></h1>
+        <p class="hero-subtitle">Detect and redact PII from documents. Fully offline. No cloud. No compromise.</p>
+      </div>
+
+      <div class="terminal" id="hero-terminal">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="terminal-dot" style="background:#ff5f57"></span>
+            <span class="terminal-dot" style="background:#febc2e"></span>
+            <span class="terminal-dot" style="background:#28c840"></span>
+          </div>
+          <span class="terminal-title">~/documents</span>
+        </div>
+        <div class="terminal-body" id="terminal-body"></div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>scroll</span>
+      <span>&#8595;</span>
+    </div>
+  </div>
+
+
+  <!-- SECTION: Why Strid -->
+  <section>
+    <div class="container">
+      <div class="section-label">01 &mdash; The Problem</div>
+      <h2>Your documents are <span class="accent">leaking.</span></h2>
+      <p>Bank statements, medical records, tax returns &mdash; they're full of personal data. Sharing them means exposing names, account numbers, Aadhaar numbers, PAN cards, and more. Most redaction tools send your data to the cloud, defeating the purpose entirely.</p>
+
+      <blockquote>
+        Strid processes everything on your device. Your documents never leave your machine. Not a single byte goes to any server.
+      </blockquote>
+
+      <ul>
+        <li><strong>20+ entity types</strong> &mdash; names, emails, phones, bank accounts, IFSC, PAN, Aadhaar, UPI IDs, and more</li>
+        <li><strong>Context-aware</strong> &mdash; smart enough to redact dates of birth but preserve transaction dates</li>
+        <li><strong>Two platforms</strong> &mdash; Python CLI for desktop, Swift iOS app for mobile</li>
+        <li><strong>First of its kind</strong> &mdash; the only open source iOS app for on-device document redaction</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- SECTION: Before / After -->
+  <section>
+    <div class="container">
+      <div class="section-label">02 &mdash; Before &amp; After</div>
+      <h2>One command. <span class="accent">Clean.</span></h2>
+
+      <div class="before-after">
+        <div class="ba-card before">
+          <h3>Raw Document</h3>
+          <div class="code-block compact">
+            <pre><code>MR. RAHUL SHARMA
+FLAT 302, WING B, SECTOR 56
+GURGAON 122011, HARYANA
+Email: rahul.sharma@gmail.com
+
+Account No : 50100248731642
+IFSC       : HDFC0001847
+Cust ID    : 84729163
+PAN        : BVMPS4521K
+
+01/09/25  UPI-SWIGGY  456.00
+02/09/25  SALARY    185,000.00</code></pre>
+          </div>
+          <ul class="ba-issues">
+            <li>Full name exposed</li>
+            <li>Address, email, phone visible</li>
+            <li>Bank account, IFSC, PAN, Cust ID in plain text</li>
+            <li>Cannot share safely</li>
+          </ul>
+        </div>
+
+        <div class="ba-card after">
+          <h3>After Strid</h3>
+          <div class="code-block compact">
+            <pre><code><span class="code-keyword">&lt;PERSON&gt;</span>
+<span class="code-keyword">&lt;LOCATION&gt;</span>
+<span class="code-keyword">&lt;LOCATION&gt;</span> <span class="code-keyword">&lt;IN_PIN_CODE&gt;</span>, <span class="code-keyword">&lt;LOCATION&gt;</span>
+Email: <span class="code-keyword">&lt;EMAIL&gt;</span>
+
+Account No : <span class="code-keyword">&lt;IN_BANK_ACCOUNT&gt;</span>
+IFSC       : <span class="code-keyword">&lt;IN_IFSC&gt;</span>
+Cust ID    : <span class="code-keyword">&lt;IN_CUSTOMER_ID&gt;</span>
+PAN        : <span class="code-keyword">&lt;IN_PAN&gt;</span>
+
+01/09/25  UPI-SWIGGY  456.00
+02/09/25  SALARY    185,000.00</code></pre>
+          </div>
+          <ul class="ba-benefits">
+            <li>All personal identifiers replaced</li>
+            <li>Financial data scrubbed</li>
+            <li>Transaction dates preserved</li>
+            <li>Safe to share, audit, or archive</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION: CLI Usage -->
+  <section>
+    <div class="container">
+      <div class="section-label">03 &mdash; CLI</div>
+      <h2>Three commands. <span class="accent">That's it.</span></h2>
+      <p>The Python CLI is built with <code>typer</code> and powered by Microsoft Presidio + spaCy. Install with <code>uv</code> and you're ready.</p>
+
+      <div class="code-block">
+        <div class="code-header">detect &mdash; find PII without changing anything</div>
+        <pre><code><span class="code-comment"># Show detected PII in a table</span>
+$ strid detect bank_statement.txt
+
+<span class="code-comment"># With surrounding context</span>
+$ strid detect bank_statement.txt <span class="code-keyword">-c</span>
+
+<span class="code-comment"># Output as JSON for scripting</span>
+$ strid detect bank_statement.txt <span class="code-keyword">--json</span>
+
+<span class="code-comment"># Lower threshold to catch more</span>
+$ strid detect bank_statement.txt <span class="code-keyword">-t 0.3</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">redact &mdash; replace PII with type placeholders</div>
+        <pre><code><span class="code-comment"># Redact to stdout</span>
+$ strid redact bank_statement.txt
+
+<span class="code-comment"># Redact to file</span>
+$ strid redact bank_statement.txt <span class="code-keyword">-o</span> clean.txt
+
+<span class="code-comment"># Only redact specific entity types</span>
+$ strid redact bank_statement.txt <span class="code-keyword">-e PERSON -e IN_PAN -e IN_AADHAAR</span>
+
+<span class="code-comment"># Preview without redacting</span>
+$ strid redact bank_statement.txt <span class="code-keyword">--dry-run</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">entities &mdash; list all supported PII types</div>
+        <pre><code>$ strid entities
+
+<span class="code-type">┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓</span>
+<span class="code-type">┃ Entity           ┃ Default ┃</span>
+<span class="code-type">┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩</span>
+<span class="code-type">│</span> PERSON           <span class="code-type">│</span> <span class="code-string">yes</span>     <span class="code-type">│</span>
+<span class="code-type">│</span> EMAIL_ADDRESS    <span class="code-type">│</span> <span class="code-string">yes</span>     <span class="code-type">│</span>
+<span class="code-type">│</span> IN_BANK_ACCOUNT  <span class="code-type">│</span> <span class="code-string">yes</span>     <span class="code-type">│</span>
+<span class="code-type">│</span> IN_PAN           <span class="code-type">│</span> <span class="code-string">yes</span>     <span class="code-type">│</span>
+<span class="code-type">│</span> IN_AADHAAR       <span class="code-type">│</span> <span class="code-string">yes</span>     <span class="code-type">│</span>
+<span class="code-type">│</span> <span class="code-comment">... 15 more</span>      <span class="code-type">│</span>        <span class="code-type">│</span>
+<span class="code-type">└──────────────────┴─────────┘</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION: Entities Coverage -->
+  <section>
+    <div class="container">
+      <div class="section-label">04 &mdash; Coverage</div>
+      <h2>What Strid <span class="accent">catches.</span></h2>
+      <p>Pattern matching with context boosting, NLP-powered named entity recognition, and checksum validation working together.</p>
+
+      <div class="bar-chart" id="stats-chart">
+        <div class="bc-row">
+          <span class="bc-label">Names &amp; Orgs</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 90%"></div>
+          </div>
+          <span class="bc-value">NLP</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Email / Phone</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 98%"></div>
+          </div>
+          <span class="bc-value">Regex</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">PAN / Aadhaar</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 95%"></div>
+          </div>
+          <span class="bc-value">Regex</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Bank Account</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 85%"></div>
+          </div>
+          <span class="bc-value">Ctx</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">IFSC / MICR</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 96%"></div>
+          </div>
+          <span class="bc-value">Regex</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">UPI IDs</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 92%"></div>
+          </div>
+          <span class="bc-value">Regex</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Credit Cards</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 97%"></div>
+          </div>
+          <span class="bc-value">Luhn</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Locations</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 85%"></div>
+          </div>
+          <span class="bc-value">NLP</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Date of Birth</span>
+          <div class="bc-track">
+            <div class="bc-fill accent-fill" style="width: 88%"></div>
+          </div>
+          <span class="bc-value">Ctx</span>
+        </div>
+      </div>
+
+      <div class="cards-grid" id="entities-grid">
+        <div class="card">
+          <div class="card-name">PERSON</div>
+          <p class="card-desc">Full names detected via NLP named entity recognition.</p>
+          <div class="card-meta">engine: spaCy / NaturalLanguage</div>
+        </div>
+        <div class="card">
+          <div class="card-name">IN_PAN</div>
+          <p class="card-desc">Indian Permanent Account Number. ABCDE1234F format.</p>
+          <div class="card-meta">engine: regex + context</div>
+        </div>
+        <div class="card">
+          <div class="card-name">IN_AADHAAR</div>
+          <p class="card-desc">12-digit Aadhaar numbers, spaced or continuous.</p>
+          <div class="card-meta">engine: regex + context</div>
+        </div>
+        <div class="card">
+          <div class="card-name">IN_UPI_ID</div>
+          <p class="card-desc">UPI VPAs like name@oksbi, name@paytm embedded in narrations.</p>
+          <div class="card-meta">engine: regex + 30 bank handles</div>
+        </div>
+        <div class="card">
+          <div class="card-name">IN_IFSC</div>
+          <p class="card-desc">IFSC codes. 4 letters + 0 + 6 alphanumeric. e.g. HDFC0001847.</p>
+          <div class="card-meta">engine: regex</div>
+        </div>
+        <div class="card">
+          <div class="card-name">IN_BANK_ACCOUNT</div>
+          <p class="card-desc">9-18 digit account numbers with context awareness.</p>
+          <div class="card-meta">engine: regex + context boost</div>
+        </div>
+        <div class="card">
+          <div class="card-name">IN_DOB</div>
+          <p class="card-desc">Dates of birth only &mdash; transaction dates are preserved.</p>
+          <div class="card-meta">engine: regex + birth context</div>
+        </div>
+        <div class="card">
+          <div class="card-name">IN_TXN_REF</div>
+          <p class="card-desc">12-20 digit transaction reference and cheque numbers.</p>
+          <div class="card-meta">engine: regex + context</div>
+        </div>
+        <div class="card">
+          <div class="card-name">+ 12 more</div>
+          <p class="card-desc">EMAIL, PHONE, CREDIT_CARD, IP_ADDRESS, URL, LOCATION, CUSTOMER_ID, BRANCH_CODE, MICR, PIN_CODE&hellip;</p>
+          <div class="card-meta">run: strid entities</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION: iOS App -->
+  <section>
+    <div class="container">
+      <div class="section-label">05 &mdash; iOS</div>
+      <h2>First open source iOS <span class="accent">redaction app.</span></h2>
+      <p>StridKit is a standalone Swift package powered by Apple's NaturalLanguage framework and NSDataDetector. All 20+ recognizers ported to Swift with context-aware scoring. No external dependencies. No network calls. Runs on-device.</p>
+
+      <div class="steps-flow">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Import</h3>
+            <p>Open a document from Files, paste text, or scan a paper document with the built-in camera.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Detect</h3>
+            <p>Strid scans for PII and shows a summary: 43 entities found &mdash; 12 txn refs, 5 UPI IDs, 4 locations, 2 IFSC codes, 1 PAN&hellip;</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Review</h3>
+            <p>Every finding listed with type, matched text, confidence score, and color-coded badges. Verify before redacting.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Redact &amp; Share</h3>
+            <p>One tap to redact. Copy to clipboard, share via AirDrop, or save to Files. The original stays untouched.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">StridKit — Swift API</div>
+        <pre><code><span class="code-keyword">import</span> <span class="code-type">StridKit</span>
+
+<span class="code-keyword">let</span> engine = <span class="code-type">StridEngine</span>(threshold: <span class="code-number">0.5</span>)
+
+<span class="code-comment">// Detect PII</span>
+<span class="code-keyword">let</span> entities = engine.detect(in: documentText)
+<span class="code-comment">// → [PIIEntity(type: .inPAN, text: "BVMPS4521K", score: 1.0), ...]</span>
+
+<span class="code-comment">// Redact with placeholders</span>
+<span class="code-keyword">let</span> clean = engine.redact(documentText, style: .placeholder)
+<span class="code-comment">// → "PAN: &lt;IN_PAN&gt; VERIFIED"</span>
+
+<span class="code-comment">// Or with asterisks</span>
+<span class="code-keyword">let</span> masked = engine.redact(documentText, style: .asterisks)
+<span class="code-comment">// → "PAN: ********** VERIFIED"</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION: Quick Start -->
+  <section>
+    <div class="container">
+      <div class="section-label">06 &mdash; Install</div>
+      <h2>Up and running in <span class="accent">60 seconds.</span></h2>
+
+      <div class="steps-flow">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Clone</h3>
+            <div class="code-block compact">
+              <pre><code>$ git clone https://github.com/your-org/strid.git
+$ cd strid</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Install</h3>
+            <div class="code-block compact">
+              <pre><code>$ uv sync
+<span class="code-comment"># Downloads Python deps + spaCy en_core_web_lg model</span></code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Detect</h3>
+            <div class="code-block compact">
+              <pre><code>$ strid detect your_document.txt <span class="code-keyword">-c</span>
+<span class="code-comment"># Shows detected PII with surrounding context</span></code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Redact</h3>
+            <div class="code-block compact">
+              <pre><code>$ strid redact your_document.txt <span class="code-keyword">-o</span> clean.txt
+<span class="code-string">Redacted output written to clean.txt</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">iOS &mdash; add StridKit as a local Swift package</div>
+        <pre><code><span class="code-comment">// In Xcode:</span>
+<span class="code-comment">// File → Add Package Dependencies → Add Local</span>
+<span class="code-comment">// Select: ios/StridKit</span>
+
+<span class="code-keyword">import</span> <span class="code-type">StridKit</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION: FAQ -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-label">07 &mdash; FAQ</div>
+      <h2>Common <span class="accent">questions.</span></h2>
+
+      <div class="faq-list">
+        <div class="faq-category">
+          <h3>General</h3>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">Does any data leave my device?</div>
+            <div class="faq-a">
+              <p>No. Strid runs entirely on your device &mdash; both the Python CLI and the iOS app. There are zero network calls. No telemetry. No analytics. Your documents stay on your machine.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">Why not just use find-and-replace?</div>
+            <div class="faq-a">
+              <p>Find-and-replace requires you to know exactly what to look for. Strid uses NLP to detect names and locations you might miss, regex with checksum validation for structured data like PAN and credit cards, and context awareness to distinguish a date of birth from a transaction date.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">What languages are supported?</div>
+            <div class="faq-a">
+              <p>The CLI uses spaCy's <code>en_core_web_lg</code> model, so English NER works best. Regex-based recognizers (PAN, Aadhaar, IFSC, etc.) are language-independent. The iOS app uses Apple's NaturalLanguage framework which supports multiple languages for NER.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">Will transaction dates get redacted?</div>
+            <div class="faq-a">
+              <p>No. Strid uses context-aware date detection. Only dates near keywords like "birth", "dob", or "born" are flagged. Regular transaction dates (01/09/25, 02/09/25) are preserved.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-category">
+          <h3>Technical</h3>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">What powers the detection engine?</div>
+            <div class="faq-a">
+              <p><strong>Python CLI:</strong> Microsoft Presidio (analyzer + anonymizer) with spaCy <code>en_core_web_lg</code> for NER, plus custom regex recognizers for Indian banking PII.<br><strong>iOS:</strong> Apple NaturalLanguage framework for NER, NSDataDetector for emails/phones/URLs, and ported regex recognizers with context scoring.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">Can I add custom entity types?</div>
+            <div class="faq-a">
+              <p>Yes. The Python engine accepts custom Presidio recognizers. Create a <code>PatternRecognizer</code> with your regex and context words, then register it with the analyzer. On iOS, implement the <code>Recognizer</code> protocol or create a new <code>RegexRecognizer</code> instance.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">How accurate is it?</div>
+            <div class="faq-a">
+              <p>Structured data (PAN, IFSC, email, credit cards) is near-perfect thanks to pattern + checksum validation. NER-based detection (names, locations) typically achieves F1 ~0.85. You can tune the <code>--threshold</code> flag to trade precision for recall.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" tabindex="0">What are the system requirements?</div>
+            <div class="faq-a">
+              <p><strong>CLI:</strong> Python 3.12+, runs on any machine (CPU only, no GPU needed). About 500MB disk for spaCy model.<br><strong>iOS:</strong> iOS 17+. No downloads needed &mdash; Apple's NLP models ship with the OS.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION: Summary -->
+  <section class="summary-section">
+    <div class="container">
+      <h2>Cloud redaction<br>vs <span class="accent">Strid.</span></h2>
+
+      <div class="final-comparison">
+        <div class="fc-col">
+          <h3 class="fc-before">Cloud Tools</h3>
+          <div class="fc-list">
+            <div class="fc-item bad">
+              <span>&#10006;</span>
+              <p>Your documents uploaded to third-party servers</p>
+            </div>
+            <div class="fc-item bad">
+              <span>&#10006;</span>
+              <p>Pay-per-use pricing adds up fast</p>
+            </div>
+            <div class="fc-item bad">
+              <span>&#10006;</span>
+              <p>Requires internet connection</p>
+            </div>
+            <div class="fc-item bad">
+              <span>&#10006;</span>
+              <p>Closed source &mdash; you can't verify what happens to your data</p>
+            </div>
+            <div class="fc-item bad">
+              <span>&#10006;</span>
+              <p>No Indian banking PII support out of the box</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="fc-col">
+          <h3 class="fc-after">Strid</h3>
+          <div class="fc-list">
+            <div class="fc-item good">
+              <span>&#10004;</span>
+              <p>Everything processed on your device, always</p>
+            </div>
+            <div class="fc-item good">
+              <span>&#10004;</span>
+              <p>Free and open source, forever</p>
+            </div>
+            <div class="fc-item good">
+              <span>&#10004;</span>
+              <p>Works offline &mdash; airplane mode, air-gapped, anywhere</p>
+            </div>
+            <div class="fc-item good">
+              <span>&#10004;</span>
+              <p>Fully auditable code &mdash; verify every line</p>
+            </div>
+            <div class="fc-item good">
+              <span>&#10004;</span>
+              <p>Built for Indian banking: PAN, Aadhaar, IFSC, UPI, and more</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-line">
+        <p>Your documents deserve better than the cloud.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <footer>
+    <p>Strid &mdash; Open Source &mdash; 2026</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
