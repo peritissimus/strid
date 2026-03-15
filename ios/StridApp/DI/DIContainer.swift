@@ -29,6 +29,10 @@ final class DIContainer {
         GetRedactionHistoryUseCaseImpl(repository: historyRepository)
     }()
 
+    private lazy var exportDocumentUseCase: ExportDocumentUseCase = {
+        ExportDocumentUseCaseImpl()
+    }()
+
     // ViewModels
     @MainActor
     func makeDocumentViewModel() -> DocumentViewModel {
@@ -37,7 +41,8 @@ final class DIContainer {
             detectUseCase: detectPIIUseCase,
             redactUseCase: redactPIIUseCase,
             recordRedactionUseCase: recordRedactionUseCase,
-            getHistoryUseCase: getHistoryUseCase
+            getHistoryUseCase: getHistoryUseCase,
+            exportDocumentUseCase: exportDocumentUseCase
         )
     }
 

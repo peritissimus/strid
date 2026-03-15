@@ -4,6 +4,10 @@ import StridKit
 struct ContentView: View {
     @State private var viewModel: DocumentViewModel
     @State private var showingFilePicker = false
+    @State private var exportedFileURL: URL?
+    @State private var showingShareSheet = false
+    @State private var exportError: Error?
+    @State private var showingExportError = false
 
     init() {
         let vm = DIContainer.shared.makeDocumentViewModel()
@@ -324,9 +328,34 @@ struct ContentView: View {
                         .foregroundStyle(Color.stridDarkGray)
                     }
                 }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        Task {
+                            await exportRedactedDocument()
+                        }
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundStyle(Color.stridAccent)
+                    }
+                }
             }
             .sheet(isPresented: $viewModel.showingSummary) {
                 summarySheet
+            }
+            .sheet(isPresented: $showingShareSheet, onDismiss: {
+                exportedFileURL = nil
+            }) {
+                if let url = exportedFileURL {
+                    ShareSheet(activityItems: [url])
+                }
+            }
+            .alert("Export Error", isPresented: $showingExportError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                if let error = exportError {
+                    Text(error.localizedDescription)
+                }
             }
         }
     }
@@ -669,6 +698,33 @@ struct ContentView: View {
 
         return attributed
     }
+
+    private func exportRedactedDocument() async {
+        do {
+            let url = try await viewModel.exportRedactedDocument()
+            exportedFileURL = url
+            showingShareSheet = true
+        } catch {
+            exportError = error
+            showingExportError = true
+        }
+    }
+}
+
+// MARK: - ShareSheet
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: nil
+        )
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 #Preview {

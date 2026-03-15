@@ -14,6 +14,7 @@
 		181BE5844AE1B908098D6D39 /* DetectPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */; };
 		3F0B37208B058EFB9C5515B2 /* PIIDetectorPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */; };
 		45AEE3986F4A802FA75B40BD /* StridApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D843A7179201530FACD17E /* StridApp.swift */; };
+		4874ADBCE54606FB473339F0 /* ExportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */; };
 		4CC33D2EE1570DE895C887A1 /* DocumentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932DA0519D54423144747AA9 /* DocumentViewModel.swift */; };
 		50AA9400E4240388CAF0B99B /* RedactionHistoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */; };
 		67B3C090A32A9F154BD1CF5C /* RecordRedactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */; };
@@ -52,6 +53,7 @@
 		B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRedactionHistoryUseCase.swift; sourceTree = "<group>"; };
 		C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactedDocument.swift; sourceTree = "<group>"; };
 		C4B485566D7AA991C9698602 /* RedactionHistoryRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionHistoryRepositoryPort.swift; sourceTree = "<group>"; };
+		C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportDocumentUseCase.swift; sourceTree = "<group>"; };
 		CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryDocumentRepository.swift; sourceTree = "<group>"; };
 		CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentState.swift; sourceTree = "<group>"; };
 		E0CE0A1583FF662913F6C140 /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 			isa = PBXGroup;
 			children = (
 				FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */,
+				C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */,
 				B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */,
 				691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */,
 				726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */,
@@ -322,6 +325,7 @@
 				054C5C5A029B7CA7ED947902 /* DocumentRepositoryPort.swift in Sources */,
 				92F7CD9BB0FB47ED14B5E359 /* DocumentState.swift in Sources */,
 				4CC33D2EE1570DE895C887A1 /* DocumentViewModel.swift in Sources */,
+				4874ADBCE54606FB473339F0 /* ExportDocumentUseCase.swift in Sources */,
 				0C585DE6E52FB47E7E407EED /* GetRedactionHistoryUseCase.swift in Sources */,
 				A9D1EB1341F1211578BB1BB4 /* ImportDocumentUseCase.swift in Sources */,
 				8182172D929E4549B24F9417 /* InMemoryDocumentRepository.swift in Sources */,

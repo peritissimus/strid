@@ -24,19 +24,22 @@ final class DocumentViewModel {
     private let redactUseCase: RedactPIIUseCase
     private let recordRedactionUseCase: RecordRedactionUseCase
     private let getHistoryUseCase: GetRedactionHistoryUseCase
+    private let exportDocumentUseCase: ExportDocumentUseCase
 
     init(
         importUseCase: ImportDocumentUseCase,
         detectUseCase: DetectPIIUseCase,
         redactUseCase: RedactPIIUseCase,
         recordRedactionUseCase: RecordRedactionUseCase,
-        getHistoryUseCase: GetRedactionHistoryUseCase
+        getHistoryUseCase: GetRedactionHistoryUseCase,
+        exportDocumentUseCase: ExportDocumentUseCase
     ) {
         self.importUseCase = importUseCase
         self.detectUseCase = detectUseCase
         self.redactUseCase = redactUseCase
         self.recordRedactionUseCase = recordRedactionUseCase
         self.getHistoryUseCase = getHistoryUseCase
+        self.exportDocumentUseCase = exportDocumentUseCase
     }
 
     // MARK: - State Computed Properties
@@ -160,6 +163,29 @@ final class DocumentViewModel {
     func loadSampleDocument(_ sample: SampleDocument) async {
         await importDocument(content: sample.content)
         showingSamplePicker = false
+    }
+
+    func exportRedactedDocument() async throws -> URL {
+        guard let results = results else {
+            throw ExportError.noRedactedDocument
+        }
+
+        let filename = "document"
+        return try await exportDocumentUseCase.exportRedactedDocument(
+            results.redactedDocument,
+            originalFilename: filename
+        )
+    }
+
+    enum ExportError: LocalizedError {
+        case noRedactedDocument
+
+        var errorDescription: String? {
+            switch self {
+            case .noRedactedDocument:
+                return "No redacted document available to export"
+            }
+        }
     }
 
     // MARK: - Helpers
