@@ -9,20 +9,28 @@ final class DocumentViewModel {
     var state: DocumentState = .empty
     var viewMode: ViewMode = .original
     var showingSummary = false
+    var showingHistory = false
+    var redactionHistory: [RedactionHistoryEntry] = []
 
     // Use Cases
     private let importUseCase: ImportDocumentUseCase
     private let detectUseCase: DetectPIIUseCase
     private let redactUseCase: RedactPIIUseCase
+    private let recordRedactionUseCase: RecordRedactionUseCase
+    private let getHistoryUseCase: GetRedactionHistoryUseCase
 
     init(
         importUseCase: ImportDocumentUseCase,
         detectUseCase: DetectPIIUseCase,
-        redactUseCase: RedactPIIUseCase
+        redactUseCase: RedactPIIUseCase,
+        recordRedactionUseCase: RecordRedactionUseCase,
+        getHistoryUseCase: GetRedactionHistoryUseCase
     ) {
         self.importUseCase = importUseCase
         self.detectUseCase = detectUseCase
         self.redactUseCase = redactUseCase
+        self.recordRedactionUseCase = recordRedactionUseCase
+        self.getHistoryUseCase = getHistoryUseCase
     }
 
     // MARK: - State Computed Properties
@@ -80,9 +88,19 @@ final class DocumentViewModel {
         async let detected = detectUseCase.execute(document: document)
         async let redacted = redactUseCase.execute(document: document)
 
+        let detectedEntities = await detected
+        let redactedDocument = await redacted
+
         let results = ScanResults(
-            detectedEntities: await detected,
-            redactedDocument: await redacted
+            detectedEntities: detectedEntities,
+            redactedDocument: redactedDocument
+        )
+
+        // Record redaction in history
+        await recordRedactionUseCase.execute(
+            document: document,
+            detectedEntities: detectedEntities,
+            redactedContent: redactedDocument.redactedContent
         )
 
         state = .scanned(document, results: results)
@@ -110,6 +128,23 @@ final class DocumentViewModel {
         if case .scanned = state { return true }
         if case .loaded = state { return true }
         return false
+    }
+
+    func toggleHistory() {
+        showingHistory.toggle()
+        if showingHistory {
+            Task {
+                await loadHistory()
+            }
+        }
+    }
+
+    func loadHistory() async {
+        redactionHistory = await getHistoryUseCase.execute()
+    }
+
+    var totalRedactionCount: Int {
+        redactionHistory.count
     }
 
     // MARK: - Helpers

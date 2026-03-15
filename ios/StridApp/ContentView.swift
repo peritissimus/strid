@@ -130,6 +130,19 @@ struct ContentView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.toggleHistory()
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .foregroundStyle(Color.stridWhite)
+                    }
+                }
+            }
+            .sheet(isPresented: $viewModel.showingHistory) {
+                historySheet
+            }
         }
     }
 
@@ -461,6 +474,98 @@ struct ContentView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.toggleSummary()
+                    } label: {
+                        Text("Done")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.stridBlack)
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+
+    private var historySheet: some View {
+        NavigationStack {
+            List {
+                if viewModel.redactionHistory.isEmpty {
+                    ContentUnavailableView {
+                        Label("No Redaction History", systemImage: "clock.badge.questionmark")
+                    } description: {
+                        Text("Your redaction operations will appear here")
+                    }
+                } else {
+                    Section {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Total Redactions")
+                                        .font(.subheadline)
+                                        .foregroundStyle(Color.stridTextSecondary)
+
+                                    Text("\(viewModel.totalRedactionCount)")
+                                        .font(.system(size: 36, weight: .bold))
+                                        .foregroundStyle(Color.stridAccent)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "clock.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundStyle(Color.stridAccent.opacity(0.15))
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+
+                    Section {
+                        ForEach(viewModel.redactionHistory) { entry in
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(entry.formattedDate)
+                                            .font(.subheadline.weight(.medium))
+                                            .foregroundStyle(Color.stridText)
+
+                                        Text("\(entry.entitiesFound) PII items found")
+                                            .font(.caption)
+                                            .foregroundStyle(Color.stridTextSecondary)
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(Color.stridSuccess)
+                                }
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(entry.entityTypes, id: \.self) { type in
+                                            Text(type.displayName)
+                                                .font(.caption2.weight(.semibold))
+                                                .padding(.horizontal, 8)
+                                                .padding(.vertical, 4)
+                                                .background(viewModel.colorForType(type).opacity(0.12))
+                                                .foregroundStyle(viewModel.colorForType(type))
+                                                .cornerRadius(4)
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    } header: {
+                        Text("Recent Activity")
+                    }
+                }
+            }
+            .navigationTitle("Redaction History")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.toggleHistory()
                     } label: {
                         Text("Done")
                             .fontWeight(.semibold)

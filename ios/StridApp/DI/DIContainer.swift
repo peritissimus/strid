@@ -6,6 +6,7 @@ final class DIContainer {
     // Ports
     private lazy var piiDetector: PIIDetectorPort = StridKitPIIDetectorAdapter()
     private lazy var documentRepository: DocumentRepositoryPort = InMemoryDocumentRepository()
+    private lazy var historyRepository: RedactionHistoryRepositoryPort = InMemoryRedactionHistoryRepository()
 
     // Use Cases
     private lazy var importDocumentUseCase: ImportDocumentUseCase = {
@@ -20,13 +21,23 @@ final class DIContainer {
         RedactPIIUseCaseImpl(detector: piiDetector)
     }()
 
+    private lazy var recordRedactionUseCase: RecordRedactionUseCase = {
+        RecordRedactionUseCaseImpl(repository: historyRepository)
+    }()
+
+    private lazy var getHistoryUseCase: GetRedactionHistoryUseCase = {
+        GetRedactionHistoryUseCaseImpl(repository: historyRepository)
+    }()
+
     // ViewModels
     @MainActor
     func makeDocumentViewModel() -> DocumentViewModel {
         DocumentViewModel(
             importUseCase: importDocumentUseCase,
             detectUseCase: detectPIIUseCase,
-            redactUseCase: redactPIIUseCase
+            redactUseCase: redactPIIUseCase,
+            recordRedactionUseCase: recordRedactionUseCase,
+            getHistoryUseCase: getHistoryUseCase
         )
     }
 
