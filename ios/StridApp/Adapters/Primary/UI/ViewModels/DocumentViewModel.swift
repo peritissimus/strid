@@ -1,0 +1,155 @@
+import Foundation
+import SwiftUI
+import StridKit
+
+@MainActor
+@Observable
+final class DocumentViewModel {
+    // State
+    var state: DocumentState = .empty
+    var viewMode: ViewMode = .original
+    var showingSummary = false
+
+    // Use Cases
+    private let importUseCase: ImportDocumentUseCase
+    private let detectUseCase: DetectPIIUseCase
+    private let redactUseCase: RedactPIIUseCase
+
+    init(
+        importUseCase: ImportDocumentUseCase,
+        detectUseCase: DetectPIIUseCase,
+        redactUseCase: RedactPIIUseCase
+    ) {
+        self.importUseCase = importUseCase
+        self.detectUseCase = detectUseCase
+        self.redactUseCase = redactUseCase
+    }
+
+    // MARK: - State Computed Properties
+
+    var isProcessing: Bool {
+        if case .processing = state { return true }
+        return false
+    }
+
+    var hasDocument: Bool {
+        state.document != nil
+    }
+
+    var hasResults: Bool {
+        if case .scanned = state { return true }
+        return false
+    }
+
+    var currentDocument: Document? {
+        state.document
+    }
+
+    var sourceText: String {
+        currentDocument?.content ?? ""
+    }
+
+    var results: ScanResults? {
+        if case .scanned(_, let results) = state {
+            return results
+        }
+        return nil
+    }
+
+    var entityCount: Int {
+        results?.entityCount ?? 0
+    }
+
+    var redactedText: String {
+        results?.redactedDocument.redactedContent ?? ""
+    }
+
+    // MARK: - Actions
+
+    func importDocument(content: String) async {
+        let document = await importUseCase.execute(content: content)
+        state = .loaded(document)
+        viewMode = .original
+    }
+
+    func scanDocument() async {
+        guard let document = currentDocument else { return }
+
+        state = .processing(document)
+
+        async let detected = detectUseCase.execute(document: document)
+        async let redacted = redactUseCase.execute(document: document)
+
+        let results = ScanResults(
+            detectedEntities: await detected,
+            redactedDocument: await redacted
+        )
+
+        state = .scanned(document, results: results)
+        viewMode = .highlighted
+    }
+
+    func clearDocument() {
+        state = .empty
+        viewMode = .original
+        showingSummary = false
+    }
+
+    func toggleSummary() {
+        showingSummary.toggle()
+    }
+
+    func goBackToDocument() {
+        if case .scanned(let document, _) = state {
+            state = .loaded(document)
+            viewMode = .original
+        }
+    }
+
+    func canGoBack() -> Bool {
+        if case .scanned = state { return true }
+        if case .loaded = state { return true }
+        return false
+    }
+
+    // MARK: - Helpers
+
+    func iconForType(_ type: PIIEntityType) -> String {
+        switch type {
+        case .person: "person"
+        case .email: "envelope"
+        case .phone, .inPhone: "phone"
+        case .url: "link"
+        case .location: "mappin"
+        case .organization: "building.2"
+        case .creditCard: "creditcard"
+        case .ipAddress: "network"
+        case .inBankAccount: "banknote"
+        case .inIFSC: "building.columns"
+        case .inPAN: "doc.text"
+        case .inAadhaar: "person.text.rectangle"
+        case .inUPIID: "indianrupeesign.circle"
+        case .inMICR: "barcode"
+        case .inPINCode: "mappin.and.ellipse"
+        case .inCustomerID: "person.badge.key"
+        case .inBranchCode: "number"
+        case .inTxnRef: "number.circle"
+        case .inDOB: "calendar"
+        }
+    }
+
+    func colorForType(_ type: PIIEntityType) -> Color {
+        switch type {
+        case .person, .inDOB: .red
+        case .email, .url: .blue
+        case .phone, .inPhone: .green
+        case .location, .inPINCode: .orange
+        case .creditCard, .inBankAccount: .purple
+        case .inIFSC, .inBranchCode, .inMICR: .brown
+        case .inPAN, .inAadhaar, .inCustomerID: .red
+        case .inUPIID, .inTxnRef: .indigo
+        case .organization: .teal
+        case .ipAddress: .gray
+        }
+    }
+}
