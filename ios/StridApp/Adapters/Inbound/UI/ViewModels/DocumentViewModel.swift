@@ -144,7 +144,7 @@ final class DocumentViewModel {
         case .person, .inDOB, .inPAN, .inAadhaar, .creditCard, .inBankAccount:
             .stridError
 
-        // Contact information - Accent indigo
+        // Contact information - Accent teal
         case .email, .url, .phone, .inPhone, .inUPIID:
             .stridAccent
 

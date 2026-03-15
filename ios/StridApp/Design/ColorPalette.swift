@@ -25,14 +25,14 @@ extension Color {
 
     // MARK: - Accent
 
-    /// Primary accent color - indigo for trust and security
-    static let stridAccent = Color(red: 0.34, green: 0.33, blue: 0.84)
+    /// Primary accent color - teal for modern, tech-focused feel
+    static let stridAccent = Color(red: 0.0, green: 0.69, blue: 0.63)
 
     /// Light accent - for backgrounds and subtle highlights
-    static let stridAccentLight = Color(red: 0.34, green: 0.33, blue: 0.84).opacity(0.1)
+    static let stridAccentLight = Color(red: 0.0, green: 0.69, blue: 0.63).opacity(0.1)
 
     /// Dark accent - for pressed states
-    static let stridAccentDark = Color(red: 0.25, green: 0.24, blue: 0.65)
+    static let stridAccentDark = Color(red: 0.0, green: 0.55, blue: 0.50)
 
     // MARK: - Semantic Colors
 
