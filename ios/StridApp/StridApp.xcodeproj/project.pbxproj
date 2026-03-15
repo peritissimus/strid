@@ -9,13 +9,14 @@
 /* Begin PBXBuildFile section */
 		054C5C5A029B7CA7ED947902 /* DocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */; };
 		181BE5844AE1B908098D6D39 /* DetectPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */; };
-		2C03CF5525F0953648179EC6 /* StridKitPIIDetectorAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71524BDF4F2E22740AEE28ED /* StridKitPIIDetectorAdapter.swift */; };
 		3F0B37208B058EFB9C5515B2 /* PIIDetectorPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */; };
 		45AEE3986F4A802FA75B40BD /* StridApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D843A7179201530FACD17E /* StridApp.swift */; };
+		4CC33D2EE1570DE895C887A1 /* DocumentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932DA0519D54423144747AA9 /* DocumentViewModel.swift */; };
 		76B6ABA6FC8D422CFC85F206 /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = F73E09EF766C4B72DB9D1AE7 /* StridKit */; };
-		8875B71C555CBBBF1101C506 /* DocumentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BC2707E9674B7944B04B7B /* DocumentState.swift */; };
+		8182172D929E4549B24F9417 /* InMemoryDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */; };
+		92F7CD9BB0FB47ED14B5E359 /* DocumentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */; };
 		A9D1EB1341F1211578BB1BB4 /* ImportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */; };
-		AC052BE1209EABFACA6A3466 /* InMemoryDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DE6124EB83C25E199148AB /* InMemoryDocumentRepository.swift */; };
+		AC0E48D0A799FE210E850650 /* StridKitPIIDetectorAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914352EDBACD3534E1C9260D /* StridKitPIIDetectorAdapter.swift */; };
 		AD0A74470CB61EBC7212854A /* RedactedDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */; };
 		C66E31406A35D5DA87A00AB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38FD04F5FE1EC4FE6200099B /* ContentView.swift */; };
 		C7D1E10E8C31B7CDE517688C /* DetectedPII.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F871F41F057A6CA08C387 /* DetectedPII.swift */; };
@@ -23,25 +24,24 @@
 		DD4F5B8D1144AE252163CA19 /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D32D4A31CA2753501F2325E /* DIContainer.swift */; };
 		DE8E7050D80D32DD1A8C79CF /* StridApp.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = FB97FBB662C964B53A26087C /* StridApp.xcodeproj */; };
 		F046E8127884947F28D901EE /* RedactPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */; };
-		FE438BE8099836DC192EC413 /* DocumentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6095081422CA406F8BA01A98 /* DocumentViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIDetectorPort.swift; sourceTree = "<group>"; };
-		19BC2707E9674B7944B04B7B /* DocumentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentState.swift; sourceTree = "<group>"; };
 		38FD04F5FE1EC4FE6200099B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3D32D4A31CA2753501F2325E /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
 		3F97406A85B5E80E2B261830 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
 		426F871F41F057A6CA08C387 /* DetectedPII.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedPII.swift; sourceTree = "<group>"; };
 		54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactPIIUseCase.swift; sourceTree = "<group>"; };
 		5697722409B34DF4A1AEE5B8 /* StridApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StridApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6095081422CA406F8BA01A98 /* DocumentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewModel.swift; sourceTree = "<group>"; };
 		691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocumentUseCase.swift; sourceTree = "<group>"; };
-		71524BDF4F2E22740AEE28ED /* StridKitPIIDetectorAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridKitPIIDetectorAdapter.swift; sourceTree = "<group>"; };
-		79DE6124EB83C25E199148AB /* InMemoryDocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryDocumentRepository.swift; sourceTree = "<group>"; };
+		914352EDBACD3534E1C9260D /* StridKitPIIDetectorAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridKitPIIDetectorAdapter.swift; sourceTree = "<group>"; };
+		932DA0519D54423144747AA9 /* DocumentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewModel.swift; sourceTree = "<group>"; };
 		97D843A7179201530FACD17E /* StridApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridApp.swift; sourceTree = "<group>"; };
 		AAE26C28DE276383659A141A /* StridKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StridKit; path = ../StridKit; sourceTree = SOURCE_ROOT; };
 		C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactedDocument.swift; sourceTree = "<group>"; };
+		CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryDocumentRepository.swift; sourceTree = "<group>"; };
+		CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentState.swift; sourceTree = "<group>"; };
 		E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentRepositoryPort.swift; sourceTree = "<group>"; };
 		FB97FBB662C964B53A26087C /* StridApp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = StridApp.xcodeproj; sourceTree = "<group>"; };
 		FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectPIIUseCase.swift; sourceTree = "<group>"; };
@@ -59,19 +59,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0D4537CBE88816431A52B30D /* PIIDetection */ = {
+		00528C2C730A6454903A31A5 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				71524BDF4F2E22740AEE28ED /* StridKitPIIDetectorAdapter.swift */,
-			);
-			path = PIIDetection;
-			sourceTree = "<group>";
-		};
-		0FE2EE44EF6AE62B8D0EFB17 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				19BC2707E9674B7944B04B7B /* DocumentState.swift */,
-				6095081422CA406F8BA01A98 /* DocumentViewModel.swift */,
+				CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */,
+				932DA0519D54423144747AA9 /* DocumentViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -93,13 +85,12 @@
 			path = DI;
 			sourceTree = "<group>";
 		};
-		4531A211404EA1B32CF6AF01 /* Secondary */ = {
+		362ABAC5DF96A618378B79FC /* Storage */ = {
 			isa = PBXGroup;
 			children = (
-				0D4537CBE88816431A52B30D /* PIIDetection */,
-				DABAB43AF5D82BE94A659377 /* Storage */,
+				CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */,
 			);
-			path = Secondary;
+			path = Storage;
 			sourceTree = "<group>";
 		};
 		573249731357C0AA6805DF63 = {
@@ -124,6 +115,23 @@
 			path = Domain;
 			sourceTree = "<group>";
 		};
+		786214F47E143082E7F189BA /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				00528C2C730A6454903A31A5 /* ViewModels */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		82551F67C54171BC3D3BA35A /* Outbound */ = {
+			isa = PBXGroup;
+			children = (
+				E730B2CAB8371B540EF9882B /* PIIDetection */,
+				362ABAC5DF96A618378B79FC /* Storage */,
+			);
+			path = Outbound;
+			sourceTree = "<group>";
+		};
 		9E0260CCDDB670441F4A3264 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -132,28 +140,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A28B167D10EDED1C92557978 /* Primary */ = {
+		B8BC2ABF4CF55192236AE6A9 /* Inbound */ = {
 			isa = PBXGroup;
 			children = (
-				E562CF66F0FCB30FE3E67DB2 /* UI */,
+				786214F47E143082E7F189BA /* UI */,
 			);
-			path = Primary;
+			path = Inbound;
 			sourceTree = "<group>";
 		};
-		DABAB43AF5D82BE94A659377 /* Storage */ = {
+		E730B2CAB8371B540EF9882B /* PIIDetection */ = {
 			isa = PBXGroup;
 			children = (
-				79DE6124EB83C25E199148AB /* InMemoryDocumentRepository.swift */,
+				914352EDBACD3534E1C9260D /* StridKitPIIDetectorAdapter.swift */,
 			);
-			path = Storage;
-			sourceTree = "<group>";
-		};
-		E562CF66F0FCB30FE3E67DB2 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				0FE2EE44EF6AE62B8D0EFB17 /* ViewModels */,
-			);
-			path = UI;
+			path = PIIDetection;
 			sourceTree = "<group>";
 		};
 		E9FC8B533A35A38B08507C5E /* StridApp */ = {
@@ -201,8 +201,8 @@
 		F5DA971718565C3C039546F8 /* Adapters */ = {
 			isa = PBXGroup;
 			children = (
-				A28B167D10EDED1C92557978 /* Primary */,
-				4531A211404EA1B32CF6AF01 /* Secondary */,
+				B8BC2ABF4CF55192236AE6A9 /* Inbound */,
+				82551F67C54171BC3D3BA35A /* Outbound */,
 			);
 			path = Adapters;
 			sourceTree = "<group>";
@@ -289,15 +289,15 @@
 				C7D1E10E8C31B7CDE517688C /* DetectedPII.swift in Sources */,
 				D0D8C207351A69E715CA0D91 /* Document.swift in Sources */,
 				054C5C5A029B7CA7ED947902 /* DocumentRepositoryPort.swift in Sources */,
-				8875B71C555CBBBF1101C506 /* DocumentState.swift in Sources */,
-				FE438BE8099836DC192EC413 /* DocumentViewModel.swift in Sources */,
+				92F7CD9BB0FB47ED14B5E359 /* DocumentState.swift in Sources */,
+				4CC33D2EE1570DE895C887A1 /* DocumentViewModel.swift in Sources */,
 				A9D1EB1341F1211578BB1BB4 /* ImportDocumentUseCase.swift in Sources */,
-				AC052BE1209EABFACA6A3466 /* InMemoryDocumentRepository.swift in Sources */,
+				8182172D929E4549B24F9417 /* InMemoryDocumentRepository.swift in Sources */,
 				3F0B37208B058EFB9C5515B2 /* PIIDetectorPort.swift in Sources */,
 				F046E8127884947F28D901EE /* RedactPIIUseCase.swift in Sources */,
 				AD0A74470CB61EBC7212854A /* RedactedDocument.swift in Sources */,
 				45AEE3986F4A802FA75B40BD /* StridApp.swift in Sources */,
-				2C03CF5525F0953648179EC6 /* StridKitPIIDetectorAdapter.swift in Sources */,
+				AC0E48D0A799FE210E850650 /* StridKitPIIDetectorAdapter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
