@@ -89,8 +89,20 @@ extension Color {
     static let stridTextSecondary = Color.secondary
 
     /// Adaptive background
-    static let stridBackground = Color(.systemBackground)
+    static var stridBackground: Color {
+        #if os(iOS)
+        return Color(.systemBackground)
+        #elseif os(macOS)
+        return Color(nsColor: .windowBackgroundColor)
+        #endif
+    }
 
     /// Adaptive secondary background
-    static let stridBackgroundSecondary = Color(.secondarySystemBackground)
+    static var stridBackgroundSecondary: Color {
+        #if os(iOS)
+        return Color(.secondarySystemBackground)
+        #elseif os(macOS)
+        return Color(nsColor: .controlBackgroundColor)
+        #endif
+    }
 }

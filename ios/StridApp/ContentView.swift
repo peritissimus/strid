@@ -105,7 +105,7 @@ struct ContentView: View {
 
                         Button {
                             Task {
-                                if let clip = UIPasteboard.general.string, !clip.isEmpty {
+                                if let clip = PasteboardHelper.getString(), !clip.isEmpty {
                                     await viewModel.importDocument(content: clip)
                                 }
                             }
@@ -131,9 +131,9 @@ struct ContentView: View {
                     Spacer()
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .platformNavigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .platformTopBarTrailing) {
                     Button {
                         viewModel.toggleHistory()
                     } label: {
@@ -212,9 +212,9 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Document")
-            .navigationBarTitleDisplayMode(.inline)
+            .platformNavigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .platformTopBarLeading) {
                     Button {
                         viewModel.clearDocument()
                     } label: {
@@ -255,7 +255,7 @@ struct ContentView: View {
                     Spacer()
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .platformNavigationBarTitleDisplayMode(.inline)
         }
     }
 
@@ -314,10 +314,10 @@ struct ContentView: View {
                 contentForViewMode
             }
             .navigationTitle("Scan Results")
-            .navigationBarTitleDisplayMode(.inline)
+            .platformNavigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .platformTopBarLeading) {
                     Button {
                         viewModel.goBackToDocument()
                     } label: {
@@ -329,7 +329,7 @@ struct ContentView: View {
                     }
                 }
 
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .platformTopBarTrailing) {
                     Button {
                         Task {
                             await exportRedactedDocument()
@@ -348,6 +348,9 @@ struct ContentView: View {
             }) {
                 if let url = exportedFileURL {
                     ShareSheet(activityItems: [url])
+                        #if os(iOS)
+                        .presentationDetents([.medium])
+                        #endif
                 }
             }
             .alert("Export Error", isPresented: $showingExportError) {
@@ -499,9 +502,9 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("PII Details")
-            .navigationBarTitleDisplayMode(.large)
+            .platformNavigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .platformTopBarTrailing) {
                     Button {
                         viewModel.toggleSummary()
                     } label: {
@@ -559,9 +562,9 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Sample Documents")
-            .navigationBarTitleDisplayMode(.large)
+            .platformNavigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .platformTopBarTrailing) {
                     Button {
                         viewModel.toggleSamplePicker()
                     } label: {
@@ -650,9 +653,9 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Redaction History")
-            .navigationBarTitleDisplayMode(.large)
+            .platformNavigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .platformTopBarTrailing) {
                     Button {
                         viewModel.toggleHistory()
                     } label: {
@@ -709,22 +712,6 @@ struct ContentView: View {
             showingExportError = true
         }
     }
-}
-
-// MARK: - ShareSheet
-
-struct ShareSheet: UIViewControllerRepresentable {
-    let activityItems: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        let controller = UIActivityViewController(
-            activityItems: activityItems,
-            applicationActivities: nil
-        )
-        return controller
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 #Preview {
