@@ -10,6 +10,7 @@
 		054C5C5A029B7CA7ED947902 /* DocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */; };
 		0C585DE6E52FB47E7E407EED /* GetRedactionHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */; };
 		11C629E39424F67384B7D09E /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE0A1583FF662913F6C140 /* ColorPalette.swift */; };
+		1239BA00262559F8AF24A106 /* SampleDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C408BF14B7AC561B6EA713F /* SampleDocument.swift */; };
 		181BE5844AE1B908098D6D39 /* DetectPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */; };
 		3F0B37208B058EFB9C5515B2 /* PIIDetectorPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */; };
 		45AEE3986F4A802FA75B40BD /* StridApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D843A7179201530FACD17E /* StridApp.swift */; };
@@ -34,6 +35,7 @@
 
 /* Begin PBXFileReference section */
 		13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIDetectorPort.swift; sourceTree = "<group>"; };
+		1C408BF14B7AC561B6EA713F /* SampleDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDocument.swift; sourceTree = "<group>"; };
 		38FD04F5FE1EC4FE6200099B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3D32D4A31CA2753501F2325E /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
 		3F97406A85B5E80E2B261830 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				3F97406A85B5E80E2B261830 /* Document.swift */,
 				C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */,
 				A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */,
+				1C408BF14B7AC561B6EA713F /* SampleDocument.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -329,6 +332,7 @@
 				AD0A74470CB61EBC7212854A /* RedactedDocument.swift in Sources */,
 				50AA9400E4240388CAF0B99B /* RedactionHistoryEntry.swift in Sources */,
 				853B6D90524C00DC34BA824A /* RedactionHistoryRepositoryPort.swift in Sources */,
+				1239BA00262559F8AF24A106 /* SampleDocument.swift in Sources */,
 				45AEE3986F4A802FA75B40BD /* StridApp.swift in Sources */,
 				AC0E48D0A799FE210E850650 /* StridKitPIIDetectorAdapter.swift in Sources */,
 			);

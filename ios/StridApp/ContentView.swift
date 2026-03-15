@@ -65,13 +65,11 @@ struct ContentView: View {
                     VStack(spacing: 14) {
                         // Primary CTA - only place using accent color
                         Button {
-                            Task {
-                                await loadSampleDocument()
-                            }
+                            viewModel.toggleSamplePicker()
                         } label: {
                             HStack {
-                                Image(systemName: "wand.and.stars")
-                                Text("Try Sample Document")
+                                Image(systemName: "doc.text.magnifyingglass")
+                                Text("Browse Sample Documents")
                             }
                             .font(.headline)
                             .frame(maxWidth: .infinity)
@@ -142,6 +140,9 @@ struct ContentView: View {
             }
             .sheet(isPresented: $viewModel.showingHistory) {
                 historySheet
+            }
+            .sheet(isPresented: $viewModel.showingSamplePicker) {
+                samplePickerSheet
             }
         }
     }
@@ -486,6 +487,65 @@ struct ContentView: View {
         .presentationDragIndicator(.visible)
     }
 
+    private var samplePickerSheet: some View {
+        NavigationStack {
+            List {
+                ForEach(SampleDocument.SampleCategory.allCases, id: \.self) { category in
+                    Section {
+                        ForEach(viewModel.sampleDocuments.filter { $0.category == category }) { sample in
+                            Button {
+                                Task {
+                                    await viewModel.loadSampleDocument(sample)
+                                }
+                            } label: {
+                                HStack(spacing: 16) {
+                                    Image(systemName: category.icon)
+                                        .font(.title2)
+                                        .foregroundStyle(Color.stridAccent)
+                                        .frame(width: 40)
+
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(sample.title)
+                                            .font(.headline)
+                                            .foregroundStyle(Color.stridText)
+
+                                        Text(sample.description)
+                                            .font(.caption)
+                                            .foregroundStyle(Color.stridTextSecondary)
+                                            .lineLimit(2)
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .foregroundStyle(Color.stridGray)
+                                }
+                                .padding(.vertical, 8)
+                            }
+                        }
+                    } header: {
+                        Text(category.rawValue)
+                    }
+                }
+            }
+            .navigationTitle("Sample Documents")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.toggleSamplePicker()
+                    } label: {
+                        Text("Cancel")
+                            .foregroundStyle(Color.stridBlack)
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+
     private var historySheet: some View {
         NavigationStack {
             List {
@@ -579,34 +639,6 @@ struct ContentView: View {
     }
 
     // MARK: - Actions
-
-    private func loadSampleDocument() async {
-        let sampleText = """
-            Dear Rajesh Kumar,
-
-            Thank you for opening your savings account with us. Here are your account details:
-
-            Account Number: 1234567890123456
-            IFSC Code: HDFC0001234
-            Branch: Mumbai Central
-            Customer ID: CUST8765432
-
-            Your registered email is rajesh.kumar@gmail.com and phone number is +91-9876543210.
-
-            For UPI payments, use: rajesh@upi
-            PAN Number: ABCDE1234F
-            Aadhaar: 1234 5678 9012
-
-            Please keep this information confidential.
-
-            Transaction Reference: TXN2024031500123
-            Date of Birth: 15/03/1985
-
-            Best regards,
-            Mumbai Bank
-            """
-        await viewModel.importDocument(content: sampleText)
-    }
 
     private func handleFileImport(_ result: Result<[URL], Error>) {
         guard case .success(let urls) = result, let url = urls.first else { return }

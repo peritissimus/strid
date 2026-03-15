@@ -10,7 +10,13 @@ final class DocumentViewModel {
     var viewMode: ViewMode = .original
     var showingSummary = false
     var showingHistory = false
+    var showingSamplePicker = false
     var redactionHistory: [RedactionHistoryEntry] = []
+
+    // Sample documents
+    var sampleDocuments: [SampleDocument] {
+        SampleDocument.samples
+    }
 
     // Use Cases
     private let importUseCase: ImportDocumentUseCase
@@ -145,6 +151,15 @@ final class DocumentViewModel {
 
     var totalRedactionCount: Int {
         redactionHistory.count
+    }
+
+    func toggleSamplePicker() {
+        showingSamplePicker.toggle()
+    }
+
+    func loadSampleDocument(_ sample: SampleDocument) async {
+        await importDocument(content: sample.content)
+        showingSamplePicker = false
     }
 
     // MARK: - Helpers
