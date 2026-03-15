@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		054C5C5A029B7CA7ED947902 /* DocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */; };
+		11C629E39424F67384B7D09E /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE0A1583FF662913F6C140 /* ColorPalette.swift */; };
 		181BE5844AE1B908098D6D39 /* DetectPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */; };
 		3F0B37208B058EFB9C5515B2 /* PIIDetectorPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */; };
 		45AEE3986F4A802FA75B40BD /* StridApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D843A7179201530FACD17E /* StridApp.swift */; };
@@ -42,6 +43,7 @@
 		C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactedDocument.swift; sourceTree = "<group>"; };
 		CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryDocumentRepository.swift; sourceTree = "<group>"; };
 		CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentState.swift; sourceTree = "<group>"; };
+		E0CE0A1583FF662913F6C140 /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentRepositoryPort.swift; sourceTree = "<group>"; };
 		FB97FBB662C964B53A26087C /* StridApp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = StridApp.xcodeproj; sourceTree = "<group>"; };
 		FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectPIIUseCase.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				F5DA971718565C3C039546F8 /* Adapters */,
+				74D90BBA43468AADD88BAFAB /* Design */,
 				1FC531923ACDABD8CCEBB896 /* DI */,
 				6A68EF2DADE504D05BE7109D /* Domain */,
 				F0724EC96340C50C3608B213 /* Packages */,
@@ -113,6 +116,14 @@
 				F218A253AF205146396BBCB8 /* UseCases */,
 			);
 			path = Domain;
+			sourceTree = "<group>";
+		};
+		74D90BBA43468AADD88BAFAB /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				E0CE0A1583FF662913F6C140 /* ColorPalette.swift */,
+			);
+			path = Design;
 			sourceTree = "<group>";
 		};
 		786214F47E143082E7F189BA /* UI */ = {
@@ -163,6 +174,7 @@
 				97D843A7179201530FACD17E /* StridApp.swift */,
 				FB97FBB662C964B53A26087C /* StridApp.xcodeproj */,
 				F5DA971718565C3C039546F8 /* Adapters */,
+				74D90BBA43468AADD88BAFAB /* Design */,
 				1FC531923ACDABD8CCEBB896 /* DI */,
 				6A68EF2DADE504D05BE7109D /* Domain */,
 			);
@@ -283,6 +295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11C629E39424F67384B7D09E /* ColorPalette.swift in Sources */,
 				C66E31406A35D5DA87A00AB5 /* ContentView.swift in Sources */,
 				DD4F5B8D1144AE252163CA19 /* DIContainer.swift in Sources */,
 				181BE5844AE1B908098D6D39 /* DetectPIIUseCase.swift in Sources */,

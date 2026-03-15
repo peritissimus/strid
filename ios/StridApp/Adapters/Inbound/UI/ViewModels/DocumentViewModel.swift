@@ -140,16 +140,25 @@ final class DocumentViewModel {
 
     func colorForType(_ type: PIIEntityType) -> Color {
         switch type {
-        case .person, .inDOB: .red
-        case .email, .url: .blue
-        case .phone, .inPhone: .green
-        case .location, .inPINCode: .orange
-        case .creditCard, .inBankAccount: .purple
-        case .inIFSC, .inBranchCode, .inMICR: .brown
-        case .inPAN, .inAadhaar, .inCustomerID: .red
-        case .inUPIID, .inTxnRef: .indigo
-        case .organization: .teal
-        case .ipAddress: .gray
+        // Critical PII - Error red
+        case .person, .inDOB, .inPAN, .inAadhaar, .creditCard, .inBankAccount:
+            .stridError
+
+        // Contact information - Accent indigo
+        case .email, .url, .phone, .inPhone, .inUPIID:
+            .stridAccent
+
+        // Location information - Warning orange
+        case .location, .inPINCode:
+            .stridWarning
+
+        // Financial/Banking codes - Info blue
+        case .inIFSC, .inBranchCode, .inMICR, .inTxnRef:
+            .stridInfo
+
+        // Organizational/Generic - Dark gray
+        case .organization, .inCustomerID, .ipAddress:
+            .stridDarkGray
         }
     }
 }

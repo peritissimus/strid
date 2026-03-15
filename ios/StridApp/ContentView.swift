@@ -38,15 +38,8 @@ struct ContentView: View {
     private var emptyStateView: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    colors: [
-                        Color(red: 0.1, green: 0.2, blue: 0.5),
-                        Color(red: 0.2, green: 0.1, blue: 0.4)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
+                Color.stridGradient
+                    .ignoresSafeArea()
 
                 VStack(spacing: 40) {
                     Spacer()
@@ -54,16 +47,16 @@ struct ContentView: View {
                     VStack(spacing: 24) {
                         Image(systemName: "shield.lefthalf.filled.badge.checkmark")
                             .font(.system(size: 80, weight: .light))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.stridWhite)
 
                         VStack(spacing: 12) {
                             Text("PII Scanner")
                                 .font(.system(size: 34, weight: .bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color.stridWhite)
 
                             Text("Detect and redact personal information\nfrom your documents")
                                 .font(.body)
-                                .foregroundStyle(.white.opacity(0.8))
+                                .foregroundStyle(Color.stridWhite.opacity(0.8))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
                         }
@@ -82,8 +75,8 @@ struct ContentView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(.white)
-                            .foregroundStyle(Color(red: 0.1, green: 0.2, blue: 0.5))
+                            .background(Color.stridWhite)
+                            .foregroundStyle(Color.stridAccent)
                             .cornerRadius(14)
                         }
 
@@ -97,8 +90,8 @@ struct ContentView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(.white.opacity(0.2))
-                            .foregroundStyle(.white)
+                            .background(Color.stridWhite.opacity(0.2))
+                            .foregroundStyle(Color.stridWhite)
                             .cornerRadius(14)
                         }
 
@@ -116,8 +109,8 @@ struct ContentView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(.white.opacity(0.2))
-                            .foregroundStyle(.white)
+                            .background(Color.stridWhite.opacity(0.2))
+                            .foregroundStyle(Color.stridWhite)
                             .cornerRadius(14)
                         }
                     }
@@ -136,14 +129,15 @@ struct ContentView: View {
                 ScrollView {
                     Text(viewModel.sourceText)
                         .font(.system(.body, design: .monospaced))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.stridText)
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textSelection(.enabled)
                 }
-                .background(Color(.systemBackground))
+                .background(Color.stridBackground)
 
                 Divider()
+                    .background(Color.stridGray)
 
                 VStack(spacing: 12) {
                     Button {
@@ -158,8 +152,8 @@ struct ContentView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
-                        .foregroundStyle(.white)
+                        .background(Color.stridAccent)
+                        .foregroundStyle(Color.stridWhite)
                         .cornerRadius(12)
                     }
 
@@ -168,13 +162,15 @@ struct ContentView: View {
                     } label: {
                         Text("Replace Document")
                             .font(.subheadline)
+                            .foregroundStyle(Color.stridTextSecondary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                     }
                     .buttonStyle(.bordered)
+                    .tint(Color.stridGray)
                 }
                 .padding(20)
-                .background(Color(.secondarySystemBackground))
+                .background(Color.stridBackgroundSecondary)
             }
             .navigationTitle("Document")
             .navigationBarTitleDisplayMode(.inline)
@@ -187,6 +183,7 @@ struct ContentView: View {
                             Image(systemName: "chevron.left")
                             Text("Back")
                         }
+                        .foregroundStyle(Color.stridAccent)
                     }
                 }
             }
@@ -196,31 +193,24 @@ struct ContentView: View {
     private var processingView: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    colors: [
-                        Color(red: 0.1, green: 0.2, blue: 0.5),
-                        Color(red: 0.2, green: 0.1, blue: 0.4)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
+                Color.stridGradient
+                    .ignoresSafeArea()
 
                 VStack(spacing: 30) {
                     Spacer()
 
                     ProgressView()
                         .scaleEffect(1.8)
-                        .tint(.white)
+                        .tint(Color.stridWhite)
 
                     VStack(spacing: 8) {
                         Text("Analyzing Document")
                             .font(.title2.bold())
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.stridWhite)
 
                         Text("Scanning for personal information...")
                             .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.8))
+                            .foregroundStyle(Color.stridWhite.opacity(0.8))
                     }
 
                     Spacer()
@@ -239,11 +229,11 @@ struct ContentView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("\(viewModel.entityCount)")
                                 .font(.system(size: 44, weight: .bold))
-                                .foregroundStyle(.red)
+                                .foregroundStyle(Color.stridError)
 
                             Text("PII Items Found")
                                 .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.stridTextSecondary)
                         }
 
                         Spacer()
@@ -257,10 +247,12 @@ struct ContentView: View {
                                 Text("Details")
                                     .font(.caption.weight(.medium))
                             }
+                            .foregroundStyle(Color.stridAccent)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                         }
                         .buttonStyle(.bordered)
+                        .tint(Color.stridAccent)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
@@ -271,12 +263,14 @@ struct ContentView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .tint(Color.stridAccent)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 16)
                 }
-                .background(Color(.secondarySystemBackground))
+                .background(Color.stridBackgroundSecondary)
 
                 Divider()
+                    .background(Color.stridGray)
 
                 contentForViewMode
             }
@@ -292,6 +286,7 @@ struct ContentView: View {
                             Image(systemName: "chevron.left")
                             Text("Document")
                         }
+                        .foregroundStyle(Color.stridAccent)
                     }
                 }
             }
@@ -317,12 +312,12 @@ struct ContentView: View {
         ScrollView {
             Text(viewModel.sourceText)
                 .font(.system(.body, design: .monospaced))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.stridText)
                 .padding(20)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
-        .background(Color(.systemBackground))
+        .background(Color.stridBackground)
     }
 
     private var highlightedTextView: some View {
@@ -333,19 +328,19 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
-        .background(Color(.systemBackground))
+        .background(Color.stridBackground)
     }
 
     private var redactedTextView: some View {
         ScrollView {
             Text(viewModel.redactedText)
                 .font(.system(.body, design: .monospaced))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.stridText)
                 .padding(20)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
-        .background(Color(.systemBackground))
+        .background(Color.stridBackground)
     }
 
     private var summarySheet: some View {
@@ -358,18 +353,18 @@ struct ContentView: View {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text("Total Found")
                                         .font(.subheadline)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(Color.stridTextSecondary)
 
                                     Text("\(results.entityCount)")
                                         .font(.system(size: 48, weight: .bold))
-                                        .foregroundStyle(.red)
+                                        .foregroundStyle(Color.stridError)
                                 }
 
                                 Spacer()
 
                                 Image(systemName: "exclamationmark.shield.fill")
                                     .font(.system(size: 50))
-                                    .foregroundStyle(.red.opacity(0.15))
+                                    .foregroundStyle(Color.stridError.opacity(0.15))
                             }
                         }
                         .padding(.vertical, 12)
@@ -385,6 +380,7 @@ struct ContentView: View {
 
                                 Text(type.displayName)
                                     .font(.body)
+                                    .foregroundStyle(Color.stridText)
 
                                 Spacer()
 
@@ -415,20 +411,20 @@ struct ContentView: View {
                                     HStack(spacing: 5) {
                                         Image(systemName: "checkmark.seal.fill")
                                             .font(.caption2)
-                                            .foregroundStyle(.green)
+                                            .foregroundStyle(Color.stridSuccess)
 
                                         Text(String(format: "%.0f%%", entity.score * 100))
                                             .font(.caption.monospacedDigit().weight(.medium))
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(Color.stridTextSecondary)
                                     }
                                 }
 
                                 Text(entity.text)
                                     .font(.system(.body, design: .monospaced))
-                                    .foregroundStyle(.primary)
+                                    .foregroundStyle(Color.stridText)
                                     .padding(14)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color(.tertiarySystemBackground))
+                                    .background(Color.stridLightGray.opacity(0.3))
                                     .cornerRadius(10)
                             }
                             .padding(.vertical, 6)
@@ -447,6 +443,7 @@ struct ContentView: View {
                     } label: {
                         Text("Done")
                             .fontWeight(.semibold)
+                            .foregroundStyle(Color.stridAccent)
                     }
                 }
             }
@@ -506,9 +503,9 @@ struct ContentView: View {
 
         for entity in results.detectedEntities {
             if let range = Range(entity.range, in: attributed) {
-                attributed[range].foregroundColor = .red
+                attributed[range].foregroundColor = Color.stridError
                 attributed[range].font = .body.monospaced().bold()
-                attributed[range].backgroundColor = Color.red.opacity(0.1)
+                attributed[range].backgroundColor = Color.stridError.opacity(0.1)
             }
         }
 
