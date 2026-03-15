@@ -50,11 +50,11 @@ extension Color {
 
     // MARK: - Gradients
 
-    /// Primary gradient for hero sections
-    static let stridGradient = LinearGradient(
+    /// Monochrome gradient for backgrounds
+    static let stridMonochromeGradient = LinearGradient(
         colors: [
-            Color(red: 0.34, green: 0.33, blue: 0.84),
-            Color(red: 0.25, green: 0.24, blue: 0.65)
+            Color(red: 0.12, green: 0.12, blue: 0.12),
+            Color(red: 0.08, green: 0.08, blue: 0.08)
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -69,6 +69,14 @@ extension Color {
         startPoint: .top,
         endPoint: .bottom
     )
+
+    // MARK: - Glass Effects
+
+    /// Glass surface color - translucent white
+    static let stridGlass = Color.white.opacity(0.1)
+
+    /// Glass border color
+    static let stridGlassBorder = Color.white.opacity(0.2)
 }
 
 // MARK: - Dark Mode Support

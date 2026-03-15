@@ -38,7 +38,7 @@ struct ContentView: View {
     private var emptyStateView: some View {
         NavigationStack {
             ZStack {
-                Color.stridGradient
+                Color.stridMonochromeGradient
                     .ignoresSafeArea()
 
                 VStack(spacing: 40) {
@@ -56,13 +56,14 @@ struct ContentView: View {
 
                             Text("Detect and redact personal information\nfrom your documents")
                                 .font(.body)
-                                .foregroundStyle(Color.stridWhite.opacity(0.8))
+                                .foregroundStyle(Color.stridWhite.opacity(0.7))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
                         }
                     }
 
                     VStack(spacing: 14) {
+                        // Primary CTA - only place using accent color
                         Button {
                             Task {
                                 await loadSampleDocument()
@@ -75,11 +76,12 @@ struct ContentView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.stridWhite)
-                            .foregroundStyle(Color.stridAccent)
+                            .background(Color.stridAccent)
+                            .foregroundStyle(Color.stridWhite)
                             .cornerRadius(14)
                         }
 
+                        // Glass buttons
                         Button {
                             showingFilePicker = true
                         } label: {
@@ -90,9 +92,13 @@ struct ContentView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.stridWhite.opacity(0.2))
+                            .background(Color.stridGlass)
                             .foregroundStyle(Color.stridWhite)
                             .cornerRadius(14)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.stridGlassBorder, lineWidth: 1)
+                            )
                         }
 
                         Button {
@@ -109,9 +115,13 @@ struct ContentView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.stridWhite.opacity(0.2))
+                            .background(Color.stridGlass)
                             .foregroundStyle(Color.stridWhite)
                             .cornerRadius(14)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.stridGlassBorder, lineWidth: 1)
+                            )
                         }
                     }
                     .padding(.horizontal, 40)
@@ -125,52 +135,63 @@ struct ContentView: View {
 
     private var documentLoadedView: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                ScrollView {
-                    Text(viewModel.sourceText)
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundStyle(Color.stridText)
-                        .padding(20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .textSelection(.enabled)
-                }
-                .background(Color.stridBackground)
+            ZStack {
+                Color.stridBackground
+                    .ignoresSafeArea()
 
-                Divider()
-                    .background(Color.stridGray)
-
-                VStack(spacing: 12) {
-                    Button {
-                        Task {
-                            await viewModel.scanDocument()
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                            Text("Scan for PII")
-                        }
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.stridAccent)
-                        .foregroundStyle(Color.stridWhite)
-                        .cornerRadius(12)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        Text(viewModel.sourceText)
+                            .font(.system(.body, design: .monospaced))
+                            .foregroundStyle(Color.stridText)
+                            .padding(20)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .textSelection(.enabled)
                     }
 
-                    Button {
-                        showingFilePicker = true
-                    } label: {
-                        Text("Replace Document")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.stridTextSecondary)
+                    VStack(spacing: 12) {
+                        // Primary action - uses accent
+                        Button {
+                            Task {
+                                await viewModel.scanDocument()
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                Text("Scan for PII")
+                            }
+                            .font(.headline)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding()
+                            .background(Color.stridAccent)
+                            .foregroundStyle(Color.stridWhite)
+                            .cornerRadius(12)
+                        }
+
+                        // Secondary action - monochrome
+                        Button {
+                            showingFilePicker = true
+                        } label: {
+                            Text("Replace Document")
+                                .font(.subheadline)
+                                .foregroundStyle(Color.stridTextSecondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(Color.stridGray)
                     }
-                    .buttonStyle(.bordered)
-                    .tint(Color.stridGray)
+                    .padding(20)
+                    .background(
+                        Color.stridGlass
+                            .overlay(
+                                Rectangle()
+                                    .fill(Color.stridGlassBorder)
+                                    .frame(height: 1),
+                                alignment: .top
+                            )
+                    )
                 }
-                .padding(20)
-                .background(Color.stridBackgroundSecondary)
             }
             .navigationTitle("Document")
             .navigationBarTitleDisplayMode(.inline)
@@ -183,7 +204,7 @@ struct ContentView: View {
                             Image(systemName: "chevron.left")
                             Text("Back")
                         }
-                        .foregroundStyle(Color.stridAccent)
+                        .foregroundStyle(Color.stridDarkGray)
                     }
                 }
             }
@@ -193,7 +214,7 @@ struct ContentView: View {
     private var processingView: some View {
         NavigationStack {
             ZStack {
-                Color.stridGradient
+                Color.stridMonochromeGradient
                     .ignoresSafeArea()
 
                 VStack(spacing: 30) {
@@ -210,7 +231,7 @@ struct ContentView: View {
 
                         Text("Scanning for personal information...")
                             .font(.subheadline)
-                            .foregroundStyle(Color.stridWhite.opacity(0.8))
+                            .foregroundStyle(Color.stridWhite.opacity(0.7))
                     }
 
                     Spacer()
@@ -223,7 +244,7 @@ struct ContentView: View {
     private var resultsView: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Stats header
+                // Stats header with glass effect
                 VStack(spacing: 16) {
                     HStack(alignment: .center) {
                         VStack(alignment: .leading, spacing: 4) {
@@ -247,12 +268,12 @@ struct ContentView: View {
                                 Text("Details")
                                     .font(.caption.weight(.medium))
                             }
-                            .foregroundStyle(Color.stridAccent)
+                            .foregroundStyle(Color.stridText)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                         }
                         .buttonStyle(.bordered)
-                        .tint(Color.stridAccent)
+                        .tint(Color.stridGray)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
@@ -263,14 +284,14 @@ struct ContentView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    .tint(Color.stridAccent)
+                    .tint(Color.stridBlack)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 16)
                 }
                 .background(Color.stridBackgroundSecondary)
 
                 Divider()
-                    .background(Color.stridGray)
+                    .background(Color.stridLightGray)
 
                 contentForViewMode
             }
@@ -286,7 +307,7 @@ struct ContentView: View {
                             Image(systemName: "chevron.left")
                             Text("Document")
                         }
-                        .foregroundStyle(Color.stridAccent)
+                        .foregroundStyle(Color.stridDarkGray)
                     }
                 }
             }
@@ -443,7 +464,7 @@ struct ContentView: View {
                     } label: {
                         Text("Done")
                             .fontWeight(.semibold)
-                            .foregroundStyle(Color.stridAccent)
+                            .foregroundStyle(Color.stridBlack)
                     }
                 }
             }
