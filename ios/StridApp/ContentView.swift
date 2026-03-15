@@ -2,155 +2,190 @@ import SwiftUI
 import StridKit
 
 struct ContentView: View {
-    @State private var sourceText = ""
-    @State private var entities: [PIIEntity] = []
-    @State private var redactedText = ""
+    @State private var viewModel: DocumentViewModel
     @State private var showingFilePicker = false
-    @State private var showingResults = false
-    @State private var isProcessing = false
-    @State private var selectedTab: Tab = .input
 
-    private let engine = StridEngine()
-
-    enum Tab {
-        case input, detected, redacted
+    init() {
+        let vm = DIContainer.shared.makeDocumentViewModel()
+        _viewModel = State(initialValue: vm)
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Tab picker
-                Picker("View", selection: $selectedTab) {
-                    Text("Input").tag(Tab.input)
-                    Text("Detected (\(entities.count))").tag(Tab.detected)
-                    Text("Redacted").tag(Tab.redacted)
-                }
-                .pickerStyle(.segmented)
-                .padding()
-
-                // Content
-                switch selectedTab {
-                case .input:
-                    inputView
-                case .detected:
-                    detectedView
-                case .redacted:
-                    redactedView
-                }
+        Group {
+            switch viewModel.state {
+            case .empty:
+                emptyStateView
+            case .loaded:
+                documentLoadedView
+            case .processing:
+                processingView
+            case .scanned:
+                resultsView
             }
-            .navigationTitle("Strid")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        Button("Import File", systemImage: "doc") {
-                            showingFilePicker = true
-                        }
-                        Button("Paste from Clipboard", systemImage: "clipboard") {
-                            if let clip = UIPasteboard.general.string {
-                                sourceText = clip
-                            }
-                        }
-                        if !sourceText.isEmpty {
-                            Button("Clear", systemImage: "trash", role: .destructive) {
-                                sourceText = ""
-                                entities = []
-                                redactedText = ""
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "plus.circle")
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    if !sourceText.isEmpty {
-                        Button("Scan") {
-                            processText()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(isProcessing)
-                    }
-                }
-            }
-            .fileImporter(
-                isPresented: $showingFilePicker,
-                allowedContentTypes: [.plainText, .pdf, .commaSeparatedText],
-                allowsMultipleSelection: false
-            ) { result in
-                handleFileImport(result)
-            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: viewModel.state)
+        .fileImporter(
+            isPresented: $showingFilePicker,
+            allowedContentTypes: [.plainText, .pdf, .commaSeparatedText],
+            allowsMultipleSelection: false
+        ) { result in
+            handleFileImport(result)
         }
     }
 
-    // MARK: - Tab Views
+    // MARK: - State Views
 
-    private var inputView: some View {
-        Group {
-            if sourceText.isEmpty {
-                ContentUnavailableView {
-                    Label("No Document", systemImage: "doc.text")
-                } description: {
-                    Text("Import a file or paste text to scan for PII.")
+    private var emptyStateView: some View {
+        NavigationStack {
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.1, green: 0.2, blue: 0.5),
+                        Color(red: 0.2, green: 0.1, blue: 0.4)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+
+                VStack(spacing: 40) {
+                    Spacer()
+
+                    VStack(spacing: 24) {
+                        Image(systemName: "shield.lefthalf.filled.badge.checkmark")
+                            .font(.system(size: 80, weight: .light))
+                            .foregroundStyle(.white)
+
+                        VStack(spacing: 12) {
+                            Text("PII Scanner")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundStyle(.white)
+
+                            Text("Detect and redact personal information\nfrom your documents")
+                                .font(.body)
+                                .foregroundStyle(.white.opacity(0.8))
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                        }
+                    }
+
+                    VStack(spacing: 14) {
+                        Button {
+                            Task {
+                                await loadSampleDocument()
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "wand.and.stars")
+                                Text("Try Sample Document")
+                            }
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(.white)
+                            .foregroundStyle(Color(red: 0.1, green: 0.2, blue: 0.5))
+                            .cornerRadius(14)
+                        }
+
+                        Button {
+                            showingFilePicker = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "doc.badge.plus")
+                                Text("Import Document")
+                            }
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(.white.opacity(0.2))
+                            .foregroundStyle(.white)
+                            .cornerRadius(14)
+                        }
+
+                        Button {
+                            Task {
+                                if let clip = UIPasteboard.general.string, !clip.isEmpty {
+                                    await viewModel.importDocument(content: clip)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "doc.on.clipboard")
+                                Text("Paste from Clipboard")
+                            }
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(.white.opacity(0.2))
+                            .foregroundStyle(.white)
+                            .cornerRadius(14)
+                        }
+                    }
+                    .padding(.horizontal, 40)
+
+                    Spacer()
                 }
-            } else {
+            }
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private var documentLoadedView: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
                 ScrollView {
-                    Text(sourceText)
+                    Text(viewModel.sourceText)
                         .font(.system(.body, design: .monospaced))
-                        .padding()
+                        .foregroundStyle(.primary)
+                        .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textSelection(.enabled)
                 }
-            }
-        }
-    }
+                .background(Color(.systemBackground))
 
-    private var detectedView: some View {
-        Group {
-            if entities.isEmpty {
-                ContentUnavailableView {
-                    Label("No PII Found", systemImage: "checkmark.shield")
-                } description: {
-                    Text(sourceText.isEmpty
-                         ? "Import a document and tap Scan."
-                         : "No PII was detected. Try lowering the threshold.")
-                }
-            } else {
-                List {
-                    // Summary section
-                    Section("Summary") {
-                        let counts = Dictionary(grouping: entities, by: \.type)
-                        ForEach(counts.keys.sorted(by: { counts[$0]!.count > counts[$1]!.count }), id: \.self) { type in
-                            HStack {
-                                Label(type.displayName, systemImage: iconForType(type))
-                                Spacer()
-                                Text("\(counts[type]!.count)")
-                                    .foregroundStyle(.secondary)
-                                    .fontDesign(.monospaced)
-                            }
+                Divider()
+
+                VStack(spacing: 12) {
+                    Button {
+                        Task {
+                            await viewModel.scanDocument()
                         }
+                    } label: {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                            Text("Scan for PII")
+                        }
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundStyle(.white)
+                        .cornerRadius(12)
                     }
 
-                    // Detail section
-                    Section("All Findings (\(entities.count))") {
-                        ForEach(entities) { entity in
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(entity.type.displayName)
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 2)
-                                        .background(colorForType(entity.type), in: Capsule())
-                                    Spacer()
-                                    Text(String(format: "%.0f%%", entity.score * 100))
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Text(entity.text)
-                                    .font(.system(.body, design: .monospaced))
-                                    .foregroundStyle(.red)
-                            }
-                            .padding(.vertical, 2)
+                    Button {
+                        showingFilePicker = true
+                    } label: {
+                        Text("Replace Document")
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding(20)
+                .background(Color(.secondarySystemBackground))
+            }
+            .navigationTitle("Document")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        viewModel.clearDocument()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
                         }
                     }
                 }
@@ -158,58 +193,296 @@ struct ContentView: View {
         }
     }
 
-    private var redactedView: some View {
-        Group {
-            if redactedText.isEmpty {
-                ContentUnavailableView {
-                    Label("Not Yet Redacted", systemImage: "eye.slash")
-                } description: {
-                    Text("Tap Scan to detect and redact PII.")
-                }
-            } else {
-                VStack {
-                    ScrollView {
-                        Text(redactedText)
-                            .font(.system(.body, design: .monospaced))
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .textSelection(.enabled)
+    private var processingView: some View {
+        NavigationStack {
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.1, green: 0.2, blue: 0.5),
+                        Color(red: 0.2, green: 0.1, blue: 0.4)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+
+                VStack(spacing: 30) {
+                    Spacer()
+
+                    ProgressView()
+                        .scaleEffect(1.8)
+                        .tint(.white)
+
+                    VStack(spacing: 8) {
+                        Text("Analyzing Document")
+                            .font(.title2.bold())
+                            .foregroundStyle(.white)
+
+                        Text("Scanning for personal information...")
+                            .font(.subheadline)
+                            .foregroundStyle(.white.opacity(0.8))
                     }
 
-                    // Action bar
-                    HStack(spacing: 16) {
-                        ShareLink(item: redactedText) {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                    Spacer()
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private var resultsView: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                // Stats header
+                VStack(spacing: 16) {
+                    HStack(alignment: .center) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(viewModel.entityCount)")
+                                .font(.system(size: 44, weight: .bold))
+                                .foregroundStyle(.red)
+
+                            Text("PII Items Found")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
-                        .buttonStyle(.borderedProminent)
+
+                        Spacer()
 
                         Button {
-                            UIPasteboard.general.string = redactedText
+                            viewModel.toggleSummary()
                         } label: {
-                            Label("Copy", systemImage: "doc.on.doc")
+                            VStack(spacing: 4) {
+                                Image(systemName: "list.bullet.rectangle.portrait")
+                                    .font(.title2)
+                                Text("Details")
+                                    .font(.caption.weight(.medium))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
                         }
                         .buttonStyle(.bordered)
                     }
-                    .padding()
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+
+                    Picker("View Mode", selection: $viewModel.viewMode) {
+                        ForEach(ViewMode.allCases, id: \.self) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 16)
+                }
+                .background(Color(.secondarySystemBackground))
+
+                Divider()
+
+                contentForViewMode
+            }
+            .navigationTitle("Scan Results")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        viewModel.goBackToDocument()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                            Text("Document")
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $viewModel.showingSummary) {
+                summarySheet
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var contentForViewMode: some View {
+        switch viewModel.viewMode {
+        case .original:
+            originalTextView
+        case .highlighted:
+            highlightedTextView
+        case .redacted:
+            redactedTextView
+        }
+    }
+
+    private var originalTextView: some View {
+        ScrollView {
+            Text(viewModel.sourceText)
+                .font(.system(.body, design: .monospaced))
+                .foregroundStyle(.primary)
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textSelection(.enabled)
+        }
+        .background(Color(.systemBackground))
+    }
+
+    private var highlightedTextView: some View {
+        ScrollView {
+            Text(buildHighlightedText())
+                .font(.system(.body, design: .monospaced))
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textSelection(.enabled)
+        }
+        .background(Color(.systemBackground))
+    }
+
+    private var redactedTextView: some View {
+        ScrollView {
+            Text(viewModel.redactedText)
+                .font(.system(.body, design: .monospaced))
+                .foregroundStyle(.primary)
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textSelection(.enabled)
+        }
+        .background(Color(.systemBackground))
+    }
+
+    private var summarySheet: some View {
+        NavigationStack {
+            List {
+                if let results = viewModel.results {
+                    Section {
+                        VStack(alignment: .leading, spacing: 20) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Total Found")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+
+                                    Text("\(results.entityCount)")
+                                        .font(.system(size: 48, weight: .bold))
+                                        .foregroundStyle(.red)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "exclamationmark.shield.fill")
+                                    .font(.system(size: 50))
+                                    .foregroundStyle(.red.opacity(0.15))
+                            }
+                        }
+                        .padding(.vertical, 12)
+                    }
+
+                    Section {
+                        ForEach(results.summary.keys.sorted(by: { results.summary[$0]! > results.summary[$1]! }), id: \.self) { type in
+                            HStack(spacing: 14) {
+                                Image(systemName: viewModel.iconForType(type))
+                                    .font(.title3)
+                                    .foregroundStyle(viewModel.colorForType(type))
+                                    .frame(width: 30)
+
+                                Text(type.displayName)
+                                    .font(.body)
+
+                                Spacer()
+
+                                Text("\(results.summary[type]!)")
+                                    .font(.title3.bold().monospacedDigit())
+                                    .foregroundStyle(viewModel.colorForType(type))
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    } header: {
+                        Text("By Category")
+                    }
+
+                    Section {
+                        ForEach(results.detectedEntities) { entity in
+                            VStack(alignment: .leading, spacing: 14) {
+                                HStack {
+                                    Text(entity.type.displayName)
+                                        .font(.caption.weight(.semibold))
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(viewModel.colorForType(entity.type).opacity(0.12))
+                                        .foregroundStyle(viewModel.colorForType(entity.type))
+                                        .cornerRadius(6)
+
+                                    Spacer()
+
+                                    HStack(spacing: 5) {
+                                        Image(systemName: "checkmark.seal.fill")
+                                            .font(.caption2)
+                                            .foregroundStyle(.green)
+
+                                        Text(String(format: "%.0f%%", entity.score * 100))
+                                            .font(.caption.monospacedDigit().weight(.medium))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+
+                                Text(entity.text)
+                                    .font(.system(.body, design: .monospaced))
+                                    .foregroundStyle(.primary)
+                                    .padding(14)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color(.tertiarySystemBackground))
+                                    .cornerRadius(10)
+                            }
+                            .padding(.vertical, 6)
+                        }
+                    } header: {
+                        Text("All Detections")
+                    }
+                }
+            }
+            .navigationTitle("PII Details")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.toggleSummary()
+                    } label: {
+                        Text("Done")
+                            .fontWeight(.semibold)
+                    }
                 }
             }
         }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
 
     // MARK: - Actions
 
-    private func processText() {
-        isProcessing = true
-        Task.detached {
-            let detected = engine.detect(in: sourceText)
-            let redacted = engine.redact(sourceText)
-            await MainActor.run {
-                entities = detected
-                redactedText = redacted
-                isProcessing = false
-                selectedTab = .detected
-            }
-        }
+    private func loadSampleDocument() async {
+        let sampleText = """
+            Dear Rajesh Kumar,
+
+            Thank you for opening your savings account with us. Here are your account details:
+
+            Account Number: 1234567890123456
+            IFSC Code: HDFC0001234
+            Branch: Mumbai Central
+            Customer ID: CUST8765432
+
+            Your registered email is rajesh.kumar@gmail.com and phone number is +91-9876543210.
+
+            For UPI payments, use: rajesh@upi
+            PAN Number: ABCDE1234F
+            Aadhaar: 1234 5678 9012
+
+            Please keep this information confidential.
+
+            Transaction Reference: TXN2024031500123
+            Date of Birth: 15/03/1985
+
+            Best regards,
+            Mumbai Bank
+            """
+        await viewModel.importDocument(content: sampleText)
     }
 
     private func handleFileImport(_ result: Result<[URL], Error>) {
@@ -218,52 +491,28 @@ struct ContentView: View {
         defer { url.stopAccessingSecurityScopedResource() }
 
         if let text = try? String(contentsOf: url, encoding: .utf8) {
-            sourceText = text
-            entities = []
-            redactedText = ""
-            selectedTab = .input
+            Task {
+                await viewModel.importDocument(content: text)
+            }
         }
     }
 
-    // MARK: - Helpers
-
-    private func iconForType(_ type: PIIEntityType) -> String {
-        switch type {
-        case .person: "person"
-        case .email: "envelope"
-        case .phone, .inPhone: "phone"
-        case .url: "link"
-        case .location: "mappin"
-        case .organization: "building.2"
-        case .creditCard: "creditcard"
-        case .ipAddress: "network"
-        case .inBankAccount: "banknote"
-        case .inIFSC: "building.columns"
-        case .inPAN: "doc.text"
-        case .inAadhaar: "person.text.rectangle"
-        case .inUPIID: "indianrupeesign.circle"
-        case .inMICR: "barcode"
-        case .inPINCode: "mappin.and.ellipse"
-        case .inCustomerID: "person.badge.key"
-        case .inBranchCode: "number"
-        case .inTxnRef: "number.circle"
-        case .inDOB: "calendar"
+    private func buildHighlightedText() -> AttributedString {
+        guard let results = viewModel.results else {
+            return AttributedString(viewModel.sourceText)
         }
-    }
 
-    private func colorForType(_ type: PIIEntityType) -> Color {
-        switch type {
-        case .person, .inDOB: .red
-        case .email, .url: .blue
-        case .phone, .inPhone: .green
-        case .location, .inPINCode: .orange
-        case .creditCard, .inBankAccount: .purple
-        case .inIFSC, .inBranchCode, .inMICR: .brown
-        case .inPAN, .inAadhaar, .inCustomerID: .red
-        case .inUPIID, .inTxnRef: .indigo
-        case .organization: .teal
-        case .ipAddress: .gray
+        var attributed = AttributedString(viewModel.sourceText)
+
+        for entity in results.detectedEntities {
+            if let range = Range(entity.range, in: attributed) {
+                attributed[range].foregroundColor = .red
+                attributed[range].font = .body.monospaced().bold()
+                attributed[range].backgroundColor = Color.red.opacity(0.1)
+            }
         }
+
+        return attributed
     }
 }
 
