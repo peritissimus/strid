@@ -9,10 +9,11 @@ struct HighlightedTextView: View {
         ScrollView {
             Text(buildHighlightedText())
                 .font(.system(.body, design: .monospaced))
-                .padding(20)
+                .padding(30)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func buildHighlightedText() -> AttributedString {

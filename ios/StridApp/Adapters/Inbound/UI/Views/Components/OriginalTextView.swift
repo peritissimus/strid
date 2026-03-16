@@ -8,9 +8,10 @@ struct OriginalTextView: View {
         ScrollView {
             Text(text)
                 .font(.system(.body, design: .monospaced))
-                .padding(20)
+                .padding(30)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

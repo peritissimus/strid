@@ -14,24 +14,35 @@ struct ScannedDocumentResultsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Stats header
-            statsHeaderView
-
-            Divider()
-                .background(Color.stridLightGray)
+            // Compact stats bar
+            compactStatsBar
 
             contentForViewMode
         }
-        .navigationTitle("Scan Results")
+        .navigationTitle("")
         .platformNavigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .platformTopBarTrailing) {
+            ToolbarItemGroup(placement: .automatic) {
+                Picker("View", selection: $viewMode) {
+                    ForEach(ViewMode.allCases, id: \.self) { mode in
+                        Text(mode.rawValue).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 280)
+
+                Button {
+                    showingSummary = true
+                } label: {
+                    Label("Details", systemImage: "info.circle")
+                }
+
                 Button {
                     Task {
                         await exportDocument()
                     }
                 } label: {
-                    Image(systemName: "square.and.arrow.up")
+                    Label("Export", systemImage: "square.and.arrow.up")
                 }
             }
         }
@@ -57,40 +68,21 @@ struct ScannedDocumentResultsView: View {
         }
     }
 
-    private var statsHeaderView: some View {
-        VStack(spacing: 16) {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("\(document.scanResults.entityCount)")
-                        .font(.system(size: 44, weight: .bold))
-                        .foregroundStyle(.red)
+    private var compactStatsBar: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.shield.fill")
+                .foregroundStyle(.red)
+                .imageScale(.small)
 
-                    Text("PII Items Found")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+            Text("\(document.scanResults.entityCount) PII items found")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
 
-                Spacer()
-
-                Button {
-                    showingSummary = true
-                } label: {
-                    Label("Details", systemImage: "list.bullet.rectangle.portrait")
-                }
-                .buttonStyle(.bordered)
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
-
-            Picker("View Mode", selection: $viewMode) {
-                ForEach(ViewMode.allCases, id: \.self) { mode in
-                    Text(mode.rawValue).tag(mode)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 16)
+            Spacer()
         }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+        .background(Color(nsColor: .controlBackgroundColor))
     }
 
     @ViewBuilder
