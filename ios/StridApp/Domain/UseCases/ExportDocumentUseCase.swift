@@ -27,7 +27,8 @@ final class ExportDocumentUseCaseImpl: ExportDocumentUseCase {
 
     private func sanitizeFilename(_ filename: String) -> String {
         var clean = filename.replacingOccurrences(of: " ", with: "_")
-        clean = clean.components(separatedBy: CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_-.")).inverted).joined()
+        let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_-."))
+        clean = clean.components(separatedBy: allowedCharacters.inverted).joined()
 
         // Ensure it has .txt extension
         if !clean.hasSuffix(".txt") {

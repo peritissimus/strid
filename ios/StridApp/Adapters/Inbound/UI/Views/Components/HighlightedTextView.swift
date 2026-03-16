@@ -20,11 +20,26 @@ struct HighlightedTextView: View {
         var attributed = AttributedString(text)
 
         for entity in entities {
-            if let range = Range(entity.range, in: attributed) {
-                attributed[range].foregroundColor = .red
-                attributed[range].font = .body.monospaced().bold()
-                attributed[range].backgroundColor = Color.red.opacity(0.1)
+            // Convert String.Index range to integer offsets
+            let startOffset = text.distance(from: text.startIndex, to: entity.range.lowerBound)
+            let endOffset = text.distance(from: text.startIndex, to: entity.range.upperBound)
+
+            // Create AttributedString indices from offsets
+            let attrStartIndex = attributed.index(attributed.startIndex, offsetByCharacters: startOffset)
+            let attrEndIndex = attributed.index(attributed.startIndex, offsetByCharacters: endOffset)
+
+            // Check bounds
+            guard attrStartIndex < attributed.endIndex,
+                  attrEndIndex <= attributed.endIndex,
+                  attrStartIndex < attrEndIndex else {
+                continue
             }
+
+            let attrRange = attrStartIndex..<attrEndIndex
+
+            attributed[attrRange].foregroundColor = .red
+            attributed[attrRange].font = .body.monospaced().bold()
+            attributed[attrRange].backgroundColor = Color.red.opacity(0.15)
         }
 
         return attributed

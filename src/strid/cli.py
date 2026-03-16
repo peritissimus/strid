@@ -7,7 +7,6 @@ from pathlib import Path
 import typer
 from rich.console import Console
 from rich.table import Table
-from rich.text import Text
 
 from strid.engine import DEFAULT_ENTITIES, StridEngine
 

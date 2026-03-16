@@ -1,6 +1,34 @@
 import SwiftUI
 import StridKit
 
+// MARK: - PIIEntityType Icon Extension
+
+extension PIIEntityType {
+    var iconName: String {
+        switch self {
+        case .person: return "person"
+        case .email: return "envelope"
+        case .phone, .inPhone: return "phone"
+        case .url: return "link"
+        case .location: return "mappin"
+        case .organization: return "building.2"
+        case .creditCard: return "creditcard"
+        case .ipAddress: return "network"
+        case .inBankAccount: return "banknote"
+        case .inIFSC: return "building.columns"
+        case .inPAN: return "doc.text"
+        case .inAadhaar: return "person.text.rectangle"
+        case .inUPIID: return "indianrupeesign.circle"
+        case .inMICR: return "barcode"
+        case .inPINCode: return "mappin.and.ellipse"
+        case .inCustomerID: return "person.badge.key"
+        case .inBranchCode: return "number"
+        case .inTxnRef: return "number.circle"
+        case .inDOB: return "calendar"
+        }
+    }
+}
+
 /// Sheet displaying detailed PII scan results with categories and individual detections
 struct SummarySheet: View {
     let results: ScanResults
@@ -33,9 +61,12 @@ struct SummarySheet: View {
                 }
 
                 Section {
-                    ForEach(results.summary.keys.sorted(by: { results.summary[$0]! > results.summary[$1]! }), id: \.self) { type in
+                    ForEach(
+                        results.summary.keys.sorted(by: { results.summary[$0]! > results.summary[$1]! }),
+                        id: \.self
+                    ) { type in
                         HStack(spacing: 14) {
-                            Image(systemName: iconForType(type))
+                            Image(systemName: type.iconName)
                                 .font(.title3)
                                 .frame(width: 30)
 
@@ -108,31 +139,4 @@ struct SummarySheet: View {
         .frame(minWidth: 600, minHeight: 700)
         #endif
     }
-
-    // MARK: - Helpers
-
-    private func iconForType(_ type: PIIEntityType) -> String {
-        switch type {
-        case .person: "person"
-        case .email: "envelope"
-        case .phone, .inPhone: "phone"
-        case .url: "link"
-        case .location: "mappin"
-        case .organization: "building.2"
-        case .creditCard: "creditcard"
-        case .ipAddress: "network"
-        case .inBankAccount: "banknote"
-        case .inIFSC: "building.columns"
-        case .inPAN: "doc.text"
-        case .inAadhaar: "person.text.rectangle"
-        case .inUPIID: "indianrupeesign.circle"
-        case .inMICR: "barcode"
-        case .inPINCode: "mappin.and.ellipse"
-        case .inCustomerID: "person.badge.key"
-        case .inBranchCode: "number"
-        case .inTxnRef: "number.circle"
-        case .inDOB: "calendar"
-        }
-    }
-
 }

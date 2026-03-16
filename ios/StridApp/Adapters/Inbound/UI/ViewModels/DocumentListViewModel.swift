@@ -97,7 +97,7 @@ final class DocumentListViewModel {
         )
 
         // Record in history
-        await recordRedactionUseCase.execute(
+        _ = await recordRedactionUseCase.execute(
             document: document,
             detectedEntities: detectedEntities,
             redactedContent: redactedDocument.redactedContent

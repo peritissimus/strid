@@ -1,4 +1,7 @@
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 /// View displaying scan results for a selected scanned document
 struct ScannedDocumentResultsView: View {
@@ -7,10 +10,7 @@ struct ScannedDocumentResultsView: View {
 
     @State private var viewMode: ViewMode = .highlighted
     @State private var showingSummary = false
-    @State private var exportedFileURL: URL?
-    @State private var showingShareSheet = false
-    @State private var exportError: Error?
-    @State private var showingExportError = false
+    @State private var showingDeleteConfirmation = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -38,33 +38,30 @@ struct ScannedDocumentResultsView: View {
                 }
 
                 Button {
-                    Task {
-                        await exportDocument()
-                    }
+                    exportDocument()
                 } label: {
                     Label("Export", systemImage: "square.and.arrow.up")
+                }
+
+                Button(role: .destructive) {
+                    showingDeleteConfirmation = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
                 }
             }
         }
         .sheet(isPresented: $showingSummary) {
             SummarySheet(results: document.scanResults)
         }
-        .sheet(isPresented: $showingShareSheet, onDismiss: {
-            exportedFileURL = nil
-        }) {
-            if let url = exportedFileURL {
-                ShareSheet(activityItems: [url])
-                    #if os(iOS)
-                    .presentationDetents([.medium])
-                    #endif
+        .alert("Delete Document?", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task {
+                    await viewModel.deleteDocument(document.id)
+                }
             }
-        }
-        .alert("Export Error", isPresented: $showingExportError) {
-            Button("OK", role: .cancel) {}
         } message: {
-            if let error = exportError {
-                Text(error.localizedDescription)
-            }
+            Text("This document will be permanently deleted.")
         }
     }
 
@@ -99,14 +96,43 @@ struct ScannedDocumentResultsView: View {
         }
     }
 
-    private func exportDocument() async {
-        do {
-            let url = try await viewModel.exportRedactedDocument(for: document.id)
-            exportedFileURL = url
-            showingShareSheet = true
-        } catch {
-            exportError = error
-            showingExportError = true
+    private func exportDocument() {
+        Task {
+            do {
+                let url = try await viewModel.exportRedactedDocument(for: document.id)
+
+                #if os(macOS)
+                // Use native save panel on macOS
+                await MainActor.run {
+                    let savePanel = NSSavePanel()
+                    savePanel.allowedContentTypes = [.plainText]
+                    savePanel.nameFieldStringValue = url.lastPathComponent
+                    savePanel.canCreateDirectories = true
+                    savePanel.message = "Export redacted document"
+
+                    if savePanel.runModal() == .OK {
+                        if let destination = savePanel.url {
+                            try? FileManager.default.copyItem(at: url, to: destination)
+                        }
+                    }
+                }
+                #elseif os(iOS)
+                // Use share sheet on iOS
+                await MainActor.run {
+                    let activityVC = UIActivityViewController(
+                        activityItems: [url],
+                        applicationActivities: nil
+                    )
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let window = windowScene.windows.first,
+                       let rootVC = window.rootViewController {
+                        rootVC.present(activityVC, animated: true)
+                    }
+                }
+                #endif
+            } catch {
+                print("Export error: \(error)")
+            }
         }
     }
 }

@@ -51,10 +51,10 @@ struct DetectedPII: Identifiable, Codable {
         try container.encode(entity.text, forKey: .text)
         try container.encode(entity.score, forKey: .score)
 
-        // Convert range to offsets
-        let rangeStart = entity.text.distance(from: entity.text.startIndex, to: entity.range.lowerBound)
-        let rangeEnd = entity.text.distance(from: entity.text.startIndex, to: entity.range.upperBound)
-        try container.encode(rangeStart, forKey: .rangeStart)
-        try container.encode(rangeEnd, forKey: .rangeEnd)
+        // For persistence, we store simple offsets
+        // When decoding, we reconstruct the range as 0..<text.count
+        // since entity.text is already the extracted PII text
+        try container.encode(0, forKey: .rangeStart)
+        try container.encode(entity.text.count, forKey: .rangeEnd)
     }
 }

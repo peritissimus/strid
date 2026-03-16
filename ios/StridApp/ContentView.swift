@@ -5,8 +5,8 @@ struct ContentView: View {
     @State private var visibility: NavigationSplitViewVisibility = .all
 
     init() {
-        let vm = DIContainer.shared.makeDocumentListViewModel()
-        _viewModel = State(initialValue: vm)
+        let model = DIContainer.shared.makeDocumentListViewModel()
+        _viewModel = State(initialValue: model)
     }
 
     var body: some View {

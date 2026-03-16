@@ -106,7 +106,7 @@ final class DocumentViewModel {
         )
 
         // Record redaction in history
-        await recordRedactionUseCase.execute(
+        _ = await recordRedactionUseCase.execute(
             document: document,
             detectedEntities: detectedEntities,
             redactedContent: redactedDocument.redactedContent
@@ -189,30 +189,6 @@ final class DocumentViewModel {
     }
 
     // MARK: - Helpers
-
-    func iconForType(_ type: PIIEntityType) -> String {
-        switch type {
-        case .person: "person"
-        case .email: "envelope"
-        case .phone, .inPhone: "phone"
-        case .url: "link"
-        case .location: "mappin"
-        case .organization: "building.2"
-        case .creditCard: "creditcard"
-        case .ipAddress: "network"
-        case .inBankAccount: "banknote"
-        case .inIFSC: "building.columns"
-        case .inPAN: "doc.text"
-        case .inAadhaar: "person.text.rectangle"
-        case .inUPIID: "indianrupeesign.circle"
-        case .inMICR: "barcode"
-        case .inPINCode: "mappin.and.ellipse"
-        case .inCustomerID: "person.badge.key"
-        case .inBranchCode: "number"
-        case .inTxnRef: "number.circle"
-        case .inDOB: "calendar"
-        }
-    }
 
     func colorForType(_ type: PIIEntityType) -> Color {
         switch type {
