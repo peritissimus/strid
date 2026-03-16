@@ -7,28 +7,21 @@ struct DocumentSidebarView: View {
 
     var body: some View {
         List(selection: $viewModel.selectedDocumentId) {
-            if viewModel.isEmpty {
-                ContentUnavailableView {
-                    Label("No Scanned Documents", systemImage: "doc.text.magnifyingglass")
-                } description: {
-                    Text("Scan your first document to get started")
-                }
-            } else {
-                ForEach(viewModel.filteredDocuments) { doc in
-                    DocumentSidebarRow(document: doc)
-                        .tag(doc.id)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                Task {
-                                    await viewModel.deleteDocument(doc.id)
-                                }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
+            ForEach(viewModel.filteredDocuments) { doc in
+                DocumentSidebarRow(document: doc)
+                    .tag(doc.id)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            Task {
+                                await viewModel.deleteDocument(doc.id)
                             }
+                        } label: {
+                            Label("Delete", systemImage: "trash")
                         }
-                }
+                    }
             }
         }
+        .listStyle(.sidebar)
         .navigationTitle("Scanned Documents")
         .searchable(text: $viewModel.searchQuery, prompt: "Search documents")
         .toolbar {

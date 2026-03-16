@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -205,6 +205,11 @@
 			path = DI;
 			sourceTree = "<group>";
 		};
+		2AF79F4B2F68832000EE6C2F /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2DB3B691612042A9F6D94819 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -332,10 +337,6 @@
 				38FD04F5FE1EC4FE6200099B /* ContentView.swift */,
 				97D843A7179201530FACD17E /* StridApp.swift */,
 				FB97FBB662C964B53A26087C /* StridApp.xcodeproj */,
-				F5DA971718565C3C039546F8 /* Adapters */,
-				74D90BBA43468AADD88BAFAB /* Design */,
-				1FC531923ACDABD8CCEBB896 /* DI */,
-				6A68EF2DADE504D05BE7109D /* Domain */,
 			);
 			name = StridApp;
 			path = .;
@@ -462,8 +463,13 @@
 			packageReferences = (
 				9B38A6364E4DF9D4A143C2A5 /* XCLocalSwiftPackageReference "../StridKit" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 2AF79F4B2F68832000EE6C2F /* Products */;
+					ProjectRef = FB97FBB662C964B53A26087C /* StridApp.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				EC0FB368C06EEC5581F1649B /* StridApp_iOS */,

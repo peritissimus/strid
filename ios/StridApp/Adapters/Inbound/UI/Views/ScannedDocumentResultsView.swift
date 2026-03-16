@@ -82,7 +82,6 @@ struct ScannedDocumentResultsView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
-        .background(Color(nsColor: .controlBackgroundColor))
     }
 
     @ViewBuilder
