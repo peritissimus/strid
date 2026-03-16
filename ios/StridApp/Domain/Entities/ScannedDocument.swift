@@ -1,5 +1,12 @@
 import Foundation
 
+/// Source of the document content
+enum DocumentSource: String, Codable {
+    case fileImport      // Imported from file picker
+    case clipboard       // Pasted from clipboard
+    case sample          // Loaded from sample documents
+}
+
 /// Represents a document that has been scanned for PII, bundling the original document,
 /// scan results, and metadata for persistence and display in the sidebar
 struct ScannedDocument: Identifiable, Equatable, Codable {
@@ -7,17 +14,23 @@ struct ScannedDocument: Identifiable, Equatable, Codable {
     let originalDocument: Document
     let scanResults: ScanResults
     let scannedAt: Date
+    let source: DocumentSource
+    let originalFileURL: URL?  // For file imports, reference to original file
 
     init(
         id: UUID = UUID(),
         originalDocument: Document,
         scanResults: ScanResults,
-        scannedAt: Date = Date()
+        scannedAt: Date = Date(),
+        source: DocumentSource,
+        originalFileURL: URL? = nil
     ) {
         self.id = id
         self.originalDocument = originalDocument
         self.scanResults = scanResults
         self.scannedAt = scannedAt
+        self.source = source
+        self.originalFileURL = originalFileURL
     }
 
     // MARK: - Display Properties
