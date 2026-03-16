@@ -29,7 +29,7 @@ enum ViewMode: String, CaseIterable {
     }
 }
 
-struct ScanResults {
+struct ScanResults: Codable {
     let detectedEntities: [DetectedPII]
     let redactedDocument: RedactedDocument
 

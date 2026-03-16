@@ -1,6 +1,6 @@
 import Foundation
 
-struct RedactedDocument: Identifiable, Equatable {
+struct RedactedDocument: Identifiable, Equatable, Codable {
     let id: UUID
     let originalDocumentId: UUID
     let redactedContent: String

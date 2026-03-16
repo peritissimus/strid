@@ -7,6 +7,7 @@ final class DIContainer {
     private lazy var piiDetector: PIIDetectorPort = StridKitPIIDetectorAdapter()
     private lazy var documentRepository: DocumentRepositoryPort = InMemoryDocumentRepository()
     private lazy var historyRepository: RedactionHistoryRepositoryPort = InMemoryRedactionHistoryRepository()
+    private lazy var scannedDocumentRepository: ScannedDocumentRepositoryPort = InMemoryScannedDocumentRepository()
 
     // Use Cases
     private lazy var importDocumentUseCase: ImportDocumentUseCase = {
@@ -33,6 +34,18 @@ final class DIContainer {
         ExportDocumentUseCaseImpl()
     }()
 
+    private lazy var getScannedDocumentsUseCase: GetScannedDocumentsUseCase = {
+        GetScannedDocumentsUseCaseImpl(repository: scannedDocumentRepository)
+    }()
+
+    private lazy var saveScannedDocumentUseCase: SaveScannedDocumentUseCase = {
+        SaveScannedDocumentUseCaseImpl(repository: scannedDocumentRepository)
+    }()
+
+    private lazy var deleteScannedDocumentUseCase: DeleteScannedDocumentUseCase = {
+        DeleteScannedDocumentUseCaseImpl(repository: scannedDocumentRepository)
+    }()
+
     // ViewModels
     @MainActor
     func makeDocumentViewModel() -> DocumentViewModel {
@@ -42,6 +55,20 @@ final class DIContainer {
             redactUseCase: redactPIIUseCase,
             recordRedactionUseCase: recordRedactionUseCase,
             getHistoryUseCase: getHistoryUseCase,
+            exportDocumentUseCase: exportDocumentUseCase
+        )
+    }
+
+    @MainActor
+    func makeDocumentListViewModel() -> DocumentListViewModel {
+        DocumentListViewModel(
+            getScannedDocumentsUseCase: getScannedDocumentsUseCase,
+            saveScannedDocumentUseCase: saveScannedDocumentUseCase,
+            deleteScannedDocumentUseCase: deleteScannedDocumentUseCase,
+            importUseCase: importDocumentUseCase,
+            detectUseCase: detectPIIUseCase,
+            redactUseCase: redactPIIUseCase,
+            recordRedactionUseCase: recordRedactionUseCase,
             exportDocumentUseCase: exportDocumentUseCase
         )
     }
