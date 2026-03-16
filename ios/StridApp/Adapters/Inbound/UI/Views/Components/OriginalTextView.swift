@@ -8,11 +8,9 @@ struct OriginalTextView: View {
         ScrollView {
             Text(text)
                 .font(.system(.body, design: .monospaced))
-                .foregroundStyle(Color.stridText)
                 .padding(20)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
-        .background(Color.stridBackground)
     }
 }

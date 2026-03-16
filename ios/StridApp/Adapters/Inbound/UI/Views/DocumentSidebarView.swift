@@ -57,7 +57,6 @@ struct DocumentSidebarView: View {
                     }
                 } label: {
                     Image(systemName: "plus.circle.fill")
-                        .foregroundStyle(Color.stridAccent)
                         .font(.title2)
                 }
             }

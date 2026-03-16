@@ -8,24 +8,23 @@ struct DocumentSidebarRow: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(document.title)
                 .font(.headline)
-                .foregroundStyle(Color.stridText)
                 .lineLimit(1)
 
             Text(document.preview)
                 .font(.subheadline)
-                .foregroundStyle(Color.stridTextSecondary)
+                .foregroundStyle(.secondary)
                 .lineLimit(2)
 
             HStack {
                 Label(document.entityCountSummary, systemImage: "exclamationmark.shield")
                     .font(.caption)
-                    .foregroundStyle(Color.stridError)
+                    .foregroundStyle(.red)
 
                 Spacer()
 
                 Text(document.scannedAt, style: .relative)
                     .font(.caption)
-                    .foregroundStyle(Color.stridTextSecondary)
+                    .foregroundStyle(.secondary)
             }
         }
         .padding(.vertical, 4)

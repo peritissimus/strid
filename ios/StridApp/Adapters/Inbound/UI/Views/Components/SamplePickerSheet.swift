@@ -20,17 +20,15 @@ struct SamplePickerSheet: View {
                                 HStack(spacing: 16) {
                                     Image(systemName: category.icon)
                                         .font(.title2)
-                                        .foregroundStyle(Color.stridAccent)
                                         .frame(width: 40)
 
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(sample.title)
                                             .font(.headline)
-                                            .foregroundStyle(Color.stridText)
 
                                         Text(sample.description)
                                             .font(.caption)
-                                            .foregroundStyle(Color.stridTextSecondary)
+                                            .foregroundStyle(.secondary)
                                             .lineLimit(2)
                                     }
 
@@ -38,7 +36,7 @@ struct SamplePickerSheet: View {
 
                                     Image(systemName: "chevron.right")
                                         .font(.caption)
-                                        .foregroundStyle(Color.stridGray)
+                                        .foregroundStyle(.secondary)
                                 }
                                 .padding(.vertical, 8)
                             }
@@ -52,11 +50,8 @@ struct SamplePickerSheet: View {
             .platformNavigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .platformTopBarTrailing) {
-                    Button {
+                    Button("Cancel") {
                         dismiss()
-                    } label: {
-                        Text("Cancel")
-                            .foregroundStyle(Color.stridBlack)
                     }
                 }
             }

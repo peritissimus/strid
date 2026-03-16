@@ -32,7 +32,6 @@ struct ScannedDocumentResultsView: View {
                     }
                 } label: {
                     Image(systemName: "square.and.arrow.up")
-                        .foregroundStyle(Color.stridAccent)
                 }
             }
         }
@@ -64,11 +63,11 @@ struct ScannedDocumentResultsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(document.scanResults.entityCount)")
                         .font(.system(size: 44, weight: .bold))
-                        .foregroundStyle(Color.stridError)
+                        .foregroundStyle(.red)
 
                     Text("PII Items Found")
                         .font(.subheadline)
-                        .foregroundStyle(Color.stridTextSecondary)
+                        .foregroundStyle(.secondary)
                 }
 
                 Spacer()
@@ -76,18 +75,9 @@ struct ScannedDocumentResultsView: View {
                 Button {
                     showingSummary = true
                 } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "list.bullet.rectangle.portrait")
-                            .font(.title2)
-                        Text("Details")
-                            .font(.caption.weight(.medium))
-                    }
-                    .foregroundStyle(Color.stridText)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    Label("Details", systemImage: "list.bullet.rectangle.portrait")
                 }
                 .buttonStyle(.bordered)
-                .tint(Color.stridGray)
             }
             .padding(.horizontal, 20)
             .padding(.top, 16)
@@ -98,11 +88,9 @@ struct ScannedDocumentResultsView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .tint(Color.stridBlack)
             .padding(.horizontal, 20)
             .padding(.bottom, 16)
         }
-        .background(Color.stridBackgroundSecondary)
     }
 
     @ViewBuilder

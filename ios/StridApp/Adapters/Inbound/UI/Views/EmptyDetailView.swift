@@ -6,95 +6,60 @@ struct EmptyDetailView: View {
     @State private var showingFilePicker = false
 
     var body: some View {
-        ZStack {
-            Color.stridMonochromeGradient
-                .ignoresSafeArea()
+        VStack(spacing: 40) {
+            Spacer()
 
-            VStack(spacing: 40) {
-                Spacer()
+            VStack(spacing: 24) {
+                Image(systemName: "shield.lefthalf.filled.badge.checkmark")
+                    .font(.system(size: 80, weight: .light))
+                    .foregroundStyle(.secondary)
 
-                VStack(spacing: 24) {
-                    Image(systemName: "shield.lefthalf.filled.badge.checkmark")
-                        .font(.system(size: 80, weight: .light))
-                        .foregroundStyle(Color.stridWhite)
+                VStack(spacing: 12) {
+                    Text("PII Scanner")
+                        .font(.largeTitle.bold())
 
-                    VStack(spacing: 12) {
-                        Text("PII Scanner")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundStyle(Color.stridWhite)
-
-                        Text("Detect and redact personal information\nfrom your documents")
-                            .font(.body)
-                            .foregroundStyle(Color.stridWhite.opacity(0.7))
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(4)
-                    }
+                    Text("Detect and redact personal information\nfrom your documents")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
-
-                VStack(spacing: 14) {
-                    // Primary CTA - accent color
-                    Button {
-                        viewModel.showingSamplePicker = true
-                    } label: {
-                        HStack {
-                            Image(systemName: "doc.text.magnifyingglass")
-                            Text("Browse Sample Documents")
-                        }
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.stridAccent)
-                        .foregroundStyle(Color.stridWhite)
-                        .cornerRadius(14)
-                    }
-
-                    // Glass buttons
-                    Button {
-                        showingFilePicker = true
-                    } label: {
-                        HStack {
-                            Image(systemName: "doc.badge.plus")
-                            Text("Import Document")
-                        }
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.stridGlass)
-                        .foregroundStyle(Color.stridWhite)
-                        .cornerRadius(14)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.stridGlassBorder, lineWidth: 1)
-                        )
-                    }
-
-                    Button {
-                        Task {
-                            if let clip = PasteboardHelper.getString(), !clip.isEmpty {
-                                await viewModel.createNewDocument(content: clip)
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: "doc.on.clipboard")
-                            Text("Paste from Clipboard")
-                        }
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.stridGlass)
-                        .foregroundStyle(Color.stridWhite)
-                        .cornerRadius(14)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.stridGlassBorder, lineWidth: 1)
-                        )
-                    }
-                }
-                .padding(.horizontal, 40)
-
-                Spacer()
             }
+
+            VStack(spacing: 14) {
+                Button {
+                    viewModel.showingSamplePicker = true
+                } label: {
+                    Label("Browse Sample Documents", systemImage: "doc.text.magnifyingglass")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+
+                Button {
+                    showingFilePicker = true
+                } label: {
+                    Label("Import Document", systemImage: "doc.badge.plus")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+
+                Button {
+                    Task {
+                        if let clip = PasteboardHelper.getString(), !clip.isEmpty {
+                            await viewModel.createNewDocument(content: clip)
+                        }
+                    }
+                } label: {
+                    Label("Paste from Clipboard", systemImage: "doc.on.clipboard")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+            }
+            .padding(.horizontal, 40)
+
+            Spacer()
         }
         .fileImporter(
             isPresented: $showingFilePicker,

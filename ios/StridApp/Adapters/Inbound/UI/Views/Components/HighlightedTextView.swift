@@ -13,7 +13,6 @@ struct HighlightedTextView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
-        .background(Color.stridBackground)
     }
 
     private func buildHighlightedText() -> AttributedString {
@@ -21,9 +20,9 @@ struct HighlightedTextView: View {
 
         for entity in entities {
             if let range = Range(entity.range, in: attributed) {
-                attributed[range].foregroundColor = Color.stridError
+                attributed[range].foregroundColor = .red
                 attributed[range].font = .body.monospaced().bold()
-                attributed[range].backgroundColor = Color.stridError.opacity(0.1)
+                attributed[range].backgroundColor = Color.red.opacity(0.1)
             }
         }
 

@@ -8,6 +8,5 @@ struct NoSelectionView: View {
         } description: {
             Text("Choose a scanned document from the sidebar to view its results")
         }
-        .background(Color.stridBackground)
     }
 }
