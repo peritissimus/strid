@@ -101,8 +101,12 @@ struct SummarySheet: View {
                 }
             }
         }
+        #if os(iOS)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        #else
+        .frame(minWidth: 600, minHeight: 700)
+        #endif
     }
 
     // MARK: - Helpers

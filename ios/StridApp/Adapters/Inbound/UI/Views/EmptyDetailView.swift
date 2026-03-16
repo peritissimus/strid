@@ -47,7 +47,7 @@ struct EmptyDetailView: View {
                 Button {
                     Task {
                         if let clip = PasteboardHelper.getString(), !clip.isEmpty {
-                            await viewModel.createNewDocument(content: clip)
+                            await viewModel.createNewDocument(content: clip, source: .clipboard)
                         }
                     }
                 } label: {
@@ -77,7 +77,7 @@ struct EmptyDetailView: View {
 
         if let text = try? String(contentsOf: url, encoding: .utf8) {
             Task {
-                await viewModel.createNewDocument(content: text)
+                await viewModel.createNewDocument(content: text, source: .fileImport, fileURL: url)
             }
         }
     }

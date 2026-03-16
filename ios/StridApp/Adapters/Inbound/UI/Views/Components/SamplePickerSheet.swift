@@ -13,7 +13,7 @@ struct SamplePickerSheet: View {
                         ForEach(SampleDocument.samples.filter { $0.category == category }) { sample in
                             Button {
                                 Task {
-                                    await viewModel.createNewDocument(content: sample.content)
+                                    await viewModel.createNewDocument(content: sample.content, source: .sample)
                                     dismiss()
                                 }
                             } label: {
@@ -56,7 +56,11 @@ struct SamplePickerSheet: View {
                 }
             }
         }
+        #if os(iOS)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        #else
+        .frame(minWidth: 500, minHeight: 600)
+        #endif
     }
 }

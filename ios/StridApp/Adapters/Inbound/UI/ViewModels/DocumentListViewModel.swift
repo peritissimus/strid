@@ -76,13 +76,13 @@ final class DocumentListViewModel {
         navigationState = .documentSelected(id)
     }
 
-    func createNewDocument(content: String) async {
+    func createNewDocument(content: String, source: DocumentSource = .clipboard, fileURL: URL? = nil) async {
         // Import and immediately start scanning
         let document = await importUseCase.execute(content: content)
-        await scanDocument(document)
+        await scanDocument(document, source: source, fileURL: fileURL)
     }
 
-    func scanDocument(_ document: Document) async {
+    func scanDocument(_ document: Document, source: DocumentSource = .clipboard, fileURL: URL? = nil) async {
         navigationState = .scanning(document)
 
         async let detected = detectUseCase.execute(document: document)
@@ -108,7 +108,9 @@ final class DocumentListViewModel {
             id: UUID(),
             originalDocument: document,
             scanResults: results,
-            scannedAt: Date()
+            scannedAt: Date(),
+            source: source,
+            originalFileURL: fileURL
         )
 
         do {
