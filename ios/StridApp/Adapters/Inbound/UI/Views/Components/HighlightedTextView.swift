@@ -47,24 +47,28 @@ struct HighlightedTextViewMac: NSViewRepresentable {
         attributed.addAttribute(.font, value: font, range: NSRange(location: 0, length: attributed.length))
         attributed.addAttribute(.foregroundColor, value: NSColor.labelColor, range: NSRange(location: 0, length: attributed.length))
 
-        // Highlight PII entities
+        // Highlight PII entities by searching for their text
         for entity in entities {
-            let startOffset = text.distance(from: text.startIndex, to: entity.range.lowerBound)
-            let endOffset = text.distance(from: text.startIndex, to: entity.range.upperBound)
-            let length = endOffset - startOffset
+            let piiText = entity.text
 
-            guard startOffset >= 0,
-                  length > 0,
-                  startOffset + length <= text.count else {
-                continue
+            // Find all occurrences of this PII text in the document
+            var searchRange = text.startIndex..<text.endIndex
+
+            while let range = text.range(of: piiText, range: searchRange) {
+                let startOffset = text.distance(from: text.startIndex, to: range.lowerBound)
+                let length = piiText.count
+
+                let nsRange = NSRange(location: startOffset, length: length)
+                let boldFont = NSFont.monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .bold)
+
+                attributed.addAttribute(.foregroundColor, value: NSColor.systemRed, range: nsRange)
+                attributed.addAttribute(.font, value: boldFont, range: nsRange)
+                attributed.addAttribute(.backgroundColor, value: NSColor.systemRed.withAlphaComponent(0.15), range: nsRange)
+
+                // Move past this occurrence
+                guard range.upperBound < text.endIndex else { break }
+                searchRange = range.upperBound..<text.endIndex
             }
-
-            let nsRange = NSRange(location: startOffset, length: length)
-            let boldFont = NSFont.monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .bold)
-
-            attributed.addAttribute(.foregroundColor, value: NSColor.systemRed, range: nsRange)
-            attributed.addAttribute(.font, value: boldFont, range: nsRange)
-            attributed.addAttribute(.backgroundColor, value: NSColor.systemRed.withAlphaComponent(0.15), range: nsRange)
         }
 
         return attributed
