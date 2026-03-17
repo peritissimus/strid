@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,6 +26,8 @@
 		27DF5C13D45FC46E7208253E /* DocumentSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98370C6C168A23BFD86F4FC5 /* DocumentSidebarRow.swift */; };
 		28168A245D2ECA01EE1BE02C /* InMemoryDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */; };
 		2AD8EA3C6A7ADF56214C68DF /* ScannedDocumentResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 716560599D66EACAE7B1C26A /* ScannedDocumentResultsView.swift */; };
+		2AF79F7A2F691BB400EE6C2F /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2AF79F792F691BB400EE6C2F /* StridKit */; };
+		2AF79F7C2F691BBA00EE6C2F /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2AF79F7B2F691BBA00EE6C2F /* StridKit */; };
 		2B422A6F20965139F60B7993 /* RedactionHistoryRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B485566D7AA991C9698602 /* RedactionHistoryRepositoryPort.swift */; };
 		2E04A1755388E1E43EE081DD /* PIIDetectorPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */; };
 		317A0966B116C7298FBEA20B /* ScannedDocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D98C67AC3F022E02886B0BF /* ScannedDocumentRepositoryPort.swift */; };
@@ -103,6 +105,23 @@
 		FE723326180DBBE2844F4317 /* RedactedDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2AF79F552F691AEF00EE6C2F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5D6ACA564A974D7EE436D95C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC0FB368C06EEC5581F1649B;
+			remoteInfo = StridApp_iOS;
+		};
+		2AF79F732F691B2700EE6C2F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5D6ACA564A974D7EE436D95C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3835EC6A9CEAAB8EFB3261AD;
+			remoteInfo = StridApp_macOS;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		04B59EEA3089B4E7512176FE /* DocumentListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentListViewModel.swift; sourceTree = "<group>"; };
 		0EACE3DAFF00C6DBB63CB9A3 /* NoSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSelectionView.swift; sourceTree = "<group>"; };
@@ -110,6 +129,8 @@
 		13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIDetectorPort.swift; sourceTree = "<group>"; };
 		189EF48B19B3840429A1D742 /* HighlightedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightedTextView.swift; sourceTree = "<group>"; };
 		1C408BF14B7AC561B6EA713F /* SampleDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDocument.swift; sourceTree = "<group>"; };
+		2AF79F512F691AEF00EE6C2F /* StridAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StridAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AF79F6F2F691B2700EE6C2F /* StridAppMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StridAppMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		36A9854D56454A1789867BE2 /* EmptyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDetailView.swift; sourceTree = "<group>"; };
 		38FD04F5FE1EC4FE6200099B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3B13BD92139A58776F0994BF /* SamplePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePickerSheet.swift; sourceTree = "<group>"; };
@@ -142,7 +163,7 @@
 		C4B485566D7AA991C9698602 /* RedactionHistoryRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionHistoryRepositoryPort.swift; sourceTree = "<group>"; };
 		C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportDocumentUseCase.swift; sourceTree = "<group>"; };
 		CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryDocumentRepository.swift; sourceTree = "<group>"; };
-		CF359D4F5054BCBB80B08959 /* StridApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StridApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF359D4F5054BCBB80B08959 /* StridApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StridApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentState.swift; sourceTree = "<group>"; };
 		DBC66860755056E4C78EAAB6 /* StridApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StridApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0CE0A1583FF662913F6C140 /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
@@ -155,7 +176,28 @@
 		FF436044B099FC5A3E99C603 /* ScanningProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningProgressView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2AF79F522F691AEF00EE6C2F /* StridAppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StridAppTests; sourceTree = "<group>"; };
+		2AF79F702F691B2700EE6C2F /* StridAppMacTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StridAppMacTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		2AF79F4E2F691AEF00EE6C2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2AF79F7A2F691BB400EE6C2F /* StridKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2AF79F6C2F691B2700EE6C2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2AF79F7C2F691BBA00EE6C2F /* StridKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		44534399A6B988F71E3FAC5F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -210,6 +252,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2AF79F782F691BB400EE6C2F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2DB3B691612042A9F6D94819 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,7 +302,10 @@
 				6A68EF2DADE504D05BE7109D /* Domain */,
 				F0724EC96340C50C3608B213 /* Packages */,
 				E9FC8B533A35A38B08507C5E /* StridApp */,
+				2AF79F522F691AEF00EE6C2F /* StridAppTests */,
+				2AF79F702F691B2700EE6C2F /* StridAppMacTests */,
 				9E0260CCDDB670441F4A3264 /* Products */,
+				2AF79F782F691BB400EE6C2F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -299,6 +351,8 @@
 			children = (
 				CF359D4F5054BCBB80B08959 /* StridApp.app */,
 				DBC66860755056E4C78EAAB6 /* StridApp.app */,
+				2AF79F512F691AEF00EE6C2F /* StridAppTests.xctest */,
+				2AF79F6F2F691B2700EE6C2F /* StridAppMacTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -391,6 +445,54 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2AF79F502F691AEF00EE6C2F /* StridAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2AF79F572F691AEF00EE6C2F /* Build configuration list for PBXNativeTarget "StridAppTests" */;
+			buildPhases = (
+				2AF79F4D2F691AEF00EE6C2F /* Sources */,
+				2AF79F4E2F691AEF00EE6C2F /* Frameworks */,
+				2AF79F4F2F691AEF00EE6C2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2AF79F562F691AEF00EE6C2F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2AF79F522F691AEF00EE6C2F /* StridAppTests */,
+			);
+			name = StridAppTests;
+			packageProductDependencies = (
+				2AF79F792F691BB400EE6C2F /* StridKit */,
+			);
+			productName = StridAppTests;
+			productReference = 2AF79F512F691AEF00EE6C2F /* StridAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		2AF79F6E2F691B2700EE6C2F /* StridAppMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2AF79F752F691B2700EE6C2F /* Build configuration list for PBXNativeTarget "StridAppMacTests" */;
+			buildPhases = (
+				2AF79F6B2F691B2700EE6C2F /* Sources */,
+				2AF79F6C2F691B2700EE6C2F /* Frameworks */,
+				2AF79F6D2F691B2700EE6C2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2AF79F742F691B2700EE6C2F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2AF79F702F691B2700EE6C2F /* StridAppMacTests */,
+			);
+			name = StridAppMacTests;
+			packageProductDependencies = (
+				2AF79F7B2F691BBA00EE6C2F /* StridKit */,
+			);
+			productName = StridAppMacTests;
+			productReference = 2AF79F6F2F691B2700EE6C2F /* StridAppMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		3835EC6A9CEAAB8EFB3261AD /* StridApp_macOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 68250AFDB1D9C270EAD0FF04 /* Build configuration list for PBXNativeTarget "StridApp_macOS" */;
@@ -438,8 +540,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					2AF79F502F691AEF00EE6C2F = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = EC0FB368C06EEC5581F1649B;
+					};
+					2AF79F6E2F691B2700EE6C2F = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 3835EC6A9CEAAB8EFB3261AD;
+					};
 					3835EC6A9CEAAB8EFB3261AD = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -474,11 +585,27 @@
 			targets = (
 				EC0FB368C06EEC5581F1649B /* StridApp_iOS */,
 				3835EC6A9CEAAB8EFB3261AD /* StridApp_macOS */,
+				2AF79F502F691AEF00EE6C2F /* StridAppTests */,
+				2AF79F6E2F691B2700EE6C2F /* StridAppMacTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		2AF79F4F2F691AEF00EE6C2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2AF79F6D2F691B2700EE6C2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		671465DCCD88C2866084C750 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -550,6 +677,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2AF79F4D2F691AEF00EE6C2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2AF79F6B2F691B2700EE6C2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		35794A9B6BE9C5F739B6D9BB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -604,6 +745,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		2AF79F562F691AEF00EE6C2F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC0FB368C06EEC5581F1649B /* StridApp_iOS */;
+			targetProxy = 2AF79F552F691AEF00EE6C2F /* PBXContainerItemProxy */;
+		};
+		2AF79F742F691B2700EE6C2F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3835EC6A9CEAAB8EFB3261AD /* StridApp_macOS */;
+			targetProxy = 2AF79F732F691B2700EE6C2F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		21C904CBDB0F33A890246CF5 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -611,6 +765,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -637,6 +792,123 @@
 				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,2";
 			};
 			name = Debug;
+		};
+		2AF79F582F691AEF00EE6C2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
+			};
+			name = Debug;
+		};
+		2AF79F592F691AEF00EE6C2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2AF79F762F691B2700EE6C2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
+			};
+			name = Debug;
+		};
+		2AF79F772F691B2700EE6C2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
+			};
+			name = Release;
 		};
 		5CB03EF2BACB22ED550BD5C2 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -678,6 +950,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -739,6 +1012,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -755,6 +1029,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -795,6 +1070,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -818,6 +1094,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -861,6 +1138,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2AF79F572F691AEF00EE6C2F /* Build configuration list for PBXNativeTarget "StridAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2AF79F582F691AEF00EE6C2F /* Debug */,
+				2AF79F592F691AEF00EE6C2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2AF79F752F691B2700EE6C2F /* Build configuration list for PBXNativeTarget "StridAppMacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2AF79F762F691B2700EE6C2F /* Debug */,
+				2AF79F772F691B2700EE6C2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		68250AFDB1D9C270EAD0FF04 /* Build configuration list for PBXNativeTarget "StridApp_macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -898,6 +1193,16 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2AF79F792F691BB400EE6C2F /* StridKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B38A6364E4DF9D4A143C2A5 /* XCLocalSwiftPackageReference "../StridKit" */;
+			productName = StridKit;
+		};
+		2AF79F7B2F691BBA00EE6C2F /* StridKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B38A6364E4DF9D4A143C2A5 /* XCLocalSwiftPackageReference "../StridKit" */;
+			productName = StridKit;
+		};
 		44FAB6B4C7A8B02387BF4DCD /* StridKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StridKit;
