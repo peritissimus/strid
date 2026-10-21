@@ -185,6 +185,10 @@ public enum IndianBankingRecognizers {
         patterns: [
             #"\b[A-Z]{1,4}\d{7,16}\b"#,
             #"\b[A-Z]{4}[A-Z0-9]\d{11,}\b"#,
+            // Merchant / gateway reference blobs: 7+ chars of [A-Z0-9.-], at least 4 digits and 2 letters.
+            #"\b(?=[A-Za-z0-9.\-]{7,}\b)(?=(?:[A-Za-z.\-]*\d){4})(?=(?:[\d.\-]*[A-Za-z]){2})[A-Za-z0-9][A-Za-z0-9.\-]*[A-Za-z0-9]\b"#,
+            // Bank-prefixed refs with few digits (the head of a wrapped NEFT/IMPS ref): IDFBH260, HDFCN5..
+            #"\b[A-Z]{4,6}[A-Z]?\d{2,6}\b(?=[ \t]*(?:\n|$))"#,
         ],
         baseScore: 0.45,
         contextWords: ["ref", "reference", "utr", "rrn", "txn", "transaction", "chq", "cheque", "neft", "imps", "rtgs", "upi"],
