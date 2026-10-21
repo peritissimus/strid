@@ -4,6 +4,20 @@ import Foundation
 public struct DataDetectorRecognizer: Recognizer {
     public init() {}
 
+    /// NSDataDetector happily calls any 9-16 digit run a phone number. Keep only shapes that are phones in India:
+    /// 10 digits, 11 with a leading 0 trunk prefix, or 12 with a +91 country code.
+    static func plausiblePhone(_ s: String) -> Bool {
+        let digits = s.filter(\.isNumber)
+        let trimmed = s.trimmingCharacters(in: .whitespaces)
+        switch digits.count {
+        case 10: return true
+        case 11: return digits.hasPrefix("0")
+        case 12: return trimmed.hasPrefix("+91") || digits.hasPrefix("91")
+        case 13: return trimmed.hasPrefix("+91") && digits.hasPrefix("910")
+        default: return false
+        }
+    }
+
     public func recognize(in text: String) -> [PIIEntity] {
         var entities: [PIIEntity] = []
         let nsText = text as NSString
@@ -32,12 +46,15 @@ public struct DataDetectorRecognizer: Recognizer {
                 nil
             }
 
+            if entityType == .phone, !Self.plausiblePhone(matched) { continue }
             if let entityType {
                 entities.append(PIIEntity(
                     type: entityType,
                     text: matched,
                     range: swiftRange,
-                    score: 1.0
+                    // Phones get a lower score so Luhn-validated cards, MICR and labelled account
+                    // numbers win the overlap; emails/URLs/addresses stay authoritative.
+                    score: entityType == .phone ? 0.75 : 1.0
                 ))
             }
         }
