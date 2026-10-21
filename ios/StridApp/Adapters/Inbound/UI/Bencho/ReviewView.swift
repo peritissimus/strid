@@ -57,6 +57,7 @@ struct ReviewView: View {
                 .padding(.top, 18)
             }
             .scrollIndicators(.hidden)
+            BottomScrim()
             actions
         }
         .preferredColorScheme(.dark)

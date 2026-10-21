@@ -76,6 +76,7 @@ struct RecordDetailView: View {
                 .offset(y: appeared ? 0 : 12)
             }
             .scrollIndicators(.hidden)
+            BottomScrim()
             actions
             // Lifted above the action row.
             ToastStack(center: vm.toasts).padding(.bottom, 92)

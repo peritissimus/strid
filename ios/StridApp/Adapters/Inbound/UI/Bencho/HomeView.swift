@@ -46,6 +46,7 @@ struct HomeView: View {
             ZStack(alignment: .bottom) {
                 Theme.bg.ignoresSafeArea()
                 content
+                BottomScrim()
                 floatingBar
                 // Lifted above the floating bar.
                 ToastStack(center: vm.toasts).padding(.bottom, 92)

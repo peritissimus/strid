@@ -127,6 +127,19 @@ struct FlowLayout: Layout {
     }
 }
 
+// MARK: - Bottom scrim
+
+/// Fades the scroll content out beneath a floating bar so cards never read
+/// through the gaps between its buttons. Pure paint: no hit testing.
+struct BottomScrim: View {
+    var height: CGFloat = 140
+    var body: some View {
+        LinearGradient(colors: [Theme.bg.opacity(0), Theme.bg], startPoint: .top, endPoint: .bottom)
+            .frame(height: height)
+            .allowsHitTesting(false)
+    }
+}
+
 // MARK: - Sweep meter
 
 /// A bright window sweeping across a row of thin bars.
