@@ -359,9 +359,10 @@ enum Assistant: String, CaseIterable, Identifiable {
     var webURL: URL {
         switch self { case .claude: URL(string: "https://claude.ai/new")!; case .chatgpt: URL(string: "https://chatgpt.com/")! }
     }
-    /// Brand-adjacent glyph: Claude's spark, ChatGPT's knot stand-in.
-    var symbol: String {
-        switch self { case .claude: "asterisk"; case .chatgpt: "hexagon" }
+    /// Asset-catalog name of the brand mark, a template SVG tinted by the
+    /// button (Claude's spark, OpenAI's knot).
+    var mark: String {
+        switch self { case .claude: "ClaudeMark"; case .chatgpt: "ChatGPTMark" }
     }
 }
 
@@ -372,8 +373,9 @@ struct AssistantButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            Image(systemName: assistant.symbol)
-                .font(.system(size: 15, weight: .medium))
+            Image(assistant.mark)
+                .resizable().scaledToFit()
+                .frame(width: 18, height: 18)
                 .foregroundStyle(Theme.ink)
                 .frame(width: 46, height: 46)
                 .background(Theme.surface2, in: Circle())
