@@ -46,10 +46,16 @@ struct HomeView: View {
             ZStack(alignment: .bottom) {
                 Theme.bg.ignoresSafeArea()
                 content
+                BottomScrim()
                 floatingBar
                 // Lifted above the floating bar.
                 ToastStack(center: vm.toasts).padding(.bottom, 92)
-                if vm.isWorking { ProcessingOverlay(stage: stageText).transition(.opacity) }
+                // Always mounted; opacity is a fixed transform of `isWorking`, so the
+                // fade never depends on a removal transition firing.
+                ProcessingOverlay(stage: stageText, active: vm.isWorking)
+                    .opacity(vm.isWorking ? 1 : 0)
+                    .allowsHitTesting(vm.isWorking)
+                    .animation(Theme.quick, value: vm.isWorking)
             }
             .navigationDestination(for: RedactionRecord.self) { r in
                 RecordDetailView(record: r, vm: vm)
@@ -253,7 +259,6 @@ struct HomeView: View {
                 .foregroundStyle(.black)
                 .padding(.horizontal, 22).padding(.vertical, 14)
                 .background(Color.white, in: Capsule())
-                .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
             }
             // `.button` menu style lets the custom label act as the trigger.
             .menuStyle(.button)
@@ -266,10 +271,11 @@ struct HomeView: View {
                     .frame(width: 48, height: 48)
                     .background(Theme.surface2, in: Circle())
                     .overlay(Circle().strokeBorder(Theme.edge, lineWidth: 0.5))
-                    .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
             }
             .buttonStyle(PressableStyle())
         }
+        // The one shadow: these sit over the scrolling list.
+        .floating()
         .padding(.bottom, 18)
     }
 }
@@ -359,26 +365,27 @@ struct EmptyState: View {
 struct ProcessingOverlay: View {
     /// Stage label from the use case's progress callback.
     let stage: String
-    /// Reserved for an animated ellipsis; currently unused.
-    @State private var dots = 0
+    /// Drives the meter; the overlay itself is always mounted and faded by its parent.
+    var active = true
     var body: some View {
         ZStack {
             // Dim + blur everything behind the card, including under the safe areas.
             Rectangle().fill(.black.opacity(0.55)).ignoresSafeArea()
                 .background(.ultraThinMaterial)
             VStack(spacing: 18) {
-                SweepMeter()
+                SweepMeter(active: active)
                 Text(stage)
                     .font(Theme.label()).foregroundStyle(Theme.ink)
-                    // Stage names change in place with a rolling transition.
-                    .contentTransition(.numericText())
-                    .animation(Theme.snappy, value: stage)
+                    // Stage names cross-fade in place; they are words, not
+                    // counters, so no digit roll.
+                    .contentTransition(.opacity)
+                    .animation(Theme.quick, value: stage)
                 Text("On device. Nothing is uploaded.").font(Theme.meta()).foregroundStyle(Theme.ink4)
             }
             .padding(.horizontal, 32).padding(.vertical, 28)
             .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous))
+            // On a dimmed, blurred backdrop the hairline edge is enough lift.
             .overlay(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
-            .shadow(color: .black.opacity(0.6), radius: 40, y: 20)
         }
     }
 }

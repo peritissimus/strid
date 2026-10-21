@@ -6,7 +6,7 @@
 //  `RecordDetailView`:
 //  - `SegmentedPill`: two-option switch with a sliding white thumb.
 //  - `EntityChip` + `FlowLayout`: wrapping row of per-type count chips.
-//  - `BarMeter` / `SweepMeter`: determinate and indeterminate bar meters.
+//  - `SweepMeter`: indeterminate bar meter for the processing overlay.
 //  - `ToastCenter` + `ToastStack`: transient bottom toasts.
 //  - `StackedCards`: fanned-card illustration for the empty state.
 //  - `SectionLabel`, `Badge`: tiny typographic helpers.
@@ -20,9 +20,11 @@ import StridKit
 /// Generic segmented control. Used in `RecordDetailView` to flip between the
 /// redacted and original previews.
 ///
-/// The selected segment's white capsule shares a `matchedGeometryEffect`
-/// id, so when `selection` changes SwiftUI animates the thumb sliding from
-/// the old segment to the new one instead of fading two separate shapes.
+/// One white thumb lives behind the row; each segment publishes its frame
+/// under its value through `matchedGeometryEffect`, and the thumb follows
+/// whichever frame `selection` names. The selection is the only state and
+/// the thumb's place is a fixed function of it, so a change is one slide
+/// on `Theme.snappy` rather than one capsule leaving and another arriving.
 struct SegmentedPill<T: Hashable>: View {
     /// `(value, label)` pairs in display order.
     let options: [(T, String)]
@@ -44,16 +46,16 @@ struct SegmentedPill<T: Hashable>: View {
                         // Black on the white thumb, muted ink elsewhere.
                         .foregroundStyle(selection == value ? .black : Theme.ink3)
                         .padding(.horizontal, 14).padding(.vertical, 7)
-                        .background {
-                            // Only the selected segment draws the thumb; the
-                            // shared id makes it slide between segments.
-                            if selection == value {
-                                Capsule().fill(Color.white).matchedGeometryEffect(id: "thumb", in: ns)
-                            }
-                        }
+                        // Source frame for the thumb, keyed by this segment's value.
+                        .matchedGeometryEffect(id: value, in: ns)
                 }
                 .buttonStyle(.plain)
             }
+        }
+        // The thumb: one capsule that takes the selected segment's frame.
+        .background {
+            Capsule().fill(Color.white)
+                .matchedGeometryEffect(id: selection, in: ns, isSource: false)
         }
         // 3pt gutter so the thumb sits inside the outer glass capsule.
         .padding(3)
@@ -125,41 +127,33 @@ struct FlowLayout: Layout {
     }
 }
 
-// MARK: - Bar meter (||||||||| 50)
+// MARK: - Bottom scrim
 
-/// Determinate meter drawn as a row of thin bars; bars below `progress`
-/// light up and grow taller. Not currently used by a screen but kept as the
-/// determinate sibling of `SweepMeter`.
-struct BarMeter: View {
-    /// 0...1
-    var progress: Double
-    /// Number of bars across the meter.
-    var bars = 32
+/// Fades the scroll content out beneath a floating bar so cards never read
+/// through the gaps between its buttons. Pure paint: no hit testing.
+struct BottomScrim: View {
+    var height: CGFloat = 140
     var body: some View {
-        HStack(spacing: 3) {
-            ForEach(0..<bars, id: \.self) { i in
-                let on = Double(i) / Double(bars) < progress
-                RoundedRectangle(cornerRadius: 1)
-                    .fill(on ? Theme.ink : Theme.ink5.opacity(0.5))
-                    .frame(width: 3, height: on ? 18 : 12)
-                    // Staggered delay makes the bars light up as a ripple
-                    // rather than all at once.
-                    .animation(Theme.snappy.delay(Double(i) * 0.008), value: on)
-            }
-        }
+        LinearGradient(colors: [Theme.bg.opacity(0), Theme.bg], startPoint: .top, endPoint: .bottom)
+            .frame(height: height)
+            .allowsHitTesting(false)
     }
 }
 
-/// Indeterminate variant: a bright window sweeping across the bars.
+// MARK: - Sweep meter
+
+/// A bright window sweeping across a row of thin bars.
 ///
 /// Shown inside `ProcessingOverlay` while a redaction job runs. A single
 /// animated scalar `t` sweeps 0 -> 1 -> 0 forever; each bar's brightness and
 /// height fall off linearly with its distance from `t`, producing a soft
 /// highlight about one sixth of the width wide.
 struct SweepMeter: View {
-    /// Position of the highlight, 0...1 across the bars. Animated on appear.
+    /// Position of the highlight, 0...1 across the bars. Sweeps while `active`.
     @State private var t: Double = 0
     var bars = 32
+    /// False parks the highlight so a hidden meter costs nothing.
+    var active = true
     var body: some View {
         HStack(spacing: 3) {
             ForEach(0..<bars, id: \.self) { i in
@@ -172,10 +166,15 @@ struct SweepMeter: View {
                     .frame(width: 3, height: 12 + 8 * lit)
             }
         }
-        .onAppear {
-            // Autoreverse gives a ping-pong sweep with no jump at the ends.
-            withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: true)) { t = 1 }
+        .onAppear { if active { sweep() } }
+        .onChange(of: active) { _, on in
+            if on { sweep() } else { withAnimation(nil) { t = 0 } }
         }
+    }
+
+    /// Autoreverse gives a ping-pong sweep with no jump at the ends.
+    private func sweep() {
+        withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: true)) { t = 1 }
     }
 }
 
@@ -184,8 +183,8 @@ struct SweepMeter: View {
 /// Queue of transient messages. Owned by `HomeViewModel` and rendered by a
 /// `ToastStack` on both the home and detail screens.
 ///
-/// `@MainActor` because it mutates UI state and schedules its own dismissal
-/// on the main actor.
+/// `@MainActor` because it mutates UI state and expires its own toasts on
+/// the main actor.
 @Observable @MainActor
 final class ToastCenter {
     /// One message. `Identifiable` for `ForEach`; `Equatable` for animations.
@@ -200,54 +199,92 @@ final class ToastCenter {
         enum Kind { case info, success, error }
     }
 
-    /// Live toasts, oldest first. `ToastStack` shows at most the last three.
+    /// Live toasts, newest first. `ToastStack` shows the first `shown`.
     var toasts: [Toast] = []
 
-    /// Appends a toast with a bouncy entrance and removes it after `seconds`
-    /// with a snappy exit. Each toast schedules its own removal task, so
-    /// overlapping toasts expire independently.
+    /// How many a `ToastStack` keeps on screen: the front one and two
+    /// slivers behind it.
+    static let shown = 3
+
+    /// Puts a toast at the front and lets it expire after `seconds`. The
+    /// arrival and every other toast's step back ride the one spring; the
+    /// expiry is a timer on state, not a step in a choreography, so each
+    /// toast's lifetime is independent of the others.
     func show(_ title: String, _ subtitle: String? = nil, kind: Toast.Kind = .info, seconds: Double = 2.6) {
         let t = Toast(title: title, subtitle: subtitle, kind: kind)
-        withAnimation(Theme.bouncy) { toasts.append(t) }
+        withAnimation(Theme.snappy) { toasts.insert(t, at: 0) }
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(seconds))
-            withAnimation(Theme.snappy) { toasts.removeAll { $0.id == t.id } }
+            dismiss(t.id)
         }
+    }
+
+    /// Removes one toast. The spring carries the rest forward; the leaving
+    /// toast's own exit is set by its transition in `ToastStack`.
+    func dismiss(_ id: Toast.ID) {
+        withAnimation(Theme.snappy) { toasts.removeAll { $0.id == id } }
     }
 }
 
-/// Renders the most recent toasts from a `ToastCenter` as a bottom-anchored
-/// stack. Placed in a `ZStack(alignment: .bottom)` by the screens, padded up
-/// to clear the floating action bar.
+/// Renders a `ToastCenter` as a bottom-anchored stack after Bencho's
+/// "Toast stack": the newest toast in front, the two before it tucked
+/// behind with a sliver of each showing above it, a step smaller each.
+/// Placed in a `ZStack(alignment: .bottom)` by the screens, padded up to
+/// clear the floating action bar.
+///
+/// A toast's place is a fixed transform of how far back it is: `peek`
+/// higher and 5% smaller per step, hanging from its top edge. Arriving,
+/// stepping back, stepping forward when one leaves: all the same move on
+/// `Theme.snappy`. Only the front toast is read; the rest are slivers.
+/// Depth is the stack and a hairline edge, not a shadow. Tap the front one
+/// to dismiss it early.
 struct ToastStack: View {
     let center: ToastCenter
+    /// How much of each tucked toast shows above the one in front.
+    private let peek: CGFloat = 10
+    /// Fixed height so the slivers line up whatever the text.
+    private let height: CGFloat = 56
+
     var body: some View {
-        VStack(spacing: 8) {
-            // Only the last three; enumerated so newer toasts get a higher
-            // zIndex and overlap correctly during transitions.
-            ForEach(Array(center.toasts.suffix(3).enumerated()), id: \.element.id) { i, t in
-                HStack(spacing: 10) {
-                    Image(systemName: icon(t.kind))
-                        .foregroundStyle(color(t.kind))
-                        .font(.system(size: 14, weight: .semibold))
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(t.title).font(Theme.label()).foregroundStyle(Theme.ink)
-                        if let s = t.subtitle { Text(s).font(Theme.meta()).foregroundStyle(Theme.ink3) }
-                    }
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, 14).padding(.vertical, 11)
-                .background(Theme.surface2, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
-                .shadow(color: .black.opacity(0.5), radius: 24, y: 12)
-                // Slide up from the bottom, fade, and grow slightly on entry.
-                .transition(.move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.96)))
-                .zIndex(Double(i))
+        ZStack(alignment: .bottom) {
+            ForEach(Array(center.toasts.prefix(ToastCenter.shown).enumerated()), id: \.element.id) { k, t in
+                row(t, read: k == 0)
+                    .frame(height: height)
+                    .scaleEffect(1 - CGFloat(k) * 0.05, anchor: .top)
+                    .offset(y: -CGFloat(k) * peek)
+                    // Paint order is the place: the front toast is on top at once.
+                    .zIndex(Double(ToastCenter.shown - k))
+                    .transition(.asymmetric(
+                        // A new one rises in from just below the front.
+                        insertion: .offset(y: 24).combined(with: .opacity),
+                        // A dismissed one slides off to the right on the short ease-in.
+                        removal: .offset(x: 60).combined(with: .opacity).animation(Theme.exit)))
+                    .onTapGesture { if k == 0 { center.dismiss(t.id) } }
             }
         }
         // Cap the width so toasts do not stretch edge to edge on iPad/macOS.
         .frame(maxWidth: 360)
         .padding(.horizontal, 16)
+    }
+
+    /// One toast surface. `read` is false for the tucked ones, whose
+    /// content fades out so only the front toast's text is on screen.
+    private func row(_ t: ToastCenter.Toast, read: Bool) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon(t.kind))
+                .foregroundStyle(color(t.kind))
+                .font(.system(size: 14, weight: .semibold))
+            VStack(alignment: .leading, spacing: 1) {
+                Text(t.title).font(Theme.label()).foregroundStyle(Theme.ink).lineLimit(1)
+                if let s = t.subtitle { Text(s).font(Theme.meta()).foregroundStyle(Theme.ink3).lineLimit(1) }
+            }
+            Spacer(minLength: 0)
+        }
+        .opacity(read ? 1 : 0)
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Theme.surface2, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
     }
 
     /// SF Symbol for each toast kind.
@@ -289,9 +326,6 @@ struct StackedCards: View {
     /// step is turned into scale as a 1000pt perspective would.
     private let stepX: CGFloat = 20, stepY: CGFloat = 16, stepZ: CGFloat = 42
     private let cardW: CGFloat = 120, cardH: CGFloat = 150
-    /// Bencho's `cubic-bezier(0.22, 1, 0.36, 1)` over 600ms: a fast start
-    /// that settles without bounce.
-    private let slide = Animation.timingCurve(0.22, 1, 0.36, 1, duration: 0.6)
 
     private func scale(_ k: Int) -> CGFloat { placed ? 1000 / (1000 + CGFloat(k) * stepZ) : 1 }
     /// Offsets are centred on the stack's middle slot so it sits centred.
@@ -324,10 +358,12 @@ struct StackedCards: View {
         .contentShape(Rectangle())
         .onTapGesture {
             Haptic.tap()
-            withAnimation(slide) { cards.append(cards.removeFirst()) }
+            withAnimation(Theme.slide) { cards.append(cards.removeFirst()) }
         }
-        // Short delay so the stack settles into depth after the screen is in.
-        .onAppear { withAnimation(slide.delay(0.15)) { placed = true } }
+        // The stack steps into depth on the same curve a swap uses, as soon
+        // as it is on screen: the empty state has no entrance of its own to
+        // wait for, so a delay here would be a pause before nothing.
+        .onAppear { withAnimation(Theme.slide) { placed = true } }
     }
 
     /// Constant 6 degree vertical skew about the card centre.

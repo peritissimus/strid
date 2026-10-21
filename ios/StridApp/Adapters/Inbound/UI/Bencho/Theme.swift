@@ -5,15 +5,17 @@
 //  Design tokens and reusable styling for the Bencho-flavoured UI (`HomeView`,
 //  `RecordDetailView`, `Components.swift`). Everything visual that is not a
 //  one-off lives here: colours, radii, animation curves, type ramps, the
-//  per-entity tint map, the `.card()` surface modifier, three button styles
-//  and the haptics helper. The app forces dark mode (`HomeView` sets
+//  `.card()` surface modifier, the `.floating()` lift for controls that sit
+//  over scrolling content, three button styles and the haptics helper. The
+//  app forces dark mode (`HomeView` sets
 //  `.preferredColorScheme(.dark)`), so these tokens have a single, dark value.
 //
 
 import SwiftUI
 
 /// Design tokens lifted from the bencho.dev language: pure black canvas, near-black surfaces,
-/// white-at-9% glass, ink in five steps, one cool accent, tight 160 ms transitions.
+/// white-at-9% glass, ink in five steps, one cool accent, and Bencho's own motion
+/// sheet: durations of 160 / 420 / 600 ms on one ease-out curve, plus one spring.
 enum Theme {
     // MARK: Canvas & surfaces
 
@@ -70,15 +72,25 @@ enum Theme {
     static let radiusTile: CGFloat = 12
 
     // MARK: Motion
+    //
+    // Every motion in the app takes exactly one of these. They are Bencho's
+    // tokens: `ease.out = cubic-bezier(0.22, 1, 0.36, 1)` at `duration.fast`
+    // (160), `slow` (420) and `long` (600), the `settle` spring
+    // (stiffness 380, damping 34: a touch under critical, so it lands with a
+    // hint of give and no wobble), and the 220 ms ease-in a leaving toast uses.
+    // Nothing overshoots on purpose; entrances fade and rise once.
 
-    /// 160 ms ease-out: press feedback, side toggles, key reveal.
-    static let quick = Animation.easeOut(duration: 0.16)
-    /// Tight spring: filter changes, list reflow, toast dismissal.
-    static let snappy = Animation.spring(response: 0.32, dampingFraction: 0.82)
-    /// Looser spring with overshoot: toast arrival.
-    static let bouncy = Animation.spring(response: 0.42, dampingFraction: 0.68)
-    /// Slow, heavily damped spring: screen entrance and navigation pushes.
-    static let settle = Animation.spring(response: 0.55, dampingFraction: 0.86)
+    /// 160 ms ease-out: press feedback, side toggles, key reveal, cross-fades.
+    static let quick = Animation.timingCurve(0.22, 1, 0.36, 1, duration: 0.16)
+    /// The one spring: filter changes, list reflow, the segmented thumb, every
+    /// toast heading for its new place.
+    static let snappy = Animation.spring(response: 0.32, dampingFraction: 0.87)
+    /// 420 ms ease-out: a screen's content fading in and rising once.
+    static let settle = Animation.timingCurve(0.22, 1, 0.36, 1, duration: 0.42)
+    /// 600 ms ease-out: a card moving slot in the empty-state stack.
+    static let slide = Animation.timingCurve(0.22, 1, 0.36, 1, duration: 0.6)
+    /// 220 ms ease-in: something leaving (a dismissed toast).
+    static let exit = Animation.timingCurve(0.4, 0, 1, 1, duration: 0.22)
 
     // MARK: Type
     //
@@ -139,6 +151,14 @@ extension View {
     /// Wraps the view in a `CardModifier`. See that type for parameter meaning.
     func card(radius: CGFloat = Theme.radiusCard, fill: Color = Theme.card, padding: CGFloat = 20) -> some View {
         modifier(CardModifier(radius: radius, fill: fill, padding: padding))
+    }
+
+    /// The one shadow in the app, for controls that float over scrolling
+    /// content (the Redact bar, the Share row). Surfaces that sit in the
+    /// layout get a hairline edge instead; Bencho draws no drop shadows on
+    /// the bench, and this is kept soft enough to read as lift, not glow.
+    func floating() -> some View {
+        shadow(color: .black.opacity(0.35), radius: 14, y: 6)
     }
 }
 

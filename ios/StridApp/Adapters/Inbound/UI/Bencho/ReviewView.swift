@@ -57,6 +57,7 @@ struct ReviewView: View {
                 .padding(.top, 18)
             }
             .scrollIndicators(.hidden)
+            BottomScrim()
             actions
         }
         .preferredColorScheme(.dark)
@@ -213,7 +214,7 @@ struct ReviewView: View {
             }
         }
         .buttonStyle(PrimaryPillStyle())
-        .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
+        .floating()
         .padding(.bottom, 18)
         .animation(Theme.snappy, value: redactedCount)
     }
