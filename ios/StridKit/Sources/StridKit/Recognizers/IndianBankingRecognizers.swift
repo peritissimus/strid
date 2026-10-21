@@ -130,7 +130,8 @@ public enum IndianBankingRecognizers {
     /// lifts the score further. A failing checksum drops the match.
     public static let aadhaarVID = RegexRecognizer(
         entityType: .inAadhaar,
-        patterns: [#"\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}\b"#],
+        // Only the printed 4-4-4-4 grouping: an unbroken 16-digit run is a reference or card number.
+        patterns: [#"\b\d{4}[ -]\d{4}[ -]\d{4}[ -]\d{4}\b"#],
         baseScore: 0.3,
         contextWords: ["vid", "virtual id", "virtual identifier", "aadhaar"],
         contextBoost: 0.5,
@@ -322,7 +323,10 @@ public enum IndianBankingRecognizers {
         ],
         baseScore: 0.5,
         contextWords: ["credit card", "card", "visa", "mastercard", "amex", "debit", "pos"],
-        validator: { Checksums.luhn(Checksums.digitsOnly($0)) },
+        // Luhn passes one random 16-digit number in ten, so cheque and transaction references in a
+        // statement column ("0000609490975800") would be labelled cards. No card network issues
+        // numbers starting with 0, 1, 7, 8 or 9 (Amex 3, Visa 4, Mastercard 2/5, RuPay/Discover 6).
+        validator: { let d = Checksums.digitsOnly($0); return "23456".contains(d.first ?? " ") && Checksums.luhn(d) },
         validatedScore: 0.95
     )
 

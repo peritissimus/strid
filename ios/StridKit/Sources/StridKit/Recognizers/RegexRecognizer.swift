@@ -140,7 +140,20 @@ public struct RegexRecognizer: Recognizer {
         let end = min(nsText.length, range.location + range.length + after)
         let windowRange = NSRange(location: start, length: end - start)
         let window = nsText.substring(with: windowRange).lowercased()
-        return words.contains { window.contains($0) }
+        return words.contains { containsWord(window, $0) }
+    }
+
+    /// Whole-word containment: "vid" must not fire on "provided", nor "card" on "cardamom".
+    /// A word is bounded when the characters either side are not letters or digits.
+    static func containsWord(_ haystack: String, _ word: String) -> Bool {
+        var searchRange = haystack.startIndex..<haystack.endIndex
+        while let r = haystack.range(of: word, range: searchRange) {
+            let beforeOK = r.lowerBound == haystack.startIndex || !haystack[haystack.index(before: r.lowerBound)].isAlphanumericASCII
+            let afterOK = r.upperBound == haystack.endIndex || !haystack[r.upperBound].isAlphanumericASCII
+            if beforeOK && afterOK { return true }
+            searchRange = r.upperBound..<haystack.endIndex
+        }
+        return false
     }
 }
 
@@ -173,4 +186,9 @@ public struct CaptureRecognizer: Recognizer {
         return out
     }
 
+}
+
+private extension Character {
+    /// Letters and digits in any script count as word characters; punctuation and whitespace do not.
+    var isAlphanumericASCII: Bool { isLetter || isNumber }
 }

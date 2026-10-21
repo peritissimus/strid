@@ -72,6 +72,20 @@ public struct AddressBlockRecognizer: Recognizer {
     /// Amounts and dates: table cells, never address lines.
     static let amountOrDate = try! NSRegularExpression(pattern: #"^[\d,]+\.\d{2}$|\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}"#)
 
+    /// "KARNATAKA INDIA", "Maharashtra, India", "IN": a trailing line made only of state / country
+    /// names and separators, printed under the PIN line on statements and cards.
+    static func isStateOrCountryLine(_ s: String) -> Bool {
+        var rest = s.lowercased()
+        for name in Self.regionNames { rest = rest.replacingOccurrences(of: name, with: " ") }
+        rest = rest.trimmingCharacters(in: .whitespacesAndNewlines.union(.punctuationCharacters))
+        return rest.isEmpty && !s.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    /// States, union territories and country spellings, longest first so "madhya pradesh" is
+    /// removed before "pradesh" could be. Sourced from the place gazetteer plus country forms.
+    static let regionNames: [String] = (IndianPlaceRecognizer.places.map { $0.lowercased() } + ["india", "bharat", "in"])
+        .sorted { $0.count > $1.count }
+
     /// Document headers that a PIN-anchored block must not climb into.
     static let headerWords = try! NSRegularExpression(
         pattern: #"(?i)\b(?:authority|government|govt|bank|limited|ltd|statement|invoice|receipt|tax|gst|understand|welcome)\b"#
@@ -142,6 +156,7 @@ public struct AddressBlockRecognizer: Recognizer {
                 if Self.hasPin(trimmed) { closedByPin = true }
                 j += 1
             }
+            j = Self.absorbRegionLine(after: j, lines: lines, taken: &taken, block: &block)
             Self.emit(block, in: text, into: &out)
             i = max(j, i + 1)
         }
@@ -166,6 +181,7 @@ public struct AddressBlockRecognizer: Recognizer {
             // Without a PIN line this is just a name followed by prose; leave it alone.
             guard closed else { continue }
             for k in (i + 1)...j { taken[k] = true }
+            j = Self.absorbRegionLine(after: j + 1, lines: lines, taken: &taken, block: &block) - 1
             Self.emit(block, in: text, into: &out)
             i = j
         }
@@ -188,9 +204,20 @@ public struct AddressBlockRecognizer: Recognizer {
             // more than the PIN; a bare state + PIN line with nothing above is left to the PIN recognizer.
             guard back > 0 || pinText.contains(",") else { continue }
             for k in start...p { taken[k] = true }
-            Self.emit(Array(lines[start...p]), in: text, into: &out)
+            var block = Array(lines[start...p])
+            _ = Self.absorbRegionLine(after: p + 1, lines: lines, taken: &taken, block: &block)
+            Self.emit(block, in: text, into: &out)
         }
         return out
+    }
+
+    /// If `lines[index]` is a free state/country line, appends it to `block`, marks it taken and
+    /// returns the index after it; otherwise returns `index` unchanged.
+    static func absorbRegionLine(after index: Int, lines: [Line], taken: inout [Bool], block: inout [Line]) -> Int {
+        guard index < lines.count, !taken[index], !block.isEmpty, isStateOrCountryLine(lines[index].trimmed) else { return index }
+        block.append(lines[index])
+        taken[index] = true
+        return index + 1
     }
 
     // MARK: - Helpers

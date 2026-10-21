@@ -75,8 +75,66 @@ public final class StridEngine: Sendable {
             filtered.append(contentsOf: policy.termEntities(in: text))
             filtered = policy.filter(filtered, in: text)
         }
-        // Stages 4 + 5.
-        return extendAcrossWraps(deduplicateOverlaps(splitContainers(filtered, in: text)), in: text)
+        // Stages 4 + 5, then field-label relabelling. A label never moves a finding into a type the
+        // policy disabled ("Ref 5254123456" found as an account number stays one when references
+        // are switched off), so the finding is still redacted under its original type.
+        return relabelByFieldLabel(extendAcrossWraps(deduplicateOverlaps(splitContainers(filtered, in: text)), in: text), in: text, enabled: policy.enabledTypes)
+    }
+
+    // MARK: - Field labels
+
+    /// Numbers are ambiguous on their own: a 10-digit value after "Phone no. :" is a phone number
+    /// even when "Cust ID" sits on the next line and a 9-digit value after "MICR :" is a MICR code
+    /// even though it also looks like an account number. Context windows cannot settle this
+    /// because several labels fall inside one window. The label printed on the same line, directly
+    /// before the value, is authoritative, so each numeric or code-like entity preceded by a known
+    /// label is reported under that label's type. Redaction is unaffected; only the type changes.
+    private static let fieldLabels: [(NSRegularExpression, PIIEntityType)] = [
+        (#"(?:phone|mobile|mob|tel|telephone|contact)(?:\s*(?:no|number|#))?\.?"#, .phone),
+        (#"(?:cust(?:omer)?\s*(?:id|no|number)|cif(?:\s*(?:id|no))?|client\s*id)\.?"#, .inCustomerID),
+        (#"micr(?:\s*(?:code|no))?\.?"#, .inMICR),
+        (#"(?:rtgs/neft\s+)?ifsc(?:\s*code)?\.?"#, .inIFSC),
+        (#"(?:a/c|account|acct)\s*(?:no|number|#)\.?"#, .inBankAccount),
+        (#"pan(?:\s*(?:no|number))?\.?"#, .inPAN),
+        (#"(?:aadhaar|aadhar|uid|uidai)(?:\s*(?:no|number))?\.?"#, .inAadhaar),
+        (#"gstin|gst\s*(?:no|number|registration\s*no)\.?"#, .inGSTIN),
+        (#"(?:pin|pincode|pin\s*code|postal\s*code)\.?"#, .inPINCode),
+        (#"(?:dob|date\s+of\s+birth|birth\s+date)\.?"#, .inDOB),
+        (#"(?:branch\s*code|br\.?\s*code)\.?"#, .inBranchCode),
+        (#"(?:ref(?:erence)?(?:\s*(?:no|number|id))?|utr(?:\s*no)?|rrn|txn\s*(?:id|no|ref)|transaction\s*(?:id|no|ref(?:erence)?)|chq\.?/ref\.?\s*no\.?|cheque\s*(?:no|number))\.?"#, .inTxnRef),
+    ].compactMap { pattern, type in
+        // Anchored at the end: the label must be the last thing before the separator and the value.
+        (try? NSRegularExpression(pattern: #"(?i)(?:^|[\s(|:])"# + pattern + #"\s*[:\-–]?\s*$"#)).map { ($0, type) }
+    }
+
+    /// Types whose values are plain numbers or codes and may be re-typed by a field label.
+    private static let relabelable: Set<PIIEntityType> = [
+        .phone, .inPhone, .inCustomerID, .inMICR, .inBankAccount, .inTxnRef, .inPINCode, .inBranchCode,
+        .inAadhaar, .inPAN, .inIFSC, .inGSTIN, .creditCard, .orderID, .location,
+    ]
+
+    private func relabelByFieldLabel(_ entities: [PIIEntity], in text: String, enabled: Set<PIIEntityType>?) -> [PIIEntity] {
+        entities.map { e in
+            guard Self.relabelable.contains(e.type) else { return e }
+            // Text from the start of the entity's line up to the entity, at most 40 characters.
+            var lineStart = e.range.lowerBound
+            var steps = 0
+            while lineStart > text.startIndex, steps < 40 {
+                let p = text.index(before: lineStart)
+                if text[p] == "\n" { break }
+                lineStart = p
+                steps += 1
+            }
+            let prefix = String(text[lineStart..<e.range.lowerBound])
+            guard !prefix.isEmpty else { return e }
+            let ns = prefix as NSString
+            for (regex, type) in Self.fieldLabels where type != e.type && (enabled?.contains(type) ?? true) {
+                if regex.firstMatch(in: prefix, range: NSRange(location: 0, length: ns.length)) != nil {
+                    return PIIEntity(type: type, text: e.text, range: e.range, score: e.score)
+                }
+            }
+            return e
+        }
     }
 
     // MARK: - Container splitting
@@ -87,10 +145,17 @@ public final class StridEngine: Sendable {
     /// Instead, every address is cut around the entities it overlaps; the remaining fragments
     /// (trimmed of whitespace, newlines and separators) go forward as addresses in their own right.
     private func splitContainers(_ entities: [PIIEntity], in text: String) -> [PIIEntity] {
-        let others = entities.filter { $0.type != .address }
+        let addresses = entities.filter { $0.type == .address }
+        // Place and organisation names inside an address ("Varthur Road", "Prestige Lakeside
+        // Habitat") are part of the address, not separate findings: they are swallowed so the
+        // address stays in one piece. Everything else (the addressee, a PIN code, a phone) cuts it.
+        let others = entities.filter { e in
+            e.type != .address && !((e.type == .location || e.type == .organization)
+                && addresses.contains { $0.range.lowerBound <= e.range.lowerBound && e.range.upperBound <= $0.range.upperBound })
+        }
         var out = others
         let trim = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ",;:-–"))
-        for address in entities where address.type == .address {
+        for address in addresses {
             let cuts = others.filter { $0.range.overlaps(address.range) }.sorted { $0.range.lowerBound < $1.range.lowerBound }
             var cursor = address.range.lowerBound
             var pieces: [Range<String.Index>] = []
@@ -103,8 +168,10 @@ public final class StridEngine: Sendable {
                 var lo = piece.lowerBound, hi = piece.upperBound
                 while lo < hi, text[lo].unicodeScalars.allSatisfy(trim.contains) { lo = text.index(after: lo) }
                 while hi > lo, text[text.index(before: hi)].unicodeScalars.allSatisfy(trim.contains) { hi = text.index(before: hi) }
-                // A fragment must still say something: three or more letters or digits ("C/O" alone is not an address).
-                guard text[lo..<hi].filter({ $0.isLetter || $0.isNumber }).count >= 3 else { continue }
+                // A fragment must still say something ("A3" is a flat number; a bare "C/O" is not an address).
+                let fragment = text[lo..<hi]
+                guard fragment.filter({ $0.isLetter || $0.isNumber }).count >= 2,
+                      fragment.range(of: #"^[CSDWH]/[Oo]\.?$"#, options: .regularExpression) == nil else { continue }
                 out.append(PIIEntity(type: .address, text: String(text[lo..<hi]), range: lo..<hi, score: address.score))
             }
         }
@@ -218,9 +285,12 @@ public final class StridEngine: Sendable {
     /// Rejects anything over 16 characters, anything containing `/` (dates), and plain words.
     private static func plausibleWrapFragment(_ s: Substring) -> Bool {
         guard !s.isEmpty, s.count <= 16, !s.contains("/") else { return false }
+        // "70.00" at the end of the previous line is an amount in the next column, not a wrapped head.
+        if s.contains("."), s.allSatisfy({ $0.isNumber || $0 == "." }) { return false }
         let digits = s.filter(\.isNumber).count
-        // Pure digits of any length, or short mixed fragments; never a plain word.
-        return digits == s.count || (digits > 0 && s.count <= 8) || (s.count <= 4 && s.allSatisfy { $0.isUppercase || $0.isNumber })
+        // Pure digits of any length, or short mixed fragments; never a plain word, and never a
+        // bare label such as "MICR" or "UPI" that happens to start the next line.
+        return digits == s.count || (digits > 0 && s.count <= 8)
     }
 
     // MARK: - Redaction
