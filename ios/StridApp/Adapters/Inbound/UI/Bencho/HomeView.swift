@@ -259,7 +259,6 @@ struct HomeView: View {
                 .foregroundStyle(.black)
                 .padding(.horizontal, 22).padding(.vertical, 14)
                 .background(Color.white, in: Capsule())
-                .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
             }
             // `.button` menu style lets the custom label act as the trigger.
             .menuStyle(.button)
@@ -272,10 +271,11 @@ struct HomeView: View {
                     .frame(width: 48, height: 48)
                     .background(Theme.surface2, in: Circle())
                     .overlay(Circle().strokeBorder(Theme.edge, lineWidth: 0.5))
-                    .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
             }
             .buttonStyle(PressableStyle())
         }
+        // The one shadow: these sit over the scrolling list.
+        .floating()
         .padding(.bottom, 18)
     }
 }
