@@ -39,7 +39,7 @@ public struct ImageDocumentHandler: DocumentHandler {
         else { throw DocumentRedactionError.unreadable(input) }
 
         var map: TokenMap? = options.reversible ? TokenMap() : nil
-        let (redacted, entities) = try Self.redact(image: image, engine: engine, tokens: &map)
+        let (redacted, entities) = try Self.redact(image: image, engine: engine, policy: options.policy, tokens: &map)
 
         // Preserve the input container type (JPEG stays JPEG, HEIC stays HEIC).
         let type = (CGImageSourceGetType(source) as String?).flatMap(UTType.init) ?? .png
@@ -71,9 +71,9 @@ public struct ImageDocumentHandler: DocumentHandler {
     ///   - tokens: `nil` for irreversible; otherwise the running token map, updated in place so
     ///     that tokens stay consistent across all pages of a PDF.
     /// - Returns: The redacted bitmap and the entities that were boxed.
-    static func redact(image: CGImage, engine: StridEngine, tokens: inout TokenMap?) throws -> (CGImage, [PIIEntity]) {
+    static func redact(image: CGImage, engine: StridEngine, policy: RedactionPolicy = .default, tokens: inout TokenMap?) throws -> (CGImage, [PIIEntity]) {
         let page = try OCR.recognise(image)
-        var entities = engine.detect(in: page.text)
+        var entities = engine.detect(in: page.text, policy: policy)
         let size = CGSize(width: image.width, height: image.height)
         var boxes: [Box] = []
         for e in entities {
@@ -83,7 +83,7 @@ public struct ImageDocumentHandler: DocumentHandler {
         // Second pass in layout-aware order (see `Layout`). Only findings whose boxes are not
         // already painted are added, so the two passes never double-count one span.
         if let alt = page.reflowed {
-            for e in engine.detect(in: alt.text) {
+            for e in engine.detect(in: alt.text, policy: policy) {
                 let fresh = alt.rects(for: e, imageSize: size).filter { r in
                     !boxes.contains { b in
                         let i = b.rect.intersection(r)

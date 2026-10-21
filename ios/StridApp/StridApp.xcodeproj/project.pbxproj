@@ -15,12 +15,14 @@
 		0A8D0C6E40F2BFDDD4E24140 /* RedactPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */; };
 		0B251786C7AF1CF10088FC0F /* EmptyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A9854D56454A1789867BE2 /* EmptyDetailView.swift */; };
 		0B3142724F33EC098A590CE1 /* DetectedPII.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F871F41F057A6CA08C387 /* DetectedPII.swift */; };
+		0BB3227C6931C344A5F3216C /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396D48D90350779B30DB7908 /* ProfileStore.swift */; };
 		0CBFCBFE3670C6007F2E8BCD /* RedactedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849665227BA5D186EB01069B /* RedactedTextView.swift */; };
 		0CD8A0EC4DF36C518FAA38B1 /* FileRedactionRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F430895200437478AC9FFB69 /* FileRedactionRecordRepository.swift */; };
 		0D630FEA3D17FC7002221A51 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC56D3809E05B3B6CD0E7A /* Components.swift */; };
 		0D862275017D7FE5A5D3F9BE /* DocumentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */; };
 		0F5E56CA65466F140D15C6C3 /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = 44FAB6B4C7A8B02387BF4DCD /* StridKit */; };
 		12B4F6F31C5BEFCC3439FBAC /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE357F7B49ED5E7D57CE05EA /* HomeViewModel.swift */; };
+		1616BBC56C63629001B27564 /* RedactionProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F2813550F42FBA263671DB /* RedactionProfile.swift */; };
 		17BB0B726280CEFA3B44464B /* DocumentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932DA0519D54423144747AA9 /* DocumentViewModel.swift */; };
 		195A3F6305621AB471DE1F29 /* StridAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BCE0A2AB9D701C4E1CF87D /* StridAppTests.swift */; };
 		1EE0796C834FAF24E3FBAF36 /* ScanningProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF436044B099FC5A3E99C603 /* ScanningProgressView.swift */; };
@@ -37,6 +39,7 @@
 		2EE4479FF8DE1653BE8984FC /* RedactionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703B5F8838EBF259B64EE4D8 /* RedactionRecord.swift */; };
 		317A0966B116C7298FBEA20B /* ScannedDocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D98C67AC3F022E02886B0BF /* ScannedDocumentRepositoryPort.swift */; };
 		32042645D11F2D105C0A00D3 /* TestFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2CC434EF96CEFF7684D01B /* TestFactories.swift */; };
+		36408864A95874E7933E34BE /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE4951781F740CDA26E357B /* ProfileView.swift */; };
 		37E3F4E690027968C40B8569 /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE0A1583FF662913F6C140 /* ColorPalette.swift */; };
 		38C94739E30DFC6F7B7441BC /* ExportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */; };
 		3B6ACAF89F403180F8DD40EF /* DocumentSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98370C6C168A23BFD86F4FC5 /* DocumentSidebarRow.swift */; };
@@ -47,10 +50,12 @@
 		4B2A1FD988E9B299C9ED6A45 /* StridApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D843A7179201530FACD17E /* StridApp.swift */; };
 		4BA4B6222CFA1EB1BC9C29CB /* DetectPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */; };
 		4D676F9D6C2AC350F13E4854 /* HighlightedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189EF48B19B3840429A1D742 /* HighlightedTextView.swift */; };
+		4E48E93DBB55689A27BB19DA /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0110272BD411EA30183A9191 /* ReviewView.swift */; };
 		50FE92778506933145E1B788 /* SaveScannedDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ED6DAEEEA2F9426D9760BF /* SaveScannedDocumentUseCase.swift */; };
 		543A0D31446908002A394A4B /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D32D4A31CA2753501F2325E /* DIContainer.swift */; };
 		5A73D85199F98E8B5D1BEF46 /* MockDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CEFBB0CD9FAF0539F3795E /* MockDependencies.swift */; };
 		5D0BCC3D95E1EE8717F8EBE9 /* GetRedactionHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */; };
+		5DFA993563F528AA6AA0CE43 /* PreviewFindingsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3D60FE957691B34DB43672 /* PreviewFindingsUseCase.swift */; };
 		634BD70F4EDE8B317383F469 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A31C07B3FFC669DE8BF0D5C /* Assets.xcassets */; };
 		638E4F9F1CF49FCCE6C2A78D /* StridDocuments in Frameworks */ = {isa = PBXBuildFile; productRef = 35C625F9797D346FC06AC1B8 /* StridDocuments */; };
 		668971FD0F8EDB8E78681159 /* ImportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */; };
@@ -59,9 +64,11 @@
 		71CB8694E7849D69A1AEE8C1 /* DocumentListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B7F6BBAB7057F4EC3EABCC /* DocumentListViewModelTests.swift */; };
 		75223E54388F8A02D296C92D /* ExportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */; };
 		76D0FD38ACCA2E6253E3F6F0 /* StridApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D843A7179201530FACD17E /* StridApp.swift */; };
+		770E91203AA5AF52EAC04322 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE4951781F740CDA26E357B /* ProfileView.swift */; };
 		78683EA8641D36D23DEDD440 /* DocumentSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C7D02322F1B4C5CF6FD6C /* DocumentSidebarView.swift */; };
 		786E0645F9BC3FD8474AA2DE /* MockDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5478C245A1A611B8DF8FF26 /* MockDIContainer.swift */; };
 		78D2815B41F7E5BC78DAECCB /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD548F5E59501E838557823 /* ViewExtensions.swift */; };
+		7A73534CB701D92413821F71 /* RedactionProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F2813550F42FBA263671DB /* RedactionProfile.swift */; };
 		7AA60E7A3F33A89679C64B51 /* FileRedactionRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F430895200437478AC9FFB69 /* FileRedactionRecordRepository.swift */; };
 		7AD09A88121C7ABCD9253245 /* DocumentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE36BAADAA05890CD6A0876 /* DocumentPreview.swift */; };
 		7AF1883466E1BE438B975E9A /* StridDocuments in Frameworks */ = {isa = PBXBuildFile; productRef = F7534A3F8B3F9ABF8DE261C8 /* StridDocuments */; };
@@ -83,6 +90,7 @@
 		97D6533BB73CF59E9F734402 /* GetRedactionHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */; };
 		9844B74E1A038D4470CACD19 /* InMemoryScannedDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DD8C91F30E3F968958D44C /* InMemoryScannedDocumentRepository.swift */; };
 		99EFE95B6E2AFB96FC905C73 /* RedactedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849665227BA5D186EB01069B /* RedactedTextView.swift */; };
+		9B43968B34E93612C90223EE /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396D48D90350779B30DB7908 /* ProfileStore.swift */; };
 		9D3233233D5A27D9D5E76C3A /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC56D3809E05B3B6CD0E7A /* Components.swift */; };
 		9EA763A6E7F4E26149131806 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5421C787EA5BAB3A91C16A /* DocumentScannerView.swift */; };
 		A0AFD4ED821E7B61B2BEB1DB /* RedactionRecordRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB10E8B2A6F085B2DB86A080 /* RedactionRecordRepositoryPort.swift */; };
@@ -127,6 +135,7 @@
 		EDC1C396EE5172C782D98A94 /* DocumentListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B59EEA3089B4E7512176FE /* DocumentListViewModel.swift */; };
 		EEAB7DDEFDA18FB1E14110A7 /* ScanningProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF436044B099FC5A3E99C603 /* ScanningProgressView.swift */; };
 		F450F92882539D239E77B113 /* DocumentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */; };
+		F5765F785CFFC812D7971BF5 /* PreviewFindingsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3D60FE957691B34DB43672 /* PreviewFindingsUseCase.swift */; };
 		F649D3F49F3B2293F2C8E515 /* OriginalTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF774A7D1E6C807926E9883 /* OriginalTextView.swift */; };
 		F6F1AFAE736CD9AA94D80F0E /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97406A85B5E80E2B261830 /* Document.swift */; };
 		F89504A3BFC9E5C1581F264C /* StridKitPIIDetectorAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914352EDBACD3534E1C9260D /* StridKitPIIDetectorAdapter.swift */; };
@@ -134,6 +143,7 @@
 		FD5926DD9DF587930BF0F878 /* DetectedPII.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F871F41F057A6CA08C387 /* DetectedPII.swift */; };
 		FD80DE7107D1822B7DBB63BD /* DeleteScannedDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB54678122D05C913F1C9BB /* DeleteScannedDocumentUseCase.swift */; };
 		FE723326180DBBE2844F4317 /* RedactedDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */; };
+		FF47BB91A806DC3EC7015069 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0110272BD411EA30183A9191 /* ReviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,6 +164,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0110272BD411EA30183A9191 /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
 		04B59EEA3089B4E7512176FE /* DocumentListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentListViewModel.swift; sourceTree = "<group>"; };
 		08B7F6BBAB7057F4EC3EABCC /* DocumentListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentListViewModelTests.swift; sourceTree = "<group>"; };
 		0EACE3DAFF00C6DBB63CB9A3 /* NoSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSelectionView.swift; sourceTree = "<group>"; };
@@ -164,10 +175,12 @@
 		1DE36BAADAA05890CD6A0876 /* DocumentPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPreview.swift; sourceTree = "<group>"; };
 		1EBC56D3809E05B3B6CD0E7A /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		1EFCBD4A6CE60B12B91A76CC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		23F2813550F42FBA263671DB /* RedactionProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionProfile.swift; sourceTree = "<group>"; };
 		36A9854D56454A1789867BE2 /* EmptyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDetailView.swift; sourceTree = "<group>"; };
 		37FA446D8CF64719FDD06555 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		38FD04F5FE1EC4FE6200099B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3948185080937E9FD65BE816 /* StridAppMacTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridAppMacTests.swift; sourceTree = "<group>"; };
+		396D48D90350779B30DB7908 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		3B13BD92139A58776F0994BF /* SamplePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePickerSheet.swift; sourceTree = "<group>"; };
 		3CF774A7D1E6C807926E9883 /* OriginalTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginalTextView.swift; sourceTree = "<group>"; };
 		3D32D4A31CA2753501F2325E /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
@@ -187,9 +200,11 @@
 		726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordRedactionUseCase.swift; sourceTree = "<group>"; };
 		72E949ED5A04798986608D05 /* PlatformHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformHelpers.swift; sourceTree = "<group>"; };
 		787C7D02322F1B4C5CF6FD6C /* DocumentSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSidebarView.swift; sourceTree = "<group>"; };
+		7CE4951781F740CDA26E357B /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		849665227BA5D186EB01069B /* RedactedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactedTextView.swift; sourceTree = "<group>"; };
 		84BCE0A2AB9D701C4E1CF87D /* StridAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridAppTests.swift; sourceTree = "<group>"; };
 		855B63E6B3EB4C87348CCE24 /* AppNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationState.swift; sourceTree = "<group>"; };
+		8A3D60FE957691B34DB43672 /* PreviewFindingsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewFindingsUseCase.swift; sourceTree = "<group>"; };
 		914352EDBACD3534E1C9260D /* StridKitPIIDetectorAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridKitPIIDetectorAdapter.swift; sourceTree = "<group>"; };
 		92B33D9553B0C4165115EFF2 /* RecordDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordDetailView.swift; sourceTree = "<group>"; };
 		932DA0519D54423144747AA9 /* DocumentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewModel.swift; sourceTree = "<group>"; };
@@ -329,6 +344,7 @@
 				CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */,
 				FD2C08412102DD79EF97CCFC /* InMemoryRedactionHistoryRepository.swift */,
 				64DD8C91F30E3F968958D44C /* InMemoryScannedDocumentRepository.swift */,
+				396D48D90350779B30DB7908 /* ProfileStore.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -491,7 +507,9 @@
 				5B5421C787EA5BAB3A91C16A /* DocumentScannerView.swift */,
 				1EFCBD4A6CE60B12B91A76CC /* HomeView.swift */,
 				AE357F7B49ED5E7D57CE05EA /* HomeViewModel.swift */,
+				7CE4951781F740CDA26E357B /* ProfileView.swift */,
 				92B33D9553B0C4165115EFF2 /* RecordDetailView.swift */,
+				0110272BD411EA30183A9191 /* ReviewView.swift */,
 				C083342D6214E255BED9FDD9 /* Theme.swift */,
 			);
 			path = Bencho;
@@ -514,6 +532,7 @@
 				B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */,
 				710D15B3053F79C5AEFD858E /* GetScannedDocumentsUseCase.swift */,
 				691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */,
+				8A3D60FE957691B34DB43672 /* PreviewFindingsUseCase.swift */,
 				726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */,
 				60151FCA27155B1B57E4C93D /* RedactFileUseCase.swift */,
 				54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */,
@@ -529,6 +548,7 @@
 				3F97406A85B5E80E2B261830 /* Document.swift */,
 				C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */,
 				A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */,
+				23F2813550F42FBA263671DB /* RedactionProfile.swift */,
 				703B5F8838EBF259B64EE4D8 /* RedactionRecord.swift */,
 				1C408BF14B7AC561B6EA713F /* SampleDocument.swift */,
 				BC39531746A1048E247437B7 /* ScannedDocument.swift */,
@@ -741,6 +761,9 @@
 				F649D3F49F3B2293F2C8E515 /* OriginalTextView.swift in Sources */,
 				2E04A1755388E1E43EE081DD /* PIIDetectorPort.swift in Sources */,
 				1FD2690C2AD54386FA8E217B /* PlatformHelpers.swift in Sources */,
+				5DFA993563F528AA6AA0CE43 /* PreviewFindingsUseCase.swift in Sources */,
+				9B43968B34E93612C90223EE /* ProfileStore.swift in Sources */,
+				36408864A95874E7933E34BE /* ProfileView.swift in Sources */,
 				2668AA4412A97F8876806E60 /* RecordDetailView.swift in Sources */,
 				07F7DA8CCF657D6E89F4813C /* RecordRedactionUseCase.swift in Sources */,
 				6CC121739DB0F24F199494A4 /* RedactFileUseCase.swift in Sources */,
@@ -749,8 +772,10 @@
 				99EFE95B6E2AFB96FC905C73 /* RedactedTextView.swift in Sources */,
 				E2BC73E23EEB3C10D6080EB7 /* RedactionHistoryEntry.swift in Sources */,
 				2B422A6F20965139F60B7993 /* RedactionHistoryRepositoryPort.swift in Sources */,
+				1616BBC56C63629001B27564 /* RedactionProfile.swift in Sources */,
 				2EE4479FF8DE1653BE8984FC /* RedactionRecord.swift in Sources */,
 				A0AFD4ED821E7B61B2BEB1DB /* RedactionRecordRepositoryPort.swift in Sources */,
+				4E48E93DBB55689A27BB19DA /* ReviewView.swift in Sources */,
 				D1D0F4EA34138B3DBDAFE2F4 /* SampleDocument.swift in Sources */,
 				C5AB7FAD7B15FB9514B59906 /* SamplePickerSheet.swift in Sources */,
 				B68598B2C76421835879E1BA /* SaveScannedDocumentUseCase.swift in Sources */,
@@ -816,6 +841,9 @@
 				8600909B24BB8EFA188CC01A /* OriginalTextView.swift in Sources */,
 				209938231DC7E5B334883DE3 /* PIIDetectorPort.swift in Sources */,
 				D15AE31DB32C2A0495118B22 /* PlatformHelpers.swift in Sources */,
+				F5765F785CFFC812D7971BF5 /* PreviewFindingsUseCase.swift in Sources */,
+				0BB3227C6931C344A5F3216C /* ProfileStore.swift in Sources */,
+				770E91203AA5AF52EAC04322 /* ProfileView.swift in Sources */,
 				CBF3787673D490C3B4E948C3 /* RecordDetailView.swift in Sources */,
 				7E899B5BC4ABB7C313747BF4 /* RecordRedactionUseCase.swift in Sources */,
 				B9A8DA60E7C5CB8B6E3745CC /* RedactFileUseCase.swift in Sources */,
@@ -824,8 +852,10 @@
 				0CBFCBFE3670C6007F2E8BCD /* RedactedTextView.swift in Sources */,
 				960889564DC347D4EFA10565 /* RedactionHistoryEntry.swift in Sources */,
 				CF146C781EE7951E56D2F96E /* RedactionHistoryRepositoryPort.swift in Sources */,
+				7A73534CB701D92413821F71 /* RedactionProfile.swift in Sources */,
 				BEC0AACCDC36012E837C07C5 /* RedactionRecord.swift in Sources */,
 				ADE1048C2FB4BD3C81164E73 /* RedactionRecordRepositoryPort.swift in Sources */,
+				FF47BB91A806DC3EC7015069 /* ReviewView.swift in Sources */,
 				CFB8346CF0F6230044799D33 /* SampleDocument.swift in Sources */,
 				857518B7C17471C92EF349CF /* SamplePickerSheet.swift in Sources */,
 				50FE92778506933145E1B788 /* SaveScannedDocumentUseCase.swift in Sources */,

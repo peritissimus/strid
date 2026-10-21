@@ -29,7 +29,7 @@ public struct TextDocumentHandler: DocumentHandler {
         guard let text = try? String(contentsOf: input, encoding: .utf8) else {
             throw DocumentRedactionError.unreadable(input)
         }
-        let entities = engine.detect(in: text)
+        let entities = engine.detect(in: text, policy: options.policy)
         var report = RedactionReport(pages: 1, entities: entities)
         let redacted: String
         if options.reversible {

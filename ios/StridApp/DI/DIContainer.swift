@@ -112,6 +112,10 @@ final class DIContainer {
     /// for `HomeViewModel`.
     private lazy var redactFileUseCase = RedactFileUseCaseImpl(repository: recordRepository)
 
+    /// The user's standing redaction rules, loaded once and shared.
+    @MainActor
+    private lazy var profileStore = ProfileStore()
+
     // MARK: - View Model Factories
 
     /// Builds the view model for the file-redaction home screen.
@@ -120,7 +124,8 @@ final class DIContainer {
     /// created and mutated on the main thread.
     @MainActor
     func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel(redactUseCase: redactFileUseCase, restoreUseCase: redactFileUseCase, repository: recordRepository)
+        HomeViewModel(redactUseCase: redactFileUseCase, previewUseCase: redactFileUseCase, restoreUseCase: redactFileUseCase,
+                      repository: recordRepository, profiles: profileStore)
     }
 
     // ViewModels

@@ -82,12 +82,31 @@ final class HomeViewModel {
     /// Presents the "PDF is locked" alert in `HomeView`.
     var showingPasswordPrompt = false
 
+    /// Findings awaiting the user's review before the final redaction.
+    /// Non-nil presents `ReviewView`.
+    var review: ReviewState?
+
+    /// Presents the "Your data" profile sheet.
+    var showProfile = false
+
+    /// A job paused at the review step: the request (now pointing at the
+    /// temp copy made during preview) and what was found in it.
+    struct ReviewState: Identifiable {
+        let id = UUID()
+        var request: RedactRequest
+        var findings: [Finding]
+    }
+
+    /// The user's standing rules: terms, categories, whether to review.
+    let profiles: ProfileStore
+
     /// Transient toasts (success, error, info). Shared with `RecordDetailView`
     /// so both screens render the same queue.
     let toasts = ToastCenter()
 
     /// Runs a redaction job end to end.
     private let redactUseCase: RedactFileUseCase
+    private let previewUseCase: PreviewFindingsUseCase
     /// Rebuilds an original from a redacted file + vault + key.
     private let restoreUseCase: RestoreFileUseCase
     /// Lists and deletes stored records.
@@ -95,8 +114,11 @@ final class HomeViewModel {
 
     /// Dependency-injected initialiser. In production the same object
     /// implements both use-case protocols (see `DIContainer`).
-    init(redactUseCase: RedactFileUseCase, restoreUseCase: RestoreFileUseCase, repository: RedactionRecordRepositoryPort) {
+    init(redactUseCase: RedactFileUseCase, previewUseCase: PreviewFindingsUseCase, restoreUseCase: RestoreFileUseCase,
+         repository: RedactionRecordRepositoryPort, profiles: ProfileStore) {
         self.redactUseCase = redactUseCase
+        self.previewUseCase = previewUseCase
+        self.profiles = profiles
         self.restoreUseCase = restoreUseCase
         self.repository = repository
     }
@@ -138,11 +160,87 @@ final class HomeViewModel {
         let scoped = url.startAccessingSecurityScopedResource()
         let req = RedactRequest(sourceURL: url, displayName: name ?? url.deletingPathExtension().lastPathComponent,
                                 password: password, reversible: reversible,
-                                vaultKey: reversible ? Vault.generatePassphrase() : nil)
+                                vaultKey: reversible ? Vault.generatePassphrase() : nil,
+                                policy: profiles.profile.policy())
         Task {
             defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-            await run(req)
+            await start(req)
         }
+    }
+
+    /// Routes a request to the review step or straight to redaction,
+    /// according to the profile.
+    private func start(_ request: RedactRequest) async {
+        if profiles.profile.reviewBeforeRedacting {
+            await preview(request)
+        } else {
+            await run(request)
+        }
+    }
+
+    /// Detect-only pass feeding the review sheet.
+    ///
+    /// The preview ignores the profile's category choices (every type is
+    /// detected) so the sheet can offer them back; the profile's terms and
+    /// kept phrases still apply. Password errors reuse the same prompt as a
+    /// full run, and `submitPassword` re-enters through `start`.
+    private func preview(_ request: RedactRequest) async {
+        phase = .working("Reading")
+        var wide = request
+        wide.policy.enabledTypes = nil
+        do {
+            let p = try await previewUseCase.execute(wide) { [weak self] stage in
+                Task { @MainActor in self?.phase = .working(stage) }
+            }
+            phase = .idle
+            var req = request
+            req.sourceURL = p.sourceCopy
+            Haptic.tap()
+            review = ReviewState(request: req, findings: p.findings)
+        } catch RedactFileError.passwordRequired {
+            phase = .idle
+            pendingPasswordRequest = request
+            passwordInput = ""
+            showingPasswordPrompt = true
+        } catch RedactFileError.wrongPassword {
+            phase = .idle
+            Haptic.error()
+            pendingPasswordRequest = request
+            passwordInput = ""
+            showingPasswordPrompt = true
+            toasts.show("Wrong password", "Try again.", kind: .error)
+        } catch {
+            phase = .idle
+            Haptic.error()
+            toasts.show("Couldn't read the file", error.localizedDescription, kind: .error, seconds: 4)
+        }
+    }
+
+    /// Runs the reviewed job with the sheet's choices folded into the policy.
+    ///
+    /// - Parameters:
+    ///   - disabled: Types the user switched off in the sheet. This is the
+    ///     whole truth for types, replacing the profile's sensitivity.
+    ///   - excluded: Normalised values unticked individually.
+    func confirmReview(disabled: Set<PIIEntityType>, excluded: Set<String>) {
+        guard let rv = review else { return }
+        review = nil
+        var req = rv.request
+        var policy = profiles.profile.policy(excluding: excluded)
+        policy.enabledTypes = disabled.isEmpty ? nil : Set(PIIEntityType.allCases).subtracting(disabled)
+        req.policy = policy
+        let copy = req.sourceURL
+        Task {
+            await run(req)
+            try? FileManager.default.removeItem(at: copy)
+        }
+    }
+
+    /// Abandons a reviewed job and removes the temp copy of the original.
+    func cancelReview() {
+        guard let rv = review else { return }
+        review = nil
+        try? FileManager.default.removeItem(at: rv.request.sourceURL)
     }
 
     /// Clipboard intake: writes the text to a temp `.txt` and reuses the URL
@@ -212,7 +310,7 @@ final class HomeViewModel {
         let scoped = url.startAccessingSecurityScopedResource()
         Task {
             defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-            await run(req)
+            await start(req)
         }
     }
 

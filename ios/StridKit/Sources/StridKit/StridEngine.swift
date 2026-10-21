@@ -47,6 +47,18 @@ public final class StridEngine: Sendable {
     /// - Parameter text: Text to scan. Returned ranges index into this string.
     /// - Returns: Non-overlapping entities sorted by position, each at or above the threshold.
     public func detect(in text: String) -> [PIIEntity] {
+        detect(in: text, policy: .default)
+    }
+
+    /// Detect PII in `text` under `policy`.
+    ///
+    /// The policy's always-redact terms are added after the false-positive
+    /// filters (so a bank name the user wants gone is not rescued by the
+    /// public-organisation list) at score 1, which makes them win every
+    /// overlap. Disabled types, kept literals and unticked values are dropped
+    /// before overlap resolution, so a suppressed finding never shadows a
+    /// smaller one it contained.
+    public func detect(in text: String, policy: RedactionPolicy) -> [PIIEntity] {
         var allEntities: [PIIEntity] = []
 
         // Stage 1: gather every candidate from every recognizer.
@@ -56,8 +68,12 @@ public final class StridEngine: Sendable {
         }
 
         // Stages 2 + 3: filter by threshold, deduplicate overlapping ranges (keep highest score)
-        let filtered = EntityFilters.apply(allEntities).filter { entity in
+        var filtered = EntityFilters.apply(allEntities).filter { entity in
             entity.score >= threshold && (allowedTypes?.contains(entity.type) ?? true)
+        }
+        if !policy.isDefault {
+            filtered.append(contentsOf: policy.termEntities(in: text))
+            filtered = policy.filter(filtered, in: text)
         }
         // Stages 4 + 5.
         return extendAcrossWraps(deduplicateOverlaps(splitContainers(filtered, in: text)), in: text)
@@ -217,8 +233,8 @@ public final class StridEngine: Sendable {
     ///   - text: Text to redact.
     ///   - style: Replacement rendering; defaults to `<TYPE>` placeholders.
     /// - Returns: The redacted text.
-    public func redact(_ text: String, style: RedactionStyle = .placeholder) -> String {
-        let entities = detect(in: text)
+    public func redact(_ text: String, style: RedactionStyle = .placeholder, policy: RedactionPolicy = .default) -> String {
+        let entities = detect(in: text, policy: policy)
         return Redactor.redact(text, entities: entities, style: style)
     }
 

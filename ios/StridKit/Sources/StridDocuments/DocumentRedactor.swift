@@ -59,6 +59,9 @@ public struct DocumentOptions: Sendable {
     /// Reversible mode: stable tokens instead of placeholders, token labels on boxes, and an encrypted
     /// vault sidecar (`<output>.strid`) sealed with `vaultKey`.
     public var vaultKey: String?
+    /// Per-run rules: enabled types, always-redact and keep-visible terms,
+    /// and values unticked in a review step. Defaults to no restrictions.
+    public var policy: RedactionPolicy = .default
     /// `true` when a vault key is present; handlers branch on this rather than on the key itself.
     public var reversible: Bool { vaultKey != nil }
 
@@ -67,11 +70,13 @@ public struct DocumentOptions: Sendable {
     ///   - keepEncryption: Re-encrypt the output PDF with the same password.
     ///   - ocrFallback: Allow OCR for pages with unusable text layers.
     ///   - vaultKey: Passphrase for the vault; non-nil turns on reversible mode.
-    public init(password: String? = nil, keepEncryption: Bool = false, ocrFallback: Bool = true, vaultKey: String? = nil) {
+    public init(password: String? = nil, keepEncryption: Bool = false, ocrFallback: Bool = true, vaultKey: String? = nil,
+                policy: RedactionPolicy = .default) {
         self.password = password
         self.keepEncryption = keepEncryption
         self.ocrFallback = ocrFallback
         self.vaultKey = vaultKey
+        self.policy = policy
     }
 }
 

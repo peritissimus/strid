@@ -98,6 +98,15 @@ struct HomeView: View {
             .ignoresSafeArea()
         }
         #endif
+        // Profile and review sheets. The review sheet cannot be swiped away
+        // without a decision because a temp copy of the original is waiting.
+        .sheet(isPresented: $vm.showProfile) { ProfileView(store: vm.profiles) }
+        .sheet(item: $vm.review) { rv in
+            ReviewView(state: rv, profile: vm.profiles.profile,
+                       onConfirm: { d, x in vm.confirmReview(disabled: d, excluded: x) },
+                       onCancel: { vm.cancelReview() })
+            .interactiveDismissDisabled()
+        }
         // Password prompt for encrypted PDFs. Cancel drops the pending request.
         .alert("PDF is locked", isPresented: $vm.showingPasswordPrompt) {
             SecureField("Password", text: $vm.passwordInput)
@@ -162,7 +171,25 @@ struct HomeView: View {
             Text("Strid").font(Theme.display(34)).tracking(-0.7).foregroundStyle(Theme.ink)
             Spacer()
             reversibleToggle
+            profileButton
         }
+    }
+
+    /// Round button opening the "Your data" sheet. The symbol fills once the
+    /// profile holds any terms, as a hint that rules are in force.
+    private var profileButton: some View {
+        Button {
+            Haptic.tap()
+            vm.showProfile = true
+        } label: {
+            Image(systemName: vm.profiles.profile.alwaysRedact.isEmpty ? "person.crop.circle" : "person.crop.circle.fill")
+                .font(.system(size: 17, weight: .medium))
+                .foregroundStyle(Theme.ink)
+                .frame(width: 36, height: 36)
+                .background(Theme.card, in: Circle())
+        }
+        .buttonStyle(PressableStyle())
+        .accessibilityLabel("Your data")
     }
 
     /// Glass pill that flips `vm.reversible`. Filled key = reversible (a

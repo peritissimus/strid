@@ -77,6 +77,9 @@ struct RedactRequest {
     /// Key used to encrypt the vault. Only consulted when `reversible` is
     /// `true`.
     var vaultKey: String?
+
+    /// Which findings to redact: the profile's rules, narrowed by review.
+    var policy: RedactionPolicy = .default
 }
 
 // MARK: - Use Case Protocols
@@ -118,7 +121,7 @@ final class RedactFileUseCaseImpl: RedactFileUseCase, RestoreFileUseCase {
     /// The StridKit detection engine shared across jobs. Constructing an
     /// engine loads recognizer tables, so it is created once per use case
     /// rather than once per job.
-    private let engine: StridEngine
+    let engine: StridEngine
 
     /// - Parameters:
     ///   - repository: Injected by `DIContainer`.
@@ -153,7 +156,7 @@ final class RedactFileUseCaseImpl: RedactFileUseCase, RestoreFileUseCase {
         // The vault key is only forwarded when the user asked for a
         // reversible job, so an irreversible job never writes a vault.
         let options = DocumentOptions(password: request.password, keepEncryption: false, ocrFallback: true,
-                                      vaultKey: request.reversible ? request.vaultKey : nil)
+                                      vaultKey: request.reversible ? request.vaultKey : nil, policy: request.policy)
         let engine = self.engine
         let result: (url: URL, report: RedactionReport)
         do {

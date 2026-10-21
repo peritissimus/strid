@@ -46,7 +46,7 @@ public struct AttributedDocumentHandler: DocumentHandler {
         }
 
         let text = attributed.string
-        let entities = engine.detect(in: text)
+        let entities = engine.detect(in: text, policy: options.policy)
         var map = TokenMap()
         // Replace from the back so earlier ranges stay valid.
         for e in entities.sorted(by: { $0.range.lowerBound > $1.range.lowerBound }) {

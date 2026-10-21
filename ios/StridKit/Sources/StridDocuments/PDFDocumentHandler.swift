@@ -162,7 +162,7 @@ public struct PDFDocumentHandler: DocumentHandler {
                 && (!options.ocrFallback || Self.textLayerLooksUsable(text))
 
             if useText {
-                let entities = engine.detect(in: text)
+                let entities = engine.detect(in: text, policy: options.policy)
                 let ns = text as NSString
                 var boxes: [Box] = []
                 for e in entities {
@@ -191,7 +191,7 @@ public struct PDFDocumentHandler: DocumentHandler {
                 pageImages.append((Raster.blackout(raster, boxes: boxes, padding: 1.5 * scale), box))
             } else {
                 ocrPages += 1
-                let (img, entities) = try ImageDocumentHandler.redact(image: raster, engine: engine, tokens: &tokens)
+                let (img, entities) = try ImageDocumentHandler.redact(image: raster, engine: engine, policy: options.policy, tokens: &tokens)
                 all += entities
                 pageImages.append((img, box))
             }
