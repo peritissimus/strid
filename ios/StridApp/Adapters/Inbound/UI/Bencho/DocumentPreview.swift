@@ -42,7 +42,7 @@ struct TextFileView: View {
     @State private var text = ""
     var body: some View {
         ScrollView {
-            Text(text).font(Theme.mono(12)).foregroundStyle(Theme.ink2)
+            Text(text).font(Theme.mono()).foregroundStyle(Theme.ink2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 // Extra top padding clears the REDACTED/ORIGINAL badge that
                 // RecordDetailView overlays in the top-left corner.

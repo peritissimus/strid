@@ -81,17 +81,27 @@ enum Theme {
     static let settle = Animation.spring(response: 0.55, dampingFraction: 0.86)
 
     // MARK: Type
+    //
+    // Six roles, after Bencho: two weights (regular, medium), sizes that
+    // cluster at 13-17 with one display step above, and hierarchy carried
+    // by ink level and weight more than by size. Monospace is for the
+    // vault key and text previews only, never for product chrome.
 
-    /// Hero numerals and the app wordmark. Medium weight, tracked tight by callers.
+    /// Hero numerals and the app wordmark. Callers track at -2%.
     static func display(_ size: CGFloat = 34) -> Font { .system(size: size, weight: .medium, design: .default) }
-    /// Card and row titles.
-    static func title(_ size: CGFloat = 20) -> Font { .system(size: size, weight: .medium) }
-    /// Body and caption copy.
-    static func body(_ size: CGFloat = 15) -> Font { .system(size: size, weight: .regular) }
-    /// Button and pill labels.
-    static func label(_ size: CGFloat = 13) -> Font { .system(size: size, weight: .medium) }
-    /// Monospaced: counts, badges, section labels, vault key, text previews.
-    static func mono(_ size: CGFloat = 12) -> Font { .system(size: size, weight: .medium, design: .monospaced) }
+    /// Card, row and screen titles. Callers track at -1%.
+    static func title() -> Font { .system(size: 17, weight: .medium) }
+    /// Body copy. Pair with `.lineSpacing(4)` when it wraps.
+    static func body() -> Font { .system(size: 15, weight: .regular) }
+    /// Button, pill, chip and count labels. 15 for the primary action,
+    /// 12 for tiny tags; 14 otherwise.
+    static func label(_ size: CGFloat = 14) -> Font { .system(size: size, weight: .medium) }
+    /// Captions and file facts: times, kinds, helper lines.
+    static func meta() -> Font { .system(size: 13, weight: .regular) }
+    /// Uppercase section eyebrows. Callers add `.tracking(0.66)`.
+    static func eyebrow() -> Font { .system(size: 11, weight: .regular) }
+    /// Monospaced: the vault key and text-file previews.
+    static func mono() -> Font { .system(size: 13, weight: .medium, design: .monospaced) }
 }
 
 extension Color {
@@ -176,7 +186,7 @@ struct GlassPillStyle: ButtonStyle {
     var active = false
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(Theme.label(14))
+            .font(Theme.label())
             .foregroundStyle(active ? Theme.ink : Theme.ink2)
             .padding(.horizontal, 14).padding(.vertical, 9)
             .background(active ? Theme.cardHi : Theme.card, in: Capsule())

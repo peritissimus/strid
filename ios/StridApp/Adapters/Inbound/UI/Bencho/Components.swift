@@ -39,7 +39,7 @@ struct SegmentedPill<T: Hashable>: View {
                     withAnimation(Theme.snappy) { selection = value }
                 } label: {
                     Text(label)
-                        .font(Theme.label(13))
+                        .font(Theme.label())
                         .lineLimit(1).fixedSize()
                         // Black on the white thumb, muted ink elsewhere.
                         .foregroundStyle(selection == value ? .black : Theme.ink3)
@@ -71,9 +71,9 @@ struct EntityChip: View {
     let count: Int
     var body: some View {
         HStack(spacing: 7) {
-            Text(type.displayName).font(Theme.label(13)).foregroundStyle(Theme.ink2)
+            Text(type.displayName).font(Theme.label()).foregroundStyle(Theme.ink2)
             Text("\(count)")
-                .font(Theme.mono(12)).foregroundStyle(Theme.ink)
+                .font(Theme.label()).foregroundStyle(Theme.ink)
                 // Digits roll rather than cross-fade if the count changes.
                 .contentTransition(.numericText())
                 .padding(.horizontal, 6).padding(.vertical, 2)
@@ -231,8 +231,8 @@ struct ToastStack: View {
                         .foregroundStyle(color(t.kind))
                         .font(.system(size: 14, weight: .semibold))
                     VStack(alignment: .leading, spacing: 1) {
-                        Text(t.title).font(Theme.label(13)).foregroundStyle(Theme.ink)
-                        if let s = t.subtitle { Text(s).font(Theme.body(12)).foregroundStyle(Theme.ink3) }
+                        Text(t.title).font(Theme.label()).foregroundStyle(Theme.ink)
+                        if let s = t.subtitle { Text(s).font(Theme.meta()).foregroundStyle(Theme.ink3) }
                     }
                     Spacer(minLength: 0)
                 }
@@ -346,7 +346,7 @@ struct SectionLabel: View {
     let text: String
     var body: some View {
         Text(text.uppercased())
-            .font(Theme.mono(11)).tracking(0.8)
+            .font(Theme.eyebrow()).tracking(0.66)
             .foregroundStyle(Theme.ink4)
     }
 }
@@ -358,7 +358,7 @@ struct Badge: View {
     var tint: Color = Theme.ink3
     var body: some View {
         Text(text)
-            .font(Theme.mono(11))
+            .font(Theme.label(12))
             .foregroundStyle(tint)
             .lineLimit(1).fixedSize()
             .padding(.horizontal, 8).padding(.vertical, 4)

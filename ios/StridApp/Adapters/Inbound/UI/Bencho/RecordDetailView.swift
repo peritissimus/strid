@@ -114,7 +114,7 @@ struct RecordDetailView: View {
                     .foregroundStyle(Theme.ink).frame(width: 40, height: 40)
                     .background(Theme.card, in: Circle())
             }.buttonStyle(PressableStyle())
-            Text(record.name).font(Theme.title(17)).foregroundStyle(Theme.ink)
+            Text(record.name).font(Theme.title()).tracking(-0.2).foregroundStyle(Theme.ink)
                 .lineLimit(1).truncationMode(.middle)
                 .frame(maxWidth: .infinity, alignment: .leading)
             SegmentedPill(options: [(Side.redacted, "Redacted"), (Side.original, "Original")], selection: $side)
@@ -149,18 +149,18 @@ struct RecordDetailView: View {
     private var summary: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("\(record.total)").font(Theme.display(40)).tracking(-1).foregroundStyle(Theme.ink)
+                Text("\(record.total)").font(Theme.display(40)).tracking(-0.8).foregroundStyle(Theme.ink)
                     .contentTransition(.numericText())
-                Text("items redacted").font(Theme.body(14)).foregroundStyle(Theme.ink3)
+                Text("items redacted").font(Theme.body()).foregroundStyle(Theme.ink3)
                 Spacer()
             }
             // File facts live here rather than in the header so the title
             // and the side toggle have the full width. "PDF · 3 pages · 12 Mar 14:05"
             Text("\(record.kindLabel) · \(record.pages) page\(record.pages == 1 ? "" : "s") · \(record.createdAt, format: .dateTime.day().month().hour().minute())")
-                .font(Theme.mono(12)).foregroundStyle(Theme.ink4)
+                .font(Theme.meta()).foregroundStyle(Theme.ink4)
             if record.total == 0 {
                 Text("Nothing personal found. The file was copied through unchanged.")
-                    .font(Theme.body(13)).foregroundStyle(Theme.ink3)
+                    .font(Theme.body()).lineSpacing(4).foregroundStyle(Theme.ink3)
             } else {
                 FlowLayout(spacing: 8) {
                     ForEach(record.sortedCounts, id: \.type) { c in EntityChip(type: c.type, count: c.count) }
@@ -187,7 +187,7 @@ struct RecordDetailView: View {
                 HStack(spacing: 10) {
                     // 22 dots approximates the passphrase length without leaking it.
                     Text(keyRevealed ? key : String(repeating: "•", count: 22))
-                        .font(Theme.mono(13)).foregroundStyle(Theme.ink)
+                        .font(Theme.mono()).foregroundStyle(Theme.ink)
                         .lineLimit(1).truncationMode(.middle)
                         .contentTransition(.opacity)
                     Spacer()
@@ -202,10 +202,10 @@ struct RecordDetailView: View {
                         .buttonStyle(GlassPillStyle())
                 }
                 Text("Shown once. Anyone with this key and the .strid vault can rebuild the original.")
-                    .font(Theme.body(12)).foregroundStyle(Theme.ink4)
+                    .font(Theme.meta()).foregroundStyle(Theme.ink4)
             } else {
                 Text("The key was shown when this file was redacted. Strid does not keep it.")
-                    .font(Theme.body(13)).foregroundStyle(Theme.ink3)
+                    .font(Theme.body()).lineSpacing(4).foregroundStyle(Theme.ink3)
             }
             HStack(spacing: 8) {
                 Button { showRestore = true } label: { Label("Restore original", systemImage: "arrow.uturn.backward") }
@@ -232,7 +232,7 @@ struct RecordDetailView: View {
                 HStack(alignment: .top, spacing: 8) {
                     // 4pt bullet nudged down to the first line's x-height.
                     Circle().fill(Theme.ink4).frame(width: 4, height: 4).padding(.top, 7)
-                    Text(w).font(Theme.body(13)).foregroundStyle(Theme.ink3)
+                    Text(w).font(Theme.body()).lineSpacing(4).foregroundStyle(Theme.ink3)
                 }
             }
         }

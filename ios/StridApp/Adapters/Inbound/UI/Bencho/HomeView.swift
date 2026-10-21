@@ -159,7 +159,7 @@ struct HomeView: View {
     /// Wordmark and reversible toggle.
     private var header: some View {
         HStack {
-            Text("Strid").font(Theme.display(34)).tracking(-0.8).foregroundStyle(Theme.ink)
+            Text("Strid").font(Theme.display(34)).tracking(-0.7).foregroundStyle(Theme.ink)
             Spacer()
             reversibleToggle
         }
@@ -177,7 +177,7 @@ struct HomeView: View {
                 Image(systemName: vm.reversible ? "key.fill" : "key")
                     .font(.system(size: 11, weight: .semibold))
                     .contentTransition(.symbolEffect(.replace))
-                Text(vm.reversible ? "Reversible" : "Permanent").font(Theme.label(12))
+                Text(vm.reversible ? "Reversible" : "Permanent").font(Theme.label())
             }
         }
         .buttonStyle(GlassPillStyle(active: vm.reversible))
@@ -259,7 +259,7 @@ struct RecordCard: View {
             Thumb(record: record)
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
-                    Text(record.name).font(Theme.title(16)).foregroundStyle(Theme.ink)
+                    Text(record.name).font(Theme.title()).tracking(-0.2).foregroundStyle(Theme.ink)
                         .lineLimit(1).truncationMode(.middle)
                     if record.reversible { Image(systemName: "key.fill").font(.system(size: 10, weight: .bold)).foregroundStyle(Theme.ink4) }
                 }
@@ -268,7 +268,7 @@ struct RecordCard: View {
                     // Zero items is good news, so it gets the green tint.
                     Badge(text: "\(record.total) items", tint: record.total == 0 ? Theme.ok : Theme.ink2)
                     Text(record.createdAt, format: .relative(presentation: .named))
-                        .font(Theme.body(12)).foregroundStyle(Theme.ink5).lineLimit(1)
+                        .font(Theme.meta()).foregroundStyle(Theme.ink5).lineLimit(1)
                 }
                 dots
             }
@@ -314,9 +314,9 @@ struct EmptyState: View {
         VStack(spacing: 22) {
             StackedCards().frame(height: 190)
             VStack(spacing: 6) {
-                Text("Nothing redacted yet").font(Theme.title(18)).foregroundStyle(Theme.ink)
+                Text("Nothing redacted yet").font(Theme.title()).tracking(-0.2).foregroundStyle(Theme.ink)
                 Text("Bank statements, Aadhaar, PAN, salary slips.\nPDF in, PDF out. Nothing leaves this device.")
-                    .font(Theme.body(14)).foregroundStyle(Theme.ink3)
+                    .font(Theme.body()).lineSpacing(4).foregroundStyle(Theme.ink3)
                     .multilineTextAlignment(.center)
             }
         }
@@ -342,11 +342,11 @@ struct ProcessingOverlay: View {
             VStack(spacing: 18) {
                 SweepMeter()
                 Text(stage)
-                    .font(Theme.label(14)).foregroundStyle(Theme.ink)
+                    .font(Theme.label()).foregroundStyle(Theme.ink)
                     // Stage names change in place with a rolling transition.
                     .contentTransition(.numericText())
                     .animation(Theme.snappy, value: stage)
-                Text("On device. Nothing is uploaded.").font(Theme.body(12)).foregroundStyle(Theme.ink4)
+                Text("On device. Nothing is uploaded.").font(Theme.meta()).foregroundStyle(Theme.ink4)
             }
             .padding(.horizontal, 32).padding(.vertical, 28)
             .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous))
