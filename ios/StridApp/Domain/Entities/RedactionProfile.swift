@@ -60,7 +60,7 @@ struct RedactionProfile: Codable, Equatable {
     /// Types that identify the user rather than a counterparty or a record.
     static let personalTypes: Set<PIIEntityType> = [
         .person, .inDOB, .inAadhaar, .inPAN, .address, .location, .inPINCode, .phone, .inPhone, .email,
-        .inBankAccount, .inCustomerID, .inUPIID, .creditCard, .barcode,
+        .inBankAccount, .inCustomerID, .inUPIID, .creditCard, .barcode, .inIFSC, .inMICR, .inBranchCode,
     ]
 
     /// Types the current sensitivity reports. `nil` means all.
@@ -122,9 +122,11 @@ enum PIICategory: String, CaseIterable, Identifiable {
         switch self {
         case .identity: [.person, .inDOB, .inAadhaar, .inPAN, .barcode]
         case .contact: [.address, .location, .inPINCode, .phone, .inPhone, .email]
-        case .banking: [.inBankAccount, .inCustomerID, .inUPIID, .creditCard]
+        // Branch codes are part of the account's identity (IFSC, MICR and branch code are printed
+        // beside the account number and name the branch), so they redact with it.
+        case .banking: [.inBankAccount, .inCustomerID, .inUPIID, .creditCard, .inIFSC, .inMICR, .inBranchCode]
         case .counterparty: [.organization, .url, .inGSTIN, .ipAddress]
-        case .references: [.inTxnRef, .orderID, .inIFSC, .inMICR, .inBranchCode]
+        case .references: [.inTxnRef, .orderID]
         }
     }
 
