@@ -51,6 +51,7 @@
 		543A0D31446908002A394A4B /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D32D4A31CA2753501F2325E /* DIContainer.swift */; };
 		5A73D85199F98E8B5D1BEF46 /* MockDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CEFBB0CD9FAF0539F3795E /* MockDependencies.swift */; };
 		5D0BCC3D95E1EE8717F8EBE9 /* GetRedactionHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */; };
+		634BD70F4EDE8B317383F469 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A31C07B3FFC669DE8BF0D5C /* Assets.xcassets */; };
 		638E4F9F1CF49FCCE6C2A78D /* StridDocuments in Frameworks */ = {isa = PBXBuildFile; productRef = 35C625F9797D346FC06AC1B8 /* StridDocuments */; };
 		668971FD0F8EDB8E78681159 /* ImportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */; };
 		6CC121739DB0F24F199494A4 /* RedactFileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60151FCA27155B1B57E4C93D /* RedactFileUseCase.swift */; };
@@ -71,6 +72,7 @@
 		857518B7C17471C92EF349CF /* SamplePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B13BD92139A58776F0994BF /* SamplePickerSheet.swift */; };
 		8600909B24BB8EFA188CC01A /* OriginalTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF774A7D1E6C807926E9883 /* OriginalTextView.swift */; };
 		8AC475EB3A85FE4644B5841D /* StridKitPIIDetectorAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914352EDBACD3534E1C9260D /* StridKitPIIDetectorAdapter.swift */; };
+		8BC54CDB9809BAE16C4B5239 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A31C07B3FFC669DE8BF0D5C /* Assets.xcassets */; };
 		8DEBBBDB3873E09DB492B64D /* DocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */; };
 		9078AAAB4C1A149B208BDEB6 /* ScannedDocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D98C67AC3F022E02886B0BF /* ScannedDocumentRepositoryPort.swift */; };
 		9333A307D8E53A7478F25BB6 /* ScannedDocumentResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 716560599D66EACAE7B1C26A /* ScannedDocumentResultsView.swift */; };
@@ -194,6 +196,7 @@
 		9419DB484EA07D0431B618FE /* DocumentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentDetailView.swift; sourceTree = "<group>"; };
 		97D843A7179201530FACD17E /* StridApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridApp.swift; sourceTree = "<group>"; };
 		98370C6C168A23BFD86F4FC5 /* DocumentSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSidebarRow.swift; sourceTree = "<group>"; };
+		9A31C07B3FFC669DE8BF0D5C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionHistoryEntry.swift; sourceTree = "<group>"; };
 		AAE26C28DE276383659A141A /* StridKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StridKit; path = ../StridKit; sourceTree = SOURCE_ROOT; };
 		AE357F7B49ED5E7D57CE05EA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -467,6 +470,7 @@
 		E9FC8B533A35A38B08507C5E /* StridApp */ = {
 			isa = PBXGroup;
 			children = (
+				9A31C07B3FFC669DE8BF0D5C /* Assets.xcassets */,
 				38FD04F5FE1EC4FE6200099B /* ContentView.swift */,
 				D6EDCF1D8FCD70A95CBFAAEF /* Info.plist */,
 				97D843A7179201530FACD17E /* StridApp.swift */,
@@ -549,6 +553,7 @@
 			buildConfigurationList = 68250AFDB1D9C270EAD0FF04 /* Build configuration list for PBXNativeTarget "StridApp_macOS" */;
 			buildPhases = (
 				35794A9B6BE9C5F739B6D9BB /* Sources */,
+				7F21150FA8AA6902B8B6EEED /* Resources */,
 				44534399A6B988F71E3FAC5F /* Frameworks */,
 			);
 			buildRules = (
@@ -610,6 +615,7 @@
 			buildConfigurationList = 766DB707AFEACF6D932564D3 /* Build configuration list for PBXNativeTarget "StridApp_iOS" */;
 			buildPhases = (
 				0A820E87893622E8D21E540B /* Sources */,
+				671465DCCD88C2866084C750 /* Resources */,
 				871C7F7B8FF67035704D8DB5 /* Frameworks */,
 			);
 			buildRules = (
@@ -670,6 +676,22 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		671465DCCD88C2866084C750 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BC54CDB9809BAE16C4B5239 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F21150FA8AA6902B8B6EEED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				634BD70F4EDE8B317383F469 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC9CC56718A5AA724AF9A89 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -866,6 +888,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphonesimulator*]" = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
@@ -889,6 +913,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphonesimulator*]" = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
@@ -913,6 +939,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphonesimulator*]" = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1112,6 +1140,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphonesimulator*]" = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
