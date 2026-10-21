@@ -208,7 +208,7 @@ final class ToastCenter {
     /// overlapping toasts expire independently.
     func show(_ title: String, _ subtitle: String? = nil, kind: Toast.Kind = .info, seconds: Double = 2.6) {
         let t = Toast(title: title, subtitle: subtitle, kind: kind)
-        withAnimation(Theme.bouncy) { toasts.append(t) }
+        withAnimation(Theme.snappy) { toasts.append(t) }
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(seconds))
             withAnimation(Theme.snappy) { toasts.removeAll { $0.id == t.id } }
