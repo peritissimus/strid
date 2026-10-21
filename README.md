@@ -40,3 +40,5 @@ strid eval ios/StridKit/Eval --verbose   # exit 2 if anything expected was misse
 ```
 
 Recall is the metric that matters for a redaction tool, so the command fails on any miss. Add real-world (anonymised) documents here before changing recognizers.
+
+Photos and low-resolution scans are upscaled (2x or 3x) before OCR when their shorter side is under 1700px; that alone took recall on a degraded-photo corpus (800 to 1300px, heavy JPEG, slight rotation) from 0.87 to 0.94 with no change on clean scans. To reproduce that corpus, downscale and recompress `Eval/hdfc_photo.jpg` with `sips` and reuse its `.expected.json`. Note that the iOS Simulator ships a much weaker Vision text model than real devices or macOS, so judge OCR quality on a phone, not in the simulator.

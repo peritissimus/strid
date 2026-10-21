@@ -56,6 +56,6 @@ let package = Package(
             ]
         ),
         // Unit tests cover the detection layer only (recognizers, engine, tokenizer, vault).
-        .testTarget(name: "StridKitTests", dependencies: ["StridKit"]),
+        .testTarget(name: "StridKitTests", dependencies: ["StridKit", "StridDocuments"]),
     ]
 )
