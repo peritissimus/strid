@@ -227,6 +227,12 @@ struct AddressBlockTests {
         #expect(addr.contains { $0.contains("रमेश") && $0.contains("कोथरूड") })
         #expect(!addr.contains { $0.contains("Authority") })
     }
+    @Test func pageNumberAfterFooterLabelIsNotAnAddress() {
+        // A footer label at the end of one page followed by the next page's header.
+        let text = "Registered Office Address:\n\u{0C}Page No .: 2\nHDFC BANK\nWe understand your world"
+        let addr = texts(text, .address)
+        #expect(!addr.contains { $0.contains("Page") })
+    }
     @Test func addressIsSplitAroundNameNotDropped() {
         let text = "Shipping Address :\nFlat 7B, Prestige Lakeside Habitat, Varthur Road\nBENGALURU, KARNATAKA, 560087"
         let joined = engine.detect(in: text).map(\.text).joined(separator: "|")

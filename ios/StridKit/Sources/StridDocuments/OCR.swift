@@ -148,6 +148,9 @@ enum OCR {
                 (try? candidate.boundingBox(for: range))?.boundingBox
             }))
         }
+        // STRID_OCR_LAYOUT=blocks makes the layout order the primary (and only) text, which is how
+        // `strid text` can show what the second pass sees.
+        if Layout.blocksOnly { return assemble(Layout.reflow(raws)) }
         var page = assemble(raws)
         if Layout.enabled, raws.count > 1 {
             page.reflowed = assemble(Layout.reflow(raws))
@@ -333,6 +336,8 @@ enum Layout {
 
     /// Set `STRID_OCR_LAYOUT=lines` to fall back to plain top-to-bottom order (for A/B evaluation).
     static let enabled = ProcessInfo.processInfo.environment["STRID_OCR_LAYOUT"] != "lines"
+    /// Set `STRID_OCR_LAYOUT=blocks` to use the layout order alone (debugging the second pass).
+    static let blocksOnly = ProcessInfo.processInfo.environment["STRID_OCR_LAYOUT"] == "blocks"
 
     static func reflow(_ raws: [Raw]) -> [Raw] {
         orderBlocks(mergeRows(raws))

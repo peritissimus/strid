@@ -241,8 +241,20 @@ public struct AddressBlockRecognizer: Recognizer {
         return lines
     }
 
-    /// Emits one ADDRESS entity spanning `block` (first line start to last line end).
+    /// Page furniture that is never part of an address, whatever label precedes it on the page
+    /// before: "Page No .: 1", "Page 2 of 12", "Sheet 1".
+    static let pageFurniture = try! NSRegularExpression(pattern: #"(?i)^[ \t]*(?:page|sheet|pg)\b[ \t.:]*(?:no\b[ \t.:]*)?\d*"#)
+
+    /// Emits one ADDRESS entity spanning `block` (first line start to last line end), after
+    /// dropping page furniture from either end of the block.
     static func emit(_ block: [Line], in text: String, into out: inout [PIIEntity]) {
+        var block = block
+        func isFurniture(_ l: Line) -> Bool {
+            let t = l.trimmed
+            return pageFurniture.firstMatch(in: t, range: NSRange(location: 0, length: (t as NSString).length)) != nil
+        }
+        while let f = block.first, isFurniture(f) { block.removeFirst() }
+        while let l = block.last, isFurniture(l) { block.removeLast() }
         guard let first = block.first, let last = block.last else { return }
         let span = NSRange(location: first.range.location, length: NSMaxRange(last.range) - first.range.location)
         guard let sr = Range(span, in: text) else { return }
