@@ -239,7 +239,24 @@ struct RecordDetailView: View {
         .card(padding: 16)
     }
 
-    /// Floating bottom row: primary "Share redacted" pill and a round delete button.
+    /// Copies the redacted file to the pasteboard and opens the assistant,
+    /// or its website when the app is not installed, with a toast saying
+    /// what to do next.
+    private func handOff(to a: Assistant) {
+        Haptic.tap()
+        guard PasteboardHelper.set(fileAt: record.outputURL, kind: record.kind) else {
+            vm.toasts.show("Couldn't copy the file", "Try sharing it instead.", kind: .error)
+            return
+        }
+        // Toast first and a little longer than usual: the app switch happens
+        // right after, so a toast shown on completion would play while the
+        // other app is in front and be gone by the time the user comes back.
+        vm.toasts.show("Copied for \(a.name)", "Paste it into the chat.", kind: .success, seconds: 5)
+        AppOpener.open(a.appURL, fallback: a.webURL)
+    }
+
+    /// Floating bottom row: primary "Share redacted" pill, two round
+    /// assistant hand-off buttons, and a round delete button.
     private var actions: some View {
         HStack(spacing: 10) {
             Button { Haptic.tap(); shareURL = record.outputURL } label: {
@@ -247,6 +264,9 @@ struct RecordDetailView: View {
             }
             .buttonStyle(PrimaryPillStyle())
             .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
+            ForEach(Assistant.allCases) { a in
+                AssistantButton(assistant: a) { handOff(to: a) }
+            }
             Button { confirmDelete = true } label: {
                 Image(systemName: "trash").font(.system(size: 15, weight: .medium)).foregroundStyle(Theme.ink)
                     .frame(width: 46, height: 46)

@@ -8,10 +8,12 @@
 //  `#if os(...)` so callers stay platform-agnostic.
 //
 //  Used by: `EmptyDetailView`, `DocumentSidebarView` and `HomeView` (paste
-//  intake), `RecordDetailView` (copy vault key, share redacted file).
+//  intake), `RecordDetailView` (copy vault key, share redacted file, hand
+//  the redacted file to Claude or ChatGPT).
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 #if os(iOS)
 import UIKit
@@ -36,6 +38,34 @@ struct PasteboardHelper {
         #endif
     }
 
+    /// Replaces the pasteboard with the file at `url`, typed by `kind`, so
+    /// it pastes as content (an image, a PDF, text) rather than as a path.
+    /// Returns `false` if the file could not be read.
+    @discardableResult
+    static func set(fileAt url: URL, kind: RedactionRecord.Kind) -> Bool {
+        guard let data = try? Data(contentsOf: url) else { return false }
+        #if os(iOS)
+        let pb = UIPasteboard.general
+        switch kind {
+        case .image:
+            guard let image = UIImage(data: data) else { return false }
+            pb.image = image
+        case .text:
+            pb.string = String(decoding: data, as: UTF8.self)
+        case .pdf:
+            pb.setData(data, forPasteboardType: UTType.pdf.identifier)
+        case .docx:
+            let type = UTType(filenameExtension: "docx")?.identifier ?? "org.openxmlformats.wordprocessingml.document"
+            pb.setData(data, forPasteboardType: type)
+        }
+        return true
+        #elseif os(macOS)
+        let pb = NSPasteboard.general
+        pb.clearContents()
+        return pb.writeObjects([url as NSURL])
+        #endif
+    }
+
     /// The current plain-text pasteboard contents, or `nil` if there is none.
     /// Callers treat an empty string as "nothing to paste".
     static func getString() -> String? {
@@ -43,6 +73,23 @@ struct PasteboardHelper {
         return UIPasteboard.general.string
         #elseif os(macOS)
         return NSPasteboard.general.string(forType: .string)
+        #endif
+    }
+}
+
+// MARK: - Opening another app
+
+/// Opens another app by URL scheme, falling back to its web address when
+/// the app is not installed. The completion reports which one opened.
+enum AppOpener {
+    static func open(_ app: URL, fallback web: URL, completion: @escaping (Bool) -> Void = { _ in }) {
+        #if os(iOS)
+        UIApplication.shared.open(app) { ok in
+            if ok { completion(true); return }
+            UIApplication.shared.open(web) { _ in completion(false) }
+        }
+        #elseif os(macOS)
+        if NSWorkspace.shared.open(app) { completion(true) } else { NSWorkspace.shared.open(web); completion(false) }
         #endif
     }
 }

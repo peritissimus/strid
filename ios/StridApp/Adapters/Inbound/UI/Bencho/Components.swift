@@ -338,6 +338,52 @@ struct StackedCards: View {
     }
 }
 
+// MARK: - Hand-off to an assistant
+
+/// A chat app the redacted file can be handed to. Neither app documents a
+/// "send a file" link, so the hand-off copies the file to the pasteboard,
+/// opens the app by scheme (its website if it is not installed) and asks
+/// the user to paste.
+enum Assistant: String, CaseIterable, Identifiable {
+    case claude, chatgpt
+    var id: String { rawValue }
+
+    var name: String {
+        switch self { case .claude: "Claude"; case .chatgpt: "ChatGPT" }
+    }
+    /// The app's URL scheme. A bare scheme opens the app on its last screen.
+    var appURL: URL {
+        switch self { case .claude: URL(string: "claude://")!; case .chatgpt: URL(string: "chatgpt://")! }
+    }
+    /// Web fallback when the app is not installed.
+    var webURL: URL {
+        switch self { case .claude: URL(string: "https://claude.ai/new")!; case .chatgpt: URL(string: "https://chatgpt.com/")! }
+    }
+    /// Brand-adjacent glyph: Claude's spark, ChatGPT's knot stand-in.
+    var symbol: String {
+        switch self { case .claude: "asterisk"; case .chatgpt: "hexagon" }
+    }
+}
+
+/// Small round button that hands the file to one assistant. Same size and
+/// surface as the delete button in `RecordDetailView.actions`.
+struct AssistantButton: View {
+    let assistant: Assistant
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: assistant.symbol)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(Theme.ink)
+                .frame(width: 46, height: 46)
+                .background(Theme.surface2, in: Circle())
+                .overlay(Circle().strokeBorder(Theme.edge, lineWidth: 0.5))
+        }
+        .buttonStyle(PressableStyle())
+        .accessibilityLabel("Send to \(assistant.name)")
+    }
+}
+
 // MARK: - Misc
 
 /// Uppercase, tracked, monospaced caption used as a card section heading
