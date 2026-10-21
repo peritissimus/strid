@@ -49,3 +49,30 @@ struct FilterTests {
         #expect(found.contains { $0.type == .creditCard && $0.text == "4567XXXXXXXX8901" })
     }
 }
+
+@Suite("HDFC wrapped narrations")
+struct WrappedNarrationTests {
+    let e = StridEngine()
+    @Test func singleWordUPIName() {
+        let f = e.detect(in: "01/04/26 UPI-SHANAWAZ-shanawaz12@okaxis-UTIB0000123-5101234567\n89-M-UPI")
+        #expect(f.contains { $0.type == .person && $0.text == "SHANAWAZ" })
+        // Reference wrapped across the line break is captured whole.
+        #expect(f.contains { $0.type == .inTxnRef && $0.text == "5101234567\n89" })
+    }
+    @Test func wrappedNEFTRef() {
+        let f = e.detect(in: "NEFT CR-ICIC0000456-RZPX PVT LTD PAYROLL-IDFBH260\n92904881")
+        #expect(f.contains { $0.type == .inTxnRef && $0.text.contains("92904881") })
+    }
+    @Test func gatewayBlob() {
+        let f = e.detect(in: "UPI-SHIVA-BAJAJPAY.6879729.MDBCXUL@hdfcbank-HDFC0000001-5101234567")
+        #expect(f.contains { $0.type == .inTxnRef && $0.text.contains("6879729") } || f.contains { $0.type == .inUPIID && $0.text.contains("6879729") })
+    }
+    @Test func doesNotEatNextRowDate() {
+        let f = e.detect(in: "ref 510123456789\n02/04/26 UPI-X")
+        #expect(f.contains { $0.type == .inTxnRef && $0.text == "510123456789" })
+    }
+    @Test func doesNotEatAmount() {
+        let f = e.detect(in: "IMPS-P2A-VIDYANAND-vidya@ybl-510123456789\n351,684.00")
+        #expect(f.contains { $0.type == .inTxnRef && $0.text == "510123456789" })
+    }
+}
