@@ -31,7 +31,71 @@ public final class StridEngine: Sendable {
         let filtered = EntityFilters.apply(allEntities).filter { entity in
             entity.score >= threshold && (allowedTypes?.contains(entity.type) ?? true)
         }
-        return deduplicateOverlaps(filtered)
+        return extendAcrossWraps(deduplicateOverlaps(filtered), in: text)
+    }
+
+    /// PDF tables wrap long identifiers mid-token across visual lines, so an entity can end exactly at a
+    /// line break with its tail on the next line (or start at a line beginning with its head above).
+    /// Extend such entities over the adjoining alphanumeric run, as long as that run is not a date,
+    /// an amount, or the start of a new row.
+    private func extendAcrossWraps(_ entities: [PIIEntity], in text: String) -> [PIIEntity] {
+        let structured: Set<PIIEntityType> = [.inTxnRef, .inUPIID, .inIFSC, .inBankAccount, .inCustomerID, .email, .creditCard, .inAadhaar]
+        return entities.map { e in
+            guard structured.contains(e.type) else { return e }
+            var lower = e.range.lowerBound, upper = e.range.upperBound
+
+            // Tail on the next line.
+            if upper < text.endIndex, text[upper] == "\n" {
+                let next = text.index(after: upper)
+                if let run = Self.leadingRun(in: text, from: next), Self.plausibleWrapFragment(text[run]) {
+                    upper = run.upperBound
+                }
+            }
+            // Head on the previous line.
+            if lower > text.startIndex, text[text.index(before: lower)] == "\n" {
+                let lineEnd = text.index(before: lower)
+                if let run = Self.trailingRun(in: text, upTo: lineEnd), Self.plausibleWrapFragment(text[run]),
+                   text.distance(from: run.lowerBound, to: run.upperBound) <= 8 {
+                    lower = run.lowerBound
+                }
+            }
+            guard lower != e.range.lowerBound || upper != e.range.upperBound else { return e }
+            let r = lower..<upper
+            return PIIEntity(type: e.type, text: String(text[r]), range: r, score: e.score)
+        }
+    }
+
+    private static let runChars = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "@."))
+
+    private static func leadingRun(in text: String, from start: String.Index) -> Range<String.Index>? {
+        var i = start
+        while i < text.endIndex, let u = text[i].unicodeScalars.first, text[i].unicodeScalars.count == 1, runChars.contains(u) {
+            i = text.index(after: i)
+        }
+        guard i > start else { return nil }
+        // Must be followed by whitespace/EOL or a narration separator, never ',' (amount) or '/' (date).
+        if i < text.endIndex, !(text[i].isWhitespace || text[i] == "-") { return nil }
+        return start..<i
+    }
+
+    private static func trailingRun(in text: String, upTo end: String.Index) -> Range<String.Index>? {
+        var i = end
+        while i > text.startIndex {
+            let p = text.index(before: i)
+            guard let u = text[p].unicodeScalars.first, text[p].unicodeScalars.count == 1, runChars.contains(u) else { break }
+            i = p
+        }
+        guard i < end else { return nil }
+        if i > text.startIndex, !(text[text.index(before: i)].isWhitespace || text[text.index(before: i)] == "-") { return nil }
+        return i..<end
+    }
+
+    /// Short alnum fragment, not a date, not a word.
+    private static func plausibleWrapFragment(_ s: Substring) -> Bool {
+        guard !s.isEmpty, s.count <= 16, !s.contains("/") else { return false }
+        let digits = s.filter(\.isNumber).count
+        // Pure digits of any length, or short mixed fragments; never a plain word.
+        return digits == s.count || (digits > 0 && s.count <= 8) || (s.count <= 4 && s.allSatisfy { $0.isUppercase || $0.isNumber })
     }
 
     /// Redact PII from text using the given style.
