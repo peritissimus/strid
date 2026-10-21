@@ -28,9 +28,11 @@ public struct AddressBlockRecognizer: Recognizer {
     static let maxLines = 6
 
     /// "Billing Address :", "Shipping Address:", "Address of the Applicant :", "Permanent Address -", "Addr:".
+    /// The label may start the line or end it: multi-column PDFs flatten to lines such as
+    /// "Order Number: 171-... Order Date: 12.10.2025 Shipping Address :", with the block beneath.
     /// Group 1 is whatever follows the label on the same line (often empty).
     static let label = try! NSRegularExpression(
-        pattern: #"(?im)^[ \t]*(?:(?:billing|shipping|delivery|permanent|present|current|correspondence|communication|residential|registered|home|office|customer|consignee|buyer|bill[ -]?to|ship[ -]?to)[ \t]+)?addr(?:ess)?(?:[ \t]+(?:of[ \t]+(?:the[ \t]+)?\w+|details))?[ \t]*[:\-–][ \t]*(.*)$"#
+        pattern: #"(?im)(?:^|[ \t])(?:(?:billing|shipping|delivery|permanent|present|current|correspondence|communication|residential|registered|home|office|customer|consignee|buyer|bill[ -]?to|ship[ -]?to)[ \t]+)?addr(?:ess)?(?:[ \t]+(?:of[ \t]+(?:the[ \t]+)?\w+|details))?[ \t]*[:\-–][ \t]*(.*)$"#
     )
 
     /// Lines beginning with these are another field, so the address has ended.

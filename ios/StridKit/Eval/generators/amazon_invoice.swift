@@ -30,12 +30,15 @@ draw("Sold By :", 36, y, bold: true); draw("Billing Address :", 330, y, bold: tr
 for (i, l) in ["Brightline Retail Private Limited", "* Survey No. 45/2, Soukya Road, Samethanahalli", "Village, Anugondanahalli Hobli, Hoskote Taluk", "Bengaluru Rural, KARNATAKA, 560067", "IN"].enumerated() { draw(l, 36, y + 12 + CGFloat(i) * 11) }
 for (i, l) in ["Kavya Raghunathan", "Flat 7B, Prestige Lakeside Habitat, Varthur Road", "Gunjur, Whitefield", "BENGALURU, KARNATAKA, 560087", "IN", "State/UT Code: 29"].enumerated() { draw(l, 330, y + 12 + CGFloat(i) * 11) }
 y = 160
-draw("PAN No: AAJCB4821P", 36, y); draw("Shipping Address :", 330, y, bold: true)
+draw("PAN No: AAJCB4821P", 36, y)
 draw("GST Registration No: 29AAJCB4821P1Z4", 36, y + 11)
-for (i, l) in ["Kavya Raghunathan", "Kavya Raghunathan", "Flat 7B, Prestige Lakeside Habitat, Varthur Road", "Gunjur, Whitefield", "BENGALURU, KARNATAKA, 560087", "IN", "State/UT Code: 29", "Place of supply: KARNATAKA", "Place of delivery: KARNATAKA"].enumerated() { draw(l, 330, y + 12 + CGFloat(i) * 11) }
+for (i, l) in ["Kavya Raghunathan", "Kavya Raghunathan", "Flat 7B, Prestige Lakeside Habitat, Varthur Road", "Gunjur, Whitefield", "BENGALURU, KARNATAKA, 560087", "IN", "State/UT Code: 29", "Place of supply: KARNATAKA", "Place of delivery: KARNATAKA"].enumerated() { draw(l, 330, y + 95 + CGFloat(i) * 11) }
 y = 232
 draw("Order Number: 171-8264519-3350731", 36, y); draw("Order Date: 12.10.2025", 36, y + 11)
-draw("Invoice Number : BLR7-2140187", 330, y + 88); draw("Invoice Details : KA-BLR7-1234567-2526", 330, y + 99); draw("Invoice Date : 13.10.2025", 330, y + 110)
+// Real Amazon.in invoices put this label on the same baseline as "Order Date", so the text layer
+// flattens to "Order Number: ... Order Date: ... Shipping Address :" on one line.
+draw("Shipping Address :", 330, y + 11, bold: true)
+draw("Invoice Number : BLR7-2140187", 330, y + 100); draw("Invoice Details : KA-BLR7-1234567-2526", 330, y + 111); draw("Invoice Date : 13.10.2025", 330, y + 122)
 
 // table
 y = 360

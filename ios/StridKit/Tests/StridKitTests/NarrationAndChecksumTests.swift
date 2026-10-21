@@ -146,6 +146,21 @@ struct AddressBlockTests {
         #expect(!got.contains { $0.0 == "PERSON" })
         #expect(got.first { $0.0 == "ADDRESS" }?.1.hasPrefix("Brightline") == true)
     }
+    @Test func labelAtEndOfAMultiColumnLine() {
+        let text = """
+        PAN No: AAJCB4821P
+        Order Number: 171-8264519-3350731 Order Date: 12.10.2025 Shipping Address :
+        Kavya Raghunathan
+        Kavya Raghunathan
+        Flat 7B, Prestige Lakeside Habitat, Varthur Road
+        Gunjur, Whitefield
+        BENGALURU, KARNATAKA, 560087
+        IN
+        """
+        let got = run(text)
+        #expect(got.filter { $0 == ("PERSON", "Kavya Raghunathan") }.count == 2)
+        #expect(got.first { $0.0 == "ADDRESS" }?.1.hasPrefix("Flat 7B") == true)
+    }
     @Test func unlabelledPlaceNamesAreIgnored() {
         #expect(run("Branch: Bandra West, Mumbai 400050").isEmpty)
     }
