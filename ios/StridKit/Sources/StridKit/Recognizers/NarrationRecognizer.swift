@@ -43,6 +43,9 @@ public struct NarrationRecognizer: Recognizer {
         #"\b(?:MR|MRS|MS|SHRI|SMT|KUMARI|DR)\.?\s+(NAME)\b"#,
     ].compactMap { try? NSRegularExpression(pattern: $0.replacingOccurrences(of: "NAME", with: nameCore)) }
     + [
+        // Single-word counterparty after UPI-/IMPS-: "UPI-SHANAWAZ-9876@ybl", "IMPS-P2A-VIDYANAND-"
+        // (HDFC and SBI print only the beneficiary's registered name, often one word).
+        #"\b(?:UPI|IMPS)[-/](?:P2[APM][-/])?([A-Z]{4,}(?:\s[A-Z]{2,}){0,3})(?=\s*[-/@]|\s*$)"#,
         // Relation lines on ID documents: "S/O: Mahendra Singh Rathore", "W/O Sunita Devi", "C/O ..."
         #"\b(?:S/O|D/O|W/O|C/O|H/O|Son of|Daughter of|Wife of|Care of)\s*:?\s+((?:[A-Z][a-z]+\.?\s+){1,3}[A-Z][a-z]+|(?:[A-Z]{2,}\s+){1,3}[A-Z]{2,})"#,
         // "Name: Ananya Krishnan" / "Customer Name : RAHUL SHARMA" / "Employee Name: ..."
@@ -51,6 +54,7 @@ public struct NarrationRecognizer: Recognizer {
 
     public func recognize(in text: String) -> [PIIEntity] {
         var out: [PIIEntity] = []
+        var seen = Set<Range<String.Index>>()
         let ns = text as NSString
         let full = NSRange(location: 0, length: ns.length)
         for regex in Self.patterns {
@@ -59,7 +63,8 @@ public struct NarrationRecognizer: Recognizer {
                 for g in 1..<m.numberOfRanges {
                     let r = m.range(at: g)
                     guard r.location != NSNotFound, r.length > 0 else { continue }
-                    guard let span = Self.trimStopWords(r, in: text) else { break }
+                    guard let span = Self.trimStopWords(r, in: text), !seen.contains(span) else { break }
+                    seen.insert(span)
                     out.append(PIIEntity(type: .person, text: String(text[span]), range: span, score: 0.92))
                     break
                 }
@@ -76,7 +81,8 @@ public struct NarrationRecognizer: Recognizer {
         func isStop(_ w: String) -> Bool { stopWords.contains(w.replacingOccurrences(of: ".", with: "").uppercased()) }
         while let f = words.first, isStop(f) { words.removeFirst(); leading += 1 }
         while let l = words.last, isStop(l) { words.removeLast(); trailing += 1 }
-        guard words.count >= 2 || (words.count == 1 && words[0].count >= 4 && leading + trailing > 0) else { return nil }
+        // One word is acceptable when it is long enough to be a name (HDFC/SBI print single registered names).
+        guard words.count >= 2 || (words.count == 1 && words[0].count >= 4) else { return nil }
         // Any remaining stop word inside (e.g. "TCS LTD SALARY") means this is an organisation line, not a person.
         if words.contains(where: isStop) { return nil }
         // Recompute range without the trimmed words.
