@@ -298,7 +298,7 @@ final class DocumentViewModel {
             .stridAccent
 
         // Location information - Warning orange
-        case .location, .inPINCode, .address:
+        case .location, .inPINCode, .address, .barcode:
             .stridWarning
 
         // Financial/Banking codes - Info blue

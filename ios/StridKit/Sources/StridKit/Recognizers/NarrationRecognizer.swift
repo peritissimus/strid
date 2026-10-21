@@ -55,7 +55,10 @@ public struct NarrationRecognizer: Recognizer {
     ///   - `[A-Z]{2,}(?:\s+[A-Z]\.?){1,2}`: a surname followed by one or two single-letter
     ///     initials (`SHARMA R K`, `KUMAR S.`).
     /// Substituted for the literal `NAME` in the first group of patterns below.
-    private static let nameCore = #"(?:[A-Z]{2,}(?:\.?\s+|\.)){1,3}[A-Z]{2,}\.?|[A-Z]{2,}(?:\s+[A-Z]\.?){1,2}"#
+    /// Words are separated by spaces or tabs only: a newline ends the name, otherwise an OCR'd
+    /// "UPI-RAHUL" followed by the wrapped VPA "PAYTM-7373@" on the next line would swallow
+    /// "PAYTM" and knock out the UPI-ID match that covers the rest of the handle.
+    private static let nameCore = #"(?:[A-Z]{2,}(?:\.?[ \t]+|\.)){1,3}[A-Z]{2,}\.?|[A-Z]{2,}(?:[ \t]+[A-Z]\.?){1,2}"#
 
     /// Compiled narration templates. The first block uses the `NAME` placeholder (replaced by
     /// `nameCore`); the second block has its own capture groups and is compiled verbatim.
@@ -63,18 +66,18 @@ public struct NarrationRecognizer: Recognizer {
     /// Common building blocks in the first block:
     ///   - `[-/ ]`               rail separator: hyphen, slash or space depending on the bank
     ///   - `(?:\w{6,}[-/])?`     an optional reference token (6+ word chars) before the name
-    ///   - `(?=\s*[-/@]|\s*$)`   lookahead: the name must be followed by a separator, an `@`
+    ///   - `(?=\s*[-/@]|[ \t]*(?:\n|$))`   lookahead: the name must be followed by a separator, an `@`
     ///                           (start of the VPA) or end of text, so the capture cannot run on
     ///                           into the next field
     private static let patterns: [NSRegularExpression] = [
         // UPI-NAME-vpa  /  UPI/ref/NAME/  /  UPI-NAME@... (name precedes a VPA or separator)
-        #"\bUPI[-/ ](?:\w{6,}[-/])?(NAME)(?=\s*[-/@]|\s*$)"#,
+        #"\bUPI[-/ ](?:\w{6,}[-/])?(NAME)(?=\s*[-/@]|[ \t]*(?:\n|$))"#,
         // IMPS-P2A-NAME-  /  IMPS/P2P/ref/NAME
         // `P2[APM]` = person-to-account / person-to-person / person-to-merchant mode flag.
-        #"\bIMPS[-/ ](?:P2[APM][-/])?(?:\w{6,}[-/])?(NAME)(?=\s*[-/]|\s*$)"#,
+        #"\bIMPS[-/ ](?:P2[APM][-/])?(?:\w{6,}[-/])?(NAME)(?=\s*[-/]|[ \t]*(?:\n|$))"#,
         // NEFT CR-IFSC-NAME-ref  /  NEFT-ref-NAME  /  RTGS ...
         // Optional CR/DR direction, optional IFSC (`[A-Z]{4}0[A-Z0-9]{6}`), optional ref, then the name.
-        #"\b(?:NEFT|RTGS)[-/ ](?:CR|DR)?[-/ ]?(?:[A-Z]{4}0[A-Z0-9]{6}[-/])?(?:\w{6,}[-/])?(NAME)(?=\s*[-/]|\s*$)"#,
+        #"\b(?:NEFT|RTGS)[-/ ](?:CR|DR)?[-/ ]?(?:[A-Z]{4}0[A-Z0-9]{6}[-/])?(?:\w{6,}[-/])?(NAME)(?=\s*[-/]|[ \t]*(?:\n|$))"#,
         // CHQ DEP 000123 NAME  /  CHQ PAID NAME  /  CHQ NO 123 NAME
         #"\bCHQ(?:\s+(?:DEP|PAID|NO|ISSUED))?\s+(?:\d+\s+)?(NAME)\b"#,
         // BY TRANSFER-NAME  /  TO TRANSFER-NAME  /  TRF TO NAME  /  TRF FROM NAME
@@ -89,7 +92,7 @@ public struct NarrationRecognizer: Recognizer {
         // (HDFC and SBI print only the beneficiary's registered name, often one word).
         // Captures one 4+ letter word optionally followed by up to three more words; `nameCore`
         // above requires at least two words, so this pattern exists specifically for the one-word case.
-        #"\b(?:UPI|IMPS)[-/](?:P2[APM][-/])?([A-Z]{4,}(?:\s[A-Z]{2,}){0,3})(?=\s*[-/@]|\s*$)"#,
+        #"\b(?:UPI|IMPS)[-/](?:P2[APM][-/])?([A-Z]{4,}(?:[ \t][A-Z]{2,}){0,3})(?=[ \t]*[-/@]|[ \t]*(?:\n|$))"#,
         // Relation lines on ID documents: "S/O: Mahendra Singh Rathore", "W/O Sunita Devi", "C/O ..."
         // Son/Daughter/Wife/Care/Husband of. The captured name may be Title Case (2-4 words,
         // `[A-Z][a-z]+`) or ALL CAPS (2-4 words, `[A-Z]{2,}`); mixed casing is not accepted.

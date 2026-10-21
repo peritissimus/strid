@@ -60,7 +60,39 @@ public final class StridEngine: Sendable {
             entity.score >= threshold && (allowedTypes?.contains(entity.type) ?? true)
         }
         // Stages 4 + 5.
-        return extendAcrossWraps(deduplicateOverlaps(filtered), in: text)
+        return extendAcrossWraps(deduplicateOverlaps(splitContainers(filtered, in: text)), in: text)
+    }
+
+    // MARK: - Container splitting
+
+    /// An ADDRESS span usually contains smaller, higher-scoring findings: the addressee, a PIN
+    /// code, a place name. Overlap resolution keeps a single winner per region, so without this
+    /// step the small entity would win and the rest of the address would stay readable.
+    /// Instead, every address is cut around the entities it overlaps; the remaining fragments
+    /// (trimmed of whitespace, newlines and separators) go forward as addresses in their own right.
+    private func splitContainers(_ entities: [PIIEntity], in text: String) -> [PIIEntity] {
+        let others = entities.filter { $0.type != .address }
+        var out = others
+        let trim = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ",;:-–"))
+        for address in entities where address.type == .address {
+            let cuts = others.filter { $0.range.overlaps(address.range) }.sorted { $0.range.lowerBound < $1.range.lowerBound }
+            var cursor = address.range.lowerBound
+            var pieces: [Range<String.Index>] = []
+            for c in cuts {
+                if c.range.lowerBound > cursor { pieces.append(cursor..<c.range.lowerBound) }
+                cursor = max(cursor, c.range.upperBound)
+            }
+            if cursor < address.range.upperBound { pieces.append(cursor..<address.range.upperBound) }
+            for piece in pieces {
+                var lo = piece.lowerBound, hi = piece.upperBound
+                while lo < hi, text[lo].unicodeScalars.allSatisfy(trim.contains) { lo = text.index(after: lo) }
+                while hi > lo, text[text.index(before: hi)].unicodeScalars.allSatisfy(trim.contains) { hi = text.index(before: hi) }
+                // A fragment must still say something: three or more letters or digits ("C/O" alone is not an address).
+                guard text[lo..<hi].filter({ $0.isLetter || $0.isNumber }).count >= 3 else { continue }
+                out.append(PIIEntity(type: .address, text: String(text[lo..<hi]), range: lo..<hi, score: address.score))
+            }
+        }
+        return out
     }
 
     // MARK: - Line-wrap extension
@@ -88,7 +120,10 @@ public final class StridEngine: Sendable {
 
             // Tail on the next line.
             // Entity ends immediately before "\n": look at the run that starts the following line.
-            if upper < text.endIndex, text[upper] == "\n" {
+            // A complete Aadhaar number or VID (12 / 16 digits) never wraps; the digits on the next
+            // line are a different field (the helpline "1947" under the VID on the card).
+            let complete = e.type == .inAadhaar && e.text.filter(\.isNumber).count >= 12
+            if !complete, upper < text.endIndex, text[upper] == "\n" {
                 let next = text.index(after: upper)
                 if let run = Self.leadingRun(in: text, from: next), Self.plausibleWrapFragment(text[run]) {
                     upper = run.upperBound
@@ -100,8 +135,12 @@ public final class StridEngine: Sendable {
             // is far more likely to be a complete separate value (an amount, another reference).
             if lower > text.startIndex, text[text.index(before: lower)] == "\n" {
                 let lineEnd = text.index(before: lower)
+                // An email or UPI handle never starts with a wrapped run of bare digits; on OCR'd
+                // pages the line above is far more likely a helpline number ("1947").
+                let digitsOnlyHeadAllowed = !(e.type == .email || e.type == .inUPIID)
                 if let run = Self.trailingRun(in: text, upTo: lineEnd), Self.plausibleWrapFragment(text[run]),
-                   text.distance(from: run.lowerBound, to: run.upperBound) <= 8 {
+                   text.distance(from: run.lowerBound, to: run.upperBound) <= 8,
+                   digitsOnlyHeadAllowed || !text[run].allSatisfy(\.isNumber) {
                     lower = run.lowerBound
                 }
             }

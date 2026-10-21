@@ -79,6 +79,9 @@ public enum PIIEntityType: String, CaseIterable, Codable, Sendable {
     /// A postal address block captured after a "Billing/Shipping Address:" style label,
     /// as one span rather than scattered place names.
     case address = "ADDRESS"
+    /// A QR code or barcode found on a scanned page; redacted as a whole because such codes
+    /// usually encode the printed personal data (Aadhaar QR, PAN QR, cheque MICR barcode).
+    case barcode = "BARCODE"
 
     /// Human-readable label for UI lists and the `strid entities` table.
     public var displayName: String {
@@ -106,6 +109,7 @@ public enum PIIEntityType: String, CaseIterable, Codable, Sendable {
         case .inGSTIN: "GSTIN"
         case .orderID: "Order / Invoice No"
         case .address: "Address"
+        case .barcode: "QR / Barcode"
         }
     }
 }

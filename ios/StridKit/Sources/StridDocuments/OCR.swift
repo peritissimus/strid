@@ -44,6 +44,17 @@ struct OCRPage {
     let text: String
     /// Line records in the same order as they appear in `text`.
     let lines: [OCRLine]
+    /// The same lines in layout-aware reading order (see `Layout`), or `nil` when disabled.
+    /// Detection runs on both orders and the boxes are unioned: the plain top-to-bottom order
+    /// keeps table rows together (a reference next to its narration), the block order keeps
+    /// multi-column headers together (an address next to the account details).
+    var reflowed: OCRPage? {
+        get { reflowedBox?.page }
+        set { reflowedBox = newValue.map(Boxed.init) }
+    }
+    /// Heap box so the value type can hold another page of its own kind.
+    private var reflowedBox: Boxed? = nil
+    private final class Boxed { let page: OCRPage; init(page: OCRPage) { self.page = page } }
 
     /// Pixel-space rectangles (origin top-left) covering `entity` on an image of the given size.
     ///
@@ -130,18 +141,22 @@ enum OCR {
         let observations = (request.results ?? [])
             .sorted { $0.boundingBox.minY > $1.boundingBox.minY } // top of page first
 
-        var raws: [(raw: String, lineBox: CGRect, boxForRange: (Range<String.Index>) -> CGRect?)] = []
+        var raws: [Layout.Raw] = []
         for obs in observations {
             guard let candidate = obs.topCandidates(1).first else { continue }
             raws.append((candidate.string, obs.boundingBox, { range in
                 (try? candidate.boundingBox(for: range))?.boundingBox
             }))
         }
-        return assemble(raws)
+        var page = assemble(raws)
+        if Layout.enabled, raws.count > 1 {
+            page.reflowed = assemble(Layout.reflow(raws))
+        }
+        return page
     }
 
     /// Joins recognised lines (already top-to-bottom) into an `OCRPage`, normalising confusables.
-    static func assemble(_ raws: [(raw: String, lineBox: CGRect, boxForRange: (Range<String.Index>) -> CGRect?)]) -> OCRPage {
+    static func assemble(_ raws: [Layout.Raw]) -> OCRPage {
         var joined = ""
         var lines: [OCRLine] = []
         for r in raws {
@@ -285,5 +300,142 @@ enum Raster {
         ctx.textPosition = CGPoint(x: box.midX - width / 2, y: box.midY - size * 0.35)
         CTLineDraw(line, ctx)
         ctx.restoreGState()
+    }
+}
+
+/// Reading-order reconstruction for OCR output, used as a second detection pass.
+///
+/// Vision returns one observation per visual line fragment with no notion of columns. Sorting
+/// those by vertical position alone interleaves side-by-side blocks, so a statement header reads
+///
+///     MR. RAHUL SHARMA          Account Branch : S S PLAZA
+///     A3                        Address        : ...
+///     4TH BLOCK, KORAMANGALA    Phone no.      : ...
+///
+/// as "MR. RAHUL SHARMA / Account Branch : S S PLAZA / A3 / Address : ... / 4TH BLOCK ..." and every
+/// line-based recognizer (address blocks, wrapped identifiers, labelled values) sees a field
+/// label between each pair of address lines. Two passes repair this:
+///
+///   1. `mergeRows`: fragments on the same baseline separated by less than ~0.7 line heights are
+///      joined with a space ("Cust ID" + ": 123456" -> "Cust ID : 123456"), so a label stays with
+///      its value when Vision split them. Table cells sit much further apart and stay separate.
+///   2. `orderBlocks`: lines are grouped into blocks when they are vertically adjacent (gap under
+///      0.9 line heights) and horizontally aligned (shared left edge or overlapping extent).
+///      Blocks are then emitted top-to-bottom, left-to-right, each block's lines contiguous.
+///
+/// Geometry stays attached to every fragment, so boxes for a merged line still come from Vision.
+///
+/// Block order is *not* used alone: in tightly set tables it reads column by column, which
+/// separates a reference number from the narration that gives it context and measurably lowers
+/// recall. `ImageDocumentHandler` therefore detects on both orders and paints the union.
+enum Layout {
+    typealias Raw = (raw: String, lineBox: CGRect, boxForRange: (Range<String.Index>) -> CGRect?)
+
+    /// Set `STRID_OCR_LAYOUT=lines` to fall back to plain top-to-bottom order (for A/B evaluation).
+    static let enabled = ProcessInfo.processInfo.environment["STRID_OCR_LAYOUT"] != "lines"
+
+    static func reflow(_ raws: [Raw]) -> [Raw] {
+        orderBlocks(mergeRows(raws))
+    }
+
+    /// Largest horizontal gap, in line heights, that still joins two fragments on one baseline.
+    static let rowGap: CGFloat = 0.7
+    /// Largest vertical gap, in line heights, between consecutive lines of one block.
+    static let blockGap: CGFloat = 0.9
+
+    /// Joins fragments that share a baseline and nearly touch. Greedy, left to right.
+    static func mergeRows(_ raws: [Raw]) -> [Raw] {
+        let items = raws.sorted { a, b in
+            if abs(a.lineBox.midY - b.lineBox.midY) > 1e-6 { return a.lineBox.midY > b.lineBox.midY }
+            return a.lineBox.minX < b.lineBox.minX
+        }
+        var used = [Bool](repeating: false, count: items.count)
+        var out: [Raw] = []
+        for i in items.indices where !used[i] {
+            var cur = items[i]
+            used[i] = true
+            while true {
+                var best = -1
+                var bestGap = CGFloat.infinity
+                for j in items.indices where !used[j] {
+                    let b = items[j].lineBox
+                    let h = max(cur.lineBox.height, b.height)
+                    guard h > 0, abs(b.midY - cur.lineBox.midY) <= 0.4 * h else { continue }
+                    let gap = b.minX - cur.lineBox.maxX
+                    guard gap >= -0.2 * h, gap <= rowGap * h, gap < bestGap else { continue }
+                    bestGap = gap
+                    best = j
+                }
+                guard best >= 0 else { break }
+                cur = join(cur, items[best])
+                used[best] = true
+            }
+            out.append(cur)
+        }
+        return out
+    }
+
+    /// Concatenates two fragments with a single space, keeping a `boxForRange` that answers from
+    /// whichever original fragment(s) a range falls in (union when it spans both).
+    static func join(_ a: Raw, _ b: Raw) -> Raw {
+        let s = a.raw + " " + b.raw
+        let aCount = a.raw.count
+        let aRaw = a.raw, bRaw = b.raw
+        let aBox = a.lineBox, bBox = b.lineBox
+        let aFor = a.boxForRange, bFor = b.boxForRange
+        return (s, aBox.union(bBox), { range in
+            let lo = s.distance(from: s.startIndex, to: range.lowerBound)
+            let hi = s.distance(from: s.startIndex, to: range.upperBound)
+            var rects: [CGRect] = []
+            if lo < aCount {
+                let end = min(hi, aCount)
+                if end > lo {
+                    let r = aRaw.index(aRaw.startIndex, offsetBy: lo)..<aRaw.index(aRaw.startIndex, offsetBy: end)
+                    rects.append(aFor(r) ?? aBox)
+                }
+            }
+            if hi > aCount + 1 {
+                let start = max(lo, aCount + 1) - (aCount + 1)
+                let end = hi - (aCount + 1)
+                if end > start {
+                    let r = bRaw.index(bRaw.startIndex, offsetBy: start)..<bRaw.index(bRaw.startIndex, offsetBy: end)
+                    rects.append(bFor(r) ?? bBox)
+                }
+            }
+            guard var u = rects.first else { return nil }
+            for r in rects.dropFirst() { u = u.union(r) }
+            return u
+        })
+    }
+
+    /// Groups lines into vertically contiguous, horizontally aligned blocks and emits them in
+    /// reading order (block top, then block left edge).
+    static func orderBlocks(_ rows: [Raw]) -> [Raw] {
+        let sorted = rows.sorted { $0.lineBox.maxY > $1.lineBox.maxY }  // top of page first
+        var blocks: [[Int]] = []
+        for (i, r) in sorted.enumerated() {
+            let b = r.lineBox
+            var best = -1
+            var bestGap = CGFloat.infinity
+            for (bi, blk) in blocks.enumerated() {
+                let last = sorted[blk[blk.count - 1]].lineBox
+                let h = max(b.height, last.height)
+                guard h > 0 else { continue }
+                // Vision's origin is bottom-left: the previous line's bottom is `minY`, this line's top is `maxY`.
+                let gap = last.minY - b.maxY
+                guard gap >= -0.5 * h, gap <= blockGap * h else { continue }
+                let overlap = min(b.maxX, last.maxX) - max(b.minX, last.minX)
+                let leftAligned = abs(b.minX - last.minX) <= 0.8 * h
+                guard leftAligned || overlap >= 0.5 * min(b.width, last.width) else { continue }
+                if gap < bestGap { bestGap = gap; best = bi }
+            }
+            if best >= 0 { blocks[best].append(i) } else { blocks.append([i]) }
+        }
+        let ordered = blocks.sorted { x, y in
+            let a = sorted[x[0]].lineBox, b = sorted[y[0]].lineBox
+            if abs(a.maxY - b.maxY) > 0.5 * max(a.height, b.height) { return a.maxY > b.maxY }
+            return a.minX < b.minX
+        }
+        return ordered.flatMap { $0.map { sorted[$0] } }
     }
 }

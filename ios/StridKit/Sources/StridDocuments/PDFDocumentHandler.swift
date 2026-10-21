@@ -184,7 +184,10 @@ public struct PDFDocumentHandler: DocumentHandler {
                         ), label: label))
                     }
                 }
-                all += entities
+                // Codes drawn or embedded on a text-layer page (e-Aadhaar, e-PAN) are boxed too.
+                let codes = Barcodes.detect(in: raster)
+                boxes += codes.map { Box(rect: $0, label: nil) }
+                all += entities + Barcodes.entities(for: codes, in: text)
                 pageImages.append((Raster.blackout(raster, boxes: boxes, padding: 1.5 * scale), box))
             } else {
                 ocrPages += 1

@@ -44,6 +44,7 @@ extension PIIEntityType {
         case .inGSTIN: return "doc.text.magnifyingglass"
         case .orderID: return "shippingbox"
         case .address: return "house"
+        case .barcode: return "qrcode"
         }
     }
 }

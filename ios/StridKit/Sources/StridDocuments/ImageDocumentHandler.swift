@@ -73,13 +73,32 @@ public struct ImageDocumentHandler: DocumentHandler {
     /// - Returns: The redacted bitmap and the entities that were boxed.
     static func redact(image: CGImage, engine: StridEngine, tokens: inout TokenMap?) throws -> (CGImage, [PIIEntity]) {
         let page = try OCR.recognise(image)
-        let entities = engine.detect(in: page.text)
+        var entities = engine.detect(in: page.text)
         let size = CGSize(width: image.width, height: image.height)
         var boxes: [Box] = []
         for e in entities {
             let label = tokens != nil ? tokens!.token(for: e) : nil
             boxes += page.rects(for: e, imageSize: size).map { Box(rect: $0, label: label) }
         }
-        return (Raster.blackout(image, boxes: boxes), entities)
+        // Second pass in layout-aware order (see `Layout`). Only findings whose boxes are not
+        // already painted are added, so the two passes never double-count one span.
+        if let alt = page.reflowed {
+            for e in engine.detect(in: alt.text) {
+                let fresh = alt.rects(for: e, imageSize: size).filter { r in
+                    !boxes.contains { b in
+                        let i = b.rect.intersection(r)
+                        return !i.isNull && i.width * i.height >= 0.8 * r.width * r.height
+                    }
+                }
+                guard !fresh.isEmpty else { continue }
+                let label = tokens != nil ? tokens!.token(for: e) : nil
+                boxes += fresh.map { Box(rect: $0, label: label) }
+                entities.append(e)
+            }
+        }
+        // QR codes and barcodes: boxed whole, never decoded (see `Barcodes`).
+        let codes = Barcodes.detect(in: image)
+        boxes += codes.map { Box(rect: $0, label: nil) }
+        return (Raster.blackout(image, boxes: boxes), entities + Barcodes.entities(for: codes, in: page.text))
     }
 }

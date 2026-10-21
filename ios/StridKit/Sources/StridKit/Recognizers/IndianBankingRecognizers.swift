@@ -27,7 +27,7 @@ public enum IndianBankingRecognizers {
     /// Order has no effect on results.
     public static func all() -> [Recognizer] {
         [
-            bankAccount, ifsc, pan, aadhaar, upiID, micr, phone,
+            bankAccount, ifsc, pan, aadhaar, aadhaarVID, upiID, micr, phone,
             pinCode, customerID, branchCode, txnRef, dob, creditCard, ipAddress,
             maskedCard, alphaTxnRef, gstin, orderID, NarrationRecognizer(), IndianPlaceRecognizer(), AddressBlockRecognizer(),
         ]
@@ -122,6 +122,22 @@ public enum IndianBankingRecognizers {
         validatedScore: 0.8
     )
 
+    /// Aadhaar VID (Virtual ID): 16 digits printed as XXXX XXXX XXXX XXXX under the Aadhaar number.
+    ///
+    /// The VID is a revocable alias for the Aadhaar number and is accepted wherever the number is,
+    /// so it is reported under the same `IN_AADHAAR` type. Like the number it carries a Verhoeff
+    /// check digit, which filters most 16-digit account numbers and card numbers; "VID" context
+    /// lifts the score further. A failing checksum drops the match.
+    public static let aadhaarVID = RegexRecognizer(
+        entityType: .inAadhaar,
+        patterns: [#"\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}\b"#],
+        baseScore: 0.3,
+        contextWords: ["vid", "virtual id", "virtual identifier", "aadhaar"],
+        contextBoost: 0.5,
+        validator: { Checksums.verhoeff(Checksums.digitsOnly($0)) },
+        validatedScore: 0.8
+    )
+
     /// UPI ID: vpa@bankhandle patterns
     ///
     /// Two patterns, both `local-part@handle` where the local part is word chars and dots
@@ -140,6 +156,12 @@ public enum IndianBankingRecognizers {
             #"[\w.]+@(?:ok(?:sbi|icici|axis|hdfc)|ybl|paytm|upi|apl|ibl|axl|kmbl|barodampay|freecharge|okhdfcbank|ikwik|mahb|indus|sbi|icici|hdfcbank|axisbank|kotak|rbl|federal|idbi|bandhan|pnb|bob|canarabank|indianbank|iob|uboi|unionbankofindia|rxairtel|airtel|jio|slice|cred|jupiter|fi|niyobank|dbs|scb|citi|hsbc|sc|equitas|au0101)\b"#,
             // Generic word@word in UPI context
             #"[\w.]+@[A-Za-z]{2,20}\b"#,
+            // OCR line wraps inside a VPA: "paytm-73734402@" at the end of one line, the handle
+            // ("ptys") at the start of the next. The newline is matched explicitly so the whole
+            // split handle is one entity and both fragments are boxed.
+            #"\b[\w.-]*\w@\n[A-Za-z][A-Za-z0-9]{1,19}\b"#,
+            // Merchant VPAs with a hyphenated local part: "paytm-73734402@ptys", "bharatpe-9A1B@yesbank".
+            #"\b[A-Za-z]+-[A-Za-z0-9.]{4,}@[A-Za-z][A-Za-z0-9]{1,19}\b"#,
         ],
         baseScore: 0.5,
         contextWords: ["upi", "vpa", "payment", "transfer", "paid", "upi-", "neft", "imps"],
