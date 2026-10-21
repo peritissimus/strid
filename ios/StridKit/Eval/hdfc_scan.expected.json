@@ -1,0 +1,325 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "ROHAN VENKATESH"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "A3"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "NAVEEN TERRACES APARTMENTS"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "4TH BLOCK, 100FT ROAD, KORAMANGALA"
+    },
+    {
+      "type": "LOCATION",
+      "text": "BENGALURU"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "560034"
+    },
+    {
+      "type": "LOCATION",
+      "text": "KARNATAKA"
+    },
+    {
+      "type": "EMAIL",
+      "text": "ROHAN.VENKATESH@EXAMPLE.COM"
+    },
+    {
+      "type": "IN_CUSTOMER_ID",
+      "text": "78945612"
+    },
+    {
+      "type": "IN_BANK_ACCOUNT",
+      "text": "50100234567890"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "HDFC0003878"
+    },
+    {
+      "type": "IN_MICR",
+      "text": "110240001"
+    },
+    {
+      "type": "IN_GSTIN",
+      "text": "29AAJCB4821P1Z4"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609172329708"
+    },
+    {
+      "type": "PERSON",
+      "text": "SHANAWAZ"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "YESB0PTMUPI"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609179917157"
+    },
+    {
+      "type": "PERSON",
+      "text": "POOJA N"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "Q243851593@YBL"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "YESB0YBLUPI"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609105878558"
+    },
+    {
+      "type": "PERSON",
+      "text": "VIDYANAND"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609229002825"
+    },
+    {
+      "type": "PERSON",
+      "text": "SHIVA"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "1@INDUS"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "INDB0MERCHA"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "IDFBH26092904881"
+    },
+    {
+      "type": "PERSON",
+      "text": "ROHAN"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "IDFB0010201"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609272564782"
+    },
+    {
+      "type": "PERSON",
+      "text": "SIMPLE MANE"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "YESB0MCHUPI"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609316847651"
+    },
+    {
+      "type": "PERSON",
+      "text": "NAGARAJ"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "Q626111377@YBL"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609322754137"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609340742237"
+    },
+    {
+      "type": "PERSON",
+      "text": "PARMANAND"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "PAYTMQR6TU0TZ@PTYS"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000300131582105"
+    },
+    {
+      "type": "PERSON",
+      "text": "DURGA PRASAD"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "8178872928@PTYES"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609469629758"
+    },
+    {
+      "type": "PERSON",
+      "text": "CHAITANYA"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "A119@OKHDFCBANK"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "HDFC0000009"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609481210315"
+    },
+    {
+      "type": "PERSON",
+      "text": "KRISHNA KUMAR"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "KRISHNAGOWDA@OKSBI"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "SBIN0040107"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609490975800"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "709@HDFCBANK"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "HDFC0MERUPI"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609496147295"
+    },
+    {
+      "type": "PERSON",
+      "text": "VENKATARAJU M S"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "8660778214@YBL"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609402059118"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "SWIGGY.STORES@AXISBANK"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "609711223344"
+    },
+    {
+      "type": "PERSON",
+      "text": "ANITA"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0000609812345678"
+    },
+    {
+      "type": "CREDIT_CARD",
+      "text": "4567XXXXXXXX8901"
+    },
+    {
+      "type": "PERSON",
+      "text": "SURESH IYER"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "S S PLAZA, PLOT NO 12, SECTOR 29"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "122001"
+    },
+    {
+      "type": "LOCATION",
+      "text": "HARYANA"
+    },
+    {
+      "type": "PHONE",
+      "text": "18002586161"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "HDFC Bank House, Senapati Bapat Marg, Lower Parel, Mumbai"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "400013"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "KHAN-PAYTMQRBOVZGMGOC4@PAYT"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "KUMAR-PAYTM.S1YB756@PTY"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "ADIGE-PAYTM.S17EFLZ@PTY"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "YADAV-PAYTMQR6TU0TZ@PTYS"
+    }
+  ],
+  "not": [
+    {
+      "text": "Statement of account"
+    },
+    {
+      "text": "Page No"
+    },
+    {
+      "text": "Nomination"
+    },
+    {
+      "text": "SAVINGS A/C"
+    },
+    {
+      "text": "Withdrawal Amt."
+    },
+    {
+      "text": "Closing Balance"
+    },
+    {
+      "text": "JOINT HOLDERS"
+    },
+    {
+      "text": "VIRTUAL PREFERRED"
+    },
+    {
+      "text": "We understand your world"
+    }
+  ]
+}

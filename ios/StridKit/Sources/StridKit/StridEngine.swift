@@ -150,8 +150,14 @@ public final class StridEngine: Sendable {
         // Habitat") are part of the address, not separate findings: they are swallowed so the
         // address stays in one piece. Everything else (the addressee, a PIN code, a phone) cuts it.
         let others = entities.filter { e in
-            e.type != .address && !((e.type == .location || e.type == .organization)
-                && addresses.contains { $0.range.lowerBound <= e.range.lowerBound && e.range.upperBound <= $0.range.upperBound })
+            guard e.type != .address else { return false }
+            guard let host = addresses.first(where: { $0.range.lowerBound <= e.range.lowerBound && e.range.upperBound <= $0.range.upperBound }) else { return true }
+            if e.type == .location || e.type == .organization { return false }
+            // A building or street line ("NAVEEN TERRACES APARTMENTS") is often tagged as a person
+            // by the name tagger. It stays part of the address; a real addressee line
+            // ("MR. ROHAN VENKATESH") carries no such word and still cuts the block.
+            if e.type == .person, Self.isPremisesLine(Self.line(containing: e.range, in: text, within: host.range)) { return false }
+            return true
         }
         var out = others
         let trim = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ",;:-–"))
@@ -168,14 +174,32 @@ public final class StridEngine: Sendable {
                 var lo = piece.lowerBound, hi = piece.upperBound
                 while lo < hi, text[lo].unicodeScalars.allSatisfy(trim.contains) { lo = text.index(after: lo) }
                 while hi > lo, text[text.index(before: hi)].unicodeScalars.allSatisfy(trim.contains) { hi = text.index(before: hi) }
-                // A fragment must still say something ("A3" is a flat number; a bare "C/O" is not an address).
+                // A fragment must still say something: "A3" is a flat number, but a bare "IN" or
+                // "C/O" left over after the PIN and the name were cut out is not an address.
                 let fragment = text[lo..<hi]
-                guard fragment.filter({ $0.isLetter || $0.isNumber }).count >= 2,
-                      fragment.range(of: #"^[CSDWH]/[Oo]\.?$"#, options: .regularExpression) == nil else { continue }
+                let alnum = fragment.filter { $0.isLetter || $0.isNumber }
+                guard alnum.count >= 3 || (alnum.count == 2 && alnum.contains { $0.isNumber }) else { continue }
                 out.append(PIIEntity(type: .address, text: String(text[lo..<hi]), range: lo..<hi, score: address.score))
             }
         }
         return out
+    }
+
+    private static let premisesWords = try! NSRegularExpression(pattern:
+        #"(?i)\b(?:apartments?|apts?|flats?|terraces?|towers?|residency|enclave|nagar|layout|colony|road|rd|street|st|lane|marg|block|phase|sector|villas?|heights|gardens?|complex|society|chs|building|bldg|floor|cross|main|extension|extn|stage|estate|plaza|house|niwas|bhavan|sadan|nilaya|county|park|avenue)\b"#)
+
+    /// Whether a line names premises rather than a person.
+    private static func isPremisesLine(_ s: Substring) -> Bool {
+        let str = String(s)
+        return premisesWords.firstMatch(in: str, range: NSRange(location: 0, length: (str as NSString).length)) != nil
+    }
+
+    /// The line of `text` containing `range`, clipped to `bounds`.
+    private static func line(containing range: Range<String.Index>, in text: String, within bounds: Range<String.Index>) -> Substring {
+        var lo = range.lowerBound, hi = range.upperBound
+        while lo > bounds.lowerBound, !text[text.index(before: lo)].isNewline { lo = text.index(before: lo) }
+        while hi < bounds.upperBound, !text[hi].isNewline { hi = text.index(after: hi) }
+        return text[lo..<hi]
     }
 
     // MARK: - Line-wrap extension

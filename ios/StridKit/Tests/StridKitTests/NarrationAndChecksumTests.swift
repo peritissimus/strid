@@ -228,11 +228,18 @@ struct AddressBlockTests {
         #expect(addr.contains { $0.contains("икщл") && $0.contains("бодхи") })
         #expect(!addr.contains { $0.contains("Authority") })
     }
+    @Test func hindiCareOfNameIsAPerson() {
+        let got = engine.detect(in: "पता:\nद्वारा: अरुण पाटनकर, वॉर्ड न 17, महात्मा गाँधी वॉर्ड,\nबोड़खी, अमला, बैतूल,\nमध्य प्रदेश - 460553")
+        #expect(got.contains { $0.type == .person && $0.text == "अरुण पाटनकर" })
+        #expect(got.contains { $0.type == .address && $0.text.contains("बोड़खी") })
+    }
     @Test func hindiPinAnchoredBlock() {
         let text = "Unique Identification Authority of India\nपता:\nद्वारा: रमेश कुलकर्णी, वॉर्ड न 12,\nकोथरूड, पुणे,\nमहाराष्ट्र - 411038"
-        let addr = texts(text, .address)
-        #expect(addr.contains { $0.contains("रमेश") && $0.contains("कोथरूड") })
-        #expect(!addr.contains { $0.contains("Authority") })
+        let all = engine.detect(in: text)
+        // The care-of name is its own PERSON finding; the rest of the block is the address.
+        #expect(all.contains { $0.type == .person && $0.text == "रमेश कुलकर्णी" })
+        #expect(all.contains { $0.type == .address && $0.text.contains("कोथरूड") })
+        #expect(!all.contains { $0.type == .address && $0.text.contains("Authority") })
     }
     @Test func pageNumberAfterFooterLabelIsNotAnAddress() {
         // A footer label at the end of one page followed by the next page's header.

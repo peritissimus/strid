@@ -112,7 +112,11 @@ public struct AddressBlockRecognizer: Recognizer {
     }
 
     public func recognize(in text: String) -> [PIIEntity] {
-        let lines = Self.split(text)
+        // PDF text layers join pages with a form feed on the last line of the page, so the next
+        // page's header would otherwise continue an address block that ends a page. Form feeds
+        // are treated as line breaks; the replacement is one UTF-16 unit for one, so every range
+        // computed on the split copy applies to `text` unchanged.
+        let lines = Self.split(text.replacingOccurrences(of: "\u{0C}", with: "\n"))
         var out: [PIIEntity] = []
         // Lines already consumed by a block; later passes skip them.
         var taken = [Bool](repeating: false, count: lines.count)
@@ -124,10 +128,13 @@ public struct AddressBlockRecognizer: Recognizer {
             guard let m = Self.label.firstMatch(in: line.text, range: NSRange(location: 0, length: (line.text as NSString).length)) else { i += 1; continue }
             var block: [Line] = []
             let rest = m.range(at: 1)
+            var closedByPin = false
             if rest.location != NSNotFound, rest.length > 0 {
                 let s = (line.text as NSString).substring(with: rest)
                 if !s.trimmingCharacters(in: .whitespaces).isEmpty {
                     block.append(Line(range: NSRange(location: line.range.location + rest.location, length: rest.length), text: s))
+                    // A one-line address ending in its PIN ("Registered Office Address: ..., Mumbai 400013").
+                    if Self.hasPin(s) { closedByPin = true }
                 }
             }
             taken[i] = true
@@ -145,11 +152,13 @@ public struct AddressBlockRecognizer: Recognizer {
             if !mirror.isEmpty { Self.emit(mirror, in: text, into: &out, score: 0.85) }
             var j = i + 1
             var nameEmitted = false
-            var closedByPin = false
             while j < lines.count, block.count < Self.maxLines, !closedByPin {
                 let l = lines[j]
                 let trimmed = l.trimmed
                 if trimmed.isEmpty { break }
+                // A page break (form feed) or page furniture ends the block: nothing continues an
+                // address onto the next page's header.
+                if l.text.unicodeScalars.first == "\u{0C}" || Self.isFurniture(trimmed) { break }
                 if Self.isTerminator(trimmed) { break }
                 // The first line(s) after the label are the addressee when they look like a person
                 // (Amazon prints the name twice on shipping blocks).
@@ -257,16 +266,16 @@ public struct AddressBlockRecognizer: Recognizer {
     /// before: "Page No .: 1", "Page 2 of 12", "Sheet 1".
     static let pageFurniture = try! NSRegularExpression(pattern: #"(?i)^[ \t]*(?:page|sheet|pg)\b[ \t.:]*(?:no\b[ \t.:]*)?\d*"#)
 
+    static func isFurniture(_ t: String) -> Bool {
+        pageFurniture.firstMatch(in: t, range: NSRange(location: 0, length: (t as NSString).length)) != nil
+    }
+
     /// Emits one ADDRESS entity spanning `block` (first line start to last line end), after
     /// dropping page furniture from either end of the block.
     static func emit(_ block: [Line], in text: String, into out: inout [PIIEntity], score: Double = 0.9) {
         var block = block
-        func isFurniture(_ l: Line) -> Bool {
-            let t = l.trimmed
-            return pageFurniture.firstMatch(in: t, range: NSRange(location: 0, length: (t as NSString).length)) != nil
-        }
-        while let f = block.first, isFurniture(f) { block.removeFirst() }
-        while let l = block.last, isFurniture(l) { block.removeLast() }
+        while let f = block.first, isFurniture(f.trimmed) { block.removeFirst() }
+        while let l = block.last, isFurniture(l.trimmed) { block.removeLast() }
         guard let first = block.first, let last = block.last else { return }
         let span = NSRange(location: first.range.location, length: NSMaxRange(last.range) - first.range.location)
         guard let sr = Range(span, in: text) else { return }

@@ -80,9 +80,10 @@ public struct ImageDocumentHandler: DocumentHandler {
             let label = tokens != nil ? tokens!.token(for: e) : nil
             boxes += page.rects(for: e, imageSize: size).map { Box(rect: $0, label: label) }
         }
-        // Second pass in layout-aware order (see `Layout`). Only findings whose boxes are not
-        // already painted are added, so the two passes never double-count one span.
-        if let alt = page.reflowed {
+        // Further passes: layout-aware order (see `Layout`) and, on bilingual pages, a Hindi-first
+        // reading. Only findings whose boxes are not already painted are added, so the passes
+        // never double-count one span.
+        for alt in page.alternates {
             for e in engine.detect(in: alt.text, policy: policy) {
                 let fresh = alt.rects(for: e, imageSize: size).filter { r in
                     !boxes.contains { b in

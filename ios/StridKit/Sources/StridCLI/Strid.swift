@@ -430,8 +430,17 @@ struct Eval: ParsableCommand {
             guard let data = try? Data(contentsOf: expURL),
                   let expected = try? JSONDecoder().decode(Expected.self, from: data) else { continue }
             docs += 1
-            let text = try DocumentText.extract(from: file, options: document.options)
-            let found = engine.detect(in: text)
+            // Images and PDFs go through the real document pipeline (OCR passes, barcode boxes),
+            // so the eval measures what redaction paints, not just one reading of the text.
+            let found: [PIIEntity]
+            let ext = file.pathExtension.lowercased()
+            if ["pdf", "jpg", "jpeg", "png", "heic", "heif", "tif", "tiff"].contains(ext) {
+                let tmp = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + "." + ext)
+                defer { try? FileManager.default.removeItem(at: tmp) }
+                found = try DocumentRedactor.redact(input: file, output: tmp, engine: engine, options: document.options).report.entities
+            } else {
+                found = engine.detect(in: try DocumentText.extract(from: file, options: document.options))
+            }
 
             // Recall: each expected entity is a hit if any detection of a compatible type overlaps it.
             for e in expected.entities {
@@ -493,7 +502,17 @@ struct Eval: ParsableCommand {
     static func overlaps(_ a: String, _ b: String) -> Bool {
         let x = a.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         let y = b.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        // Very short strings ("IN", "Tax") only match exactly: substring containment would let a
+        // two-letter country code "match" every forbidden heading that happens to contain it.
+        // A short line ("A3") also matches a multi-line block that has it as one of its lines.
+        if min(x.count, y.count) < 4 {
+            let lines = { (s: String) in s.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespaces) } }
+            return x == y || lines(x).contains(y) || lines(y).contains(x)
+        }
         if x.contains(y) || y.contains(x) { return true }
+        // OCR confusables: "YESBOPTMUPI" read for "YESB0PTMUPI" is the same identifier.
+        let fold: (String) -> String = { $0.replacingOccurrences(of: "o", with: "0").replacingOccurrences(of: "l", with: "1").replacingOccurrences(of: "i", with: "1") }
+        if fold(x) == fold(y) { return true }
         // OCR tolerance: identifiers of equal length that differ in a single character still count.
         let dx = x.filter(\.isNumber), dy = y.filter(\.isNumber)
         guard dx.count >= 8, dx.count == dy.count else { return false }

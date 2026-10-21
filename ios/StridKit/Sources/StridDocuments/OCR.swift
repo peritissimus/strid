@@ -52,9 +52,26 @@ struct OCRPage {
         get { reflowedBox?.page }
         set { reflowedBox = newValue.map(Boxed.init) }
     }
-    /// Heap box so the value type can hold another page of its own kind.
+    /// A second recognition with Hindi first in the language list, present only when the primary
+    /// pass shows regional script. Vision reads Devanagari far better when it leads the list, but
+    /// then misreads some Latin lines, so neither order can be the only one: detection runs on
+    /// both and the boxes are unioned, exactly as for `reflowed`.
+    var regionalScript: OCRPage? {
+        get { regionalBox?.page }
+        set { regionalBox = newValue.map(Boxed.init) }
+    }
+    /// Every alternate reading of the page, for a caller that unions detections.
+    var alternates: [OCRPage] { [reflowed, regionalScript].compactMap { $0 } }
+    /// Heap boxes so the value type can hold pages of its own kind.
     private var reflowedBox: Boxed? = nil
+    private var regionalBox: Boxed? = nil
     private final class Boxed { let page: OCRPage; init(page: OCRPage) { self.page = page } }
+
+    /// Letters outside Latin script (Devanagari, or the Cyrillic / Greek shapes Vision produces
+    /// for Devanagari when English leads the language list).
+    var nonLatinLetterCount: Int {
+        text.unicodeScalars.reduce(0) { $0 + (($1.properties.isAlphabetic && $1.value >= 0x0250) ? 1 : 0) }
+    }
 
     /// Pixel-space rectangles (origin top-left) covering `entity` on an image of the given size.
     ///
@@ -131,6 +148,19 @@ enum OCR {
         // print reliably. Upscaling costs time, not geometry: Vision reports normalised
         // coordinates, so rectangles map straight back onto the original image.
         let prepared = Preprocess.upscaled(image)
+        var page = try recognise(prepared: prepared, languages: languages)
+        // Regional script on the page (ID cards, bilingual forms): read it again with Hindi first.
+        if page.nonLatinLetterCount >= regionalScriptTrigger, languages.first != "hi-IN" {
+            page.regionalScript = try? recognise(prepared: prepared, languages: ["hi-IN", "en-IN"])
+        }
+        return page
+    }
+
+    /// Non-Latin letters in the primary reading that trigger the Hindi-first pass.
+    static let regionalScriptTrigger = 6
+
+    /// One Vision recognition of an already prepared bitmap.
+    static func recognise(prepared: CGImage, languages: [String]) throws -> OCRPage {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         request.usesLanguageCorrection = false  // keep IDs and numbers verbatim
@@ -186,6 +216,7 @@ enum OCR {
         "а": "a", "с": "c", "е": "e", "о": "o", "р": "p", "х": "x", "у": "y", "і": "i", "ј": "j", "ѕ": "s",
         "Α": "A", "Β": "B", "Ε": "E", "Η": "H", "Ι": "I", "Κ": "K", "Μ": "M", "Ν": "N", "Ο": "O", "Ρ": "P",
         "Τ": "T", "Υ": "Y", "Χ": "X", "ο": "o", "ν": "v",
+        "З": "3", "з": "3",
         "٠": "0", "١": "1", "२": "2", "३": "3", "४": "4", "५": "5", "६": "6", "७": "7", "८": "8", "९": "9", "०": "0", "१": "1",
     ]
 
@@ -345,6 +376,8 @@ enum Layout {
 
     /// Largest horizontal gap, in line heights, that still joins two fragments on one baseline.
     static let rowGap: CGFloat = 0.7
+    /// Largest gap, in line heights, between a label and a value fragment that begins with ":".
+    static let labelGap: CGFloat = 8
     /// Largest vertical gap, in line heights, between consecutive lines of one block.
     static let blockGap: CGFloat = 0.9
 
@@ -367,7 +400,11 @@ enum Layout {
                     let h = max(cur.lineBox.height, b.height)
                     guard h > 0, abs(b.midY - cur.lineBox.midY) <= 0.4 * h else { continue }
                     let gap = b.minX - cur.lineBox.maxX
-                    guard gap >= -0.2 * h, gap <= rowGap * h, gap < bestGap else { continue }
+                    // A fragment that starts with ":" is the value of the label to its left, however
+                    // wide the gutter between the label and value columns ("Cust ID" ... ": 78945612").
+                    let valueOfLabel = items[j].raw.hasPrefix(":") || cur.raw.hasSuffix(":")
+                    let limit = (valueOfLabel ? labelGap : rowGap) * h
+                    guard gap >= -0.2 * h, gap <= limit, gap < bestGap else { continue }
                     bestGap = gap
                     best = j
                 }

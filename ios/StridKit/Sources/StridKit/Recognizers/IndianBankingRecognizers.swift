@@ -42,7 +42,7 @@ public enum IndianBankingRecognizers {
     /// Without context, a bare digit run is left to the txn-ref / phone / Aadhaar recognizers.
     public static let bankAccount = RegexRecognizer(
         entityType: .inBankAccount,
-        patterns: [#"\b\d{9,18}\b"#],
+        patterns: [#"(?<!\d)\d{9,18}(?!\d)"#],
         baseScore: 0.3,
         contextWords: [
             "account", "a/c", "acc", "acct", "bank account", "saving", "current",
@@ -58,7 +58,16 @@ public enum IndianBankingRecognizers {
     /// context ("ifsc", "neft") takes it to 1.0 via the default 0.35 boost.
     public static let ifsc = RegexRecognizer(
         entityType: .inIFSC,
-        patterns: [#"\b[A-Z]{4}0[A-Z0-9]{6}\b"#],
+        patterns: [
+            #"\b[A-Z]{4}0[A-Z0-9]{6}\b"#,
+            // OCR drops the colon after a tight label: "RTGS/NEFT IFSCHDFC0003878".
+            #"(?<=IFSC)[A-Z]{4}0[A-Z0-9]{6}\b"#,
+            // OCR reads the mandatory fifth-position zero as the letter O ("YESBOPTMUPI"). Only
+            // accepted between narration rails, where a plain word cannot sit.
+            #"(?<=-)[A-Z]{4}O[A-Z0-9]{6}(?=-)"#,
+            // The same at the start of a wrapped narration line, before the transaction number.
+            #"(?<![A-Z0-9@])[A-Z]{4}O[A-Z0-9]{6}(?=-\d)"#,
+        ],
         baseScore: 0.85,
         contextWords: ["ifsc", "branch", "bank", "neft", "rtgs", "imps", "rtgs/neft"]
     )
@@ -114,7 +123,7 @@ public enum IndianBankingRecognizers {
     /// context. A failing checksum drops the match so the txn-ref recognizer can claim it instead.
     public static let aadhaar = RegexRecognizer(
         entityType: .inAadhaar,
-        patterns: [#"\b[2-9]\d{3}\s?\d{4}\s?\d{4}\b"#],
+        patterns: [#"(?<!\d)[2-9]\d{3}\s?\d{4}\s?\d{4}(?!\d)"#],
         baseScore: 0.4,
         contextWords: ["aadhaar", "aadhar", "uid", "uidai", "unique id", "aadhaar no"],
         contextBoost: 0.45,
@@ -177,7 +186,7 @@ public enum IndianBankingRecognizers {
     /// a large 0.6 to 0.9 so it beats the 0.75 NSDataDetector phone on the same span.
     public static let micr = RegexRecognizer(
         entityType: .inMICR,
-        patterns: [#"\b\d{9}\b"#],
+        patterns: [#"(?<!\d)\d{9}(?!\d)"#],
         baseScore: 0.3,
         contextWords: ["micr", "cheque", "check"],
         contextBoost: 0.6,
@@ -195,8 +204,8 @@ public enum IndianBankingRecognizers {
     public static let phone = RegexRecognizer(
         entityType: .inPhone,
         patterns: [
-            #"(?:\+91[\s\-]?)?[6-9]\d{4}[\s\-]?\d{5}\b"#,
-            #"\b0[6-9]\d{4}[\s\-]?\d{5}\b"#,
+            #"(?<!\d)(?:\+91[\s\-]?)?[6-9]\d{4}[\s\-]?\d{5}(?!\d)"#,
+            #"(?<!\d)0[6-9]\d{4}[\s\-]?\d{5}(?!\d)"#,
         ],
         baseScore: 0.6,
         contextWords: ["phone", "mobile", "mob", "cell", "contact", "tel", "call", "sms", "whatsapp", "phone no"]
@@ -211,7 +220,7 @@ public enum IndianBankingRecognizers {
     /// (where the street and city sit) and 20 after (where "India" or a phone label might sit).
     public static let pinCode = RegexRecognizer(
         entityType: .inPINCode,
-        patterns: [#"\b[1-9]\d{5}\b"#],
+        patterns: [#"(?<!\d)[1-9]\d{5}(?!\d)"#],
         baseScore: 0.3,
         contextWords: [
             "pin", "pincode", "pin code", "postal", "zip", "post office", "sector", "city", "address",
@@ -233,7 +242,7 @@ public enum IndianBankingRecognizers {
     /// the 0.5 boost takes 0.3 to 0.8 so it outranks a bare bank-account or txn-ref match.
     public static let customerID = RegexRecognizer(
         entityType: .inCustomerID,
-        patterns: [#"\b\d{7,11}\b"#],
+        patterns: [#"(?<!\d)\d{7,11}(?!\d)"#],
         baseScore: 0.3,
         contextWords: ["cust id", "customer id", "cif", "cust no", "customer no", "client id"],
         contextBoost: 0.5
@@ -268,7 +277,7 @@ public enum IndianBankingRecognizers {
     public static let txnRef = RegexRecognizer(
         entityType: .inTxnRef,
         patterns: [
-            #"\b\d{12,20}\b"#,
+            #"(?<!\d)\d{12,20}(?!\d)"#,
             // Slash/hyphen-delimited refs inside narrations: BIL/ONL/000123456, NEFT/N2452.../, -0012345678
             #"(?<=[/\-])\d{6,11}\b(?!@)"#,
         ],

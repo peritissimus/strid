@@ -92,11 +92,14 @@ public struct NarrationRecognizer: Recognizer {
         // (HDFC and SBI print only the beneficiary's registered name, often one word).
         // Captures one 4+ letter word optionally followed by up to three more words; `nameCore`
         // above requires at least two words, so this pattern exists specifically for the one-word case.
-        #"\b(?:UPI|IMPS)[-/](?:P2[APM][-/])?([A-Z]{4,}(?:[ \t][A-Z]{2,}){0,3})(?=[ \t]*[-/@]|[ \t]*(?:\n|$))"#,
+        #"\b(?:UPI|IMPS)[-/](?:P2[APM][-/])?(?:\d{6,}[-/])?([A-Z]{4,}(?:[ \t]+[A-Z]{1,}){0,3})(?=[ \t]*[-/@]|[ \t]*(?:\n|$))"#,
         // Relation lines on ID documents: "S/O: Mahendra Singh Rathore", "W/O Sunita Devi", "C/O ..."
         // Son/Daughter/Wife/Care/Husband of. The captured name may be Title Case (2-4 words,
         // `[A-Z][a-z]+`) or ALL CAPS (2-4 words, `[A-Z]{2,}`); mixed casing is not accepted.
         #"\b(?:S/O|D/O|W/O|C/O|H/O|Son of|Daughter of|Wife of|Care of)\s*:?\s+((?:[A-Z][a-z]+\.?\s+){1,3}[A-Z][a-z]+|(?:[A-Z]{2,}\s+){1,3}[A-Z]{2,})"#,
+        // Hindi relation labels on ID cards: "द्वारा: अरुण पाटनकर," (care of), "पुत्र" (son of),
+        // "पत्नी" (wife of), "पिता" (father). One to four Devanagari words up to the next comma.
+        #"(?:द्वारा|दारा|पुत्र|पुत्री|पत्नी|पिता|पति)[ \t]*:?[ \t]*([\u0900-\u097F]+(?:[ \t]+[\u0900-\u097F]+){0,3})"#,
         // "Name: Ananya Krishnan" / "Customer Name : RAHUL SHARMA" / "Employee Name: ..."
         // Same Title Case / ALL CAPS name body as above, after an optional qualifier and "Name:".
         #"\b(?:Employee |Customer |Account Holder |Applicant |Beneficiary |Nominee )?Name\s*:\s*((?:[A-Z][a-z]+\.?\s+){1,3}[A-Z][a-z]+|(?:[A-Z]{2,}\s+){1,3}[A-Z]{2,})"#,
