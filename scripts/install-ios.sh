@@ -70,7 +70,8 @@ echo "Team: $team"
 #     devicectl's output. Take the first match.
 dev_line=""
 for _ in $(seq 1 18); do
-  list="$(xcrun devicectl list devices 2>/dev/null | awk 'NR>2' | grep -iE 'iphone')"
+  # Newer devicectl also lists booted simulators ("simulated"); only real phones qualify.
+  list="$(xcrun devicectl list devices 2>/dev/null | awk 'NR>2' | grep -iE 'iphone' | grep -iE 'physical')"
   if [[ -n "${DEVICE:-}" ]]; then list="$(echo "$list" | grep -iF "$DEVICE" || true)"; fi
   dev_line="$(echo "$list" | grep -iE '\b(available|connected)\b' | grep -viE 'unavailable' | head -1 || true)"
   [[ -n "$dev_line" ]] && break
