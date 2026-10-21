@@ -20,9 +20,11 @@ import StridKit
 /// Generic segmented control. Used in `RecordDetailView` to flip between the
 /// redacted and original previews.
 ///
-/// The selected segment's white capsule shares a `matchedGeometryEffect`
-/// id, so when `selection` changes SwiftUI animates the thumb sliding from
-/// the old segment to the new one instead of fading two separate shapes.
+/// One white thumb lives behind the row; each segment publishes its frame
+/// under its value through `matchedGeometryEffect`, and the thumb follows
+/// whichever frame `selection` names. The selection is the only state and
+/// the thumb's place is a fixed function of it, so a change is one slide
+/// on `Theme.snappy` rather than one capsule leaving and another arriving.
 struct SegmentedPill<T: Hashable>: View {
     /// `(value, label)` pairs in display order.
     let options: [(T, String)]
@@ -44,16 +46,16 @@ struct SegmentedPill<T: Hashable>: View {
                         // Black on the white thumb, muted ink elsewhere.
                         .foregroundStyle(selection == value ? .black : Theme.ink3)
                         .padding(.horizontal, 14).padding(.vertical, 7)
-                        .background {
-                            // Only the selected segment draws the thumb; the
-                            // shared id makes it slide between segments.
-                            if selection == value {
-                                Capsule().fill(Color.white).matchedGeometryEffect(id: "thumb", in: ns)
-                            }
-                        }
+                        // Source frame for the thumb, keyed by this segment's value.
+                        .matchedGeometryEffect(id: value, in: ns)
                 }
                 .buttonStyle(.plain)
             }
+        }
+        // The thumb: one capsule that takes the selected segment's frame.
+        .background {
+            Capsule().fill(Color.white)
+                .matchedGeometryEffect(id: selection, in: ns, isSource: false)
         }
         // 3pt gutter so the thumb sits inside the outer glass capsule.
         .padding(3)
