@@ -149,9 +149,11 @@ struct BottomScrim: View {
 /// height fall off linearly with its distance from `t`, producing a soft
 /// highlight about one sixth of the width wide.
 struct SweepMeter: View {
-    /// Position of the highlight, 0...1 across the bars. Animated on appear.
+    /// Position of the highlight, 0...1 across the bars. Sweeps while `active`.
     @State private var t: Double = 0
     var bars = 32
+    /// False parks the highlight so a hidden meter costs nothing.
+    var active = true
     var body: some View {
         HStack(spacing: 3) {
             ForEach(0..<bars, id: \.self) { i in
@@ -164,10 +166,15 @@ struct SweepMeter: View {
                     .frame(width: 3, height: 12 + 8 * lit)
             }
         }
-        .onAppear {
-            // Autoreverse gives a ping-pong sweep with no jump at the ends.
-            withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: true)) { t = 1 }
+        .onAppear { if active { sweep() } }
+        .onChange(of: active) { _, on in
+            if on { sweep() } else { withAnimation(nil) { t = 0 } }
         }
+    }
+
+    /// Autoreverse gives a ping-pong sweep with no jump at the ends.
+    private func sweep() {
+        withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: true)) { t = 1 }
     }
 }
 
