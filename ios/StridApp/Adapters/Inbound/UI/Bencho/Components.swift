@@ -289,9 +289,6 @@ struct StackedCards: View {
     /// step is turned into scale as a 1000pt perspective would.
     private let stepX: CGFloat = 20, stepY: CGFloat = 16, stepZ: CGFloat = 42
     private let cardW: CGFloat = 120, cardH: CGFloat = 150
-    /// Bencho's `cubic-bezier(0.22, 1, 0.36, 1)` over 600ms: a fast start
-    /// that settles without bounce.
-    private let slide = Animation.timingCurve(0.22, 1, 0.36, 1, duration: 0.6)
 
     private func scale(_ k: Int) -> CGFloat { placed ? 1000 / (1000 + CGFloat(k) * stepZ) : 1 }
     /// Offsets are centred on the stack's middle slot so it sits centred.
@@ -324,10 +321,12 @@ struct StackedCards: View {
         .contentShape(Rectangle())
         .onTapGesture {
             Haptic.tap()
-            withAnimation(slide) { cards.append(cards.removeFirst()) }
+            withAnimation(Theme.slide) { cards.append(cards.removeFirst()) }
         }
-        // Short delay so the stack settles into depth after the screen is in.
-        .onAppear { withAnimation(slide.delay(0.15)) { placed = true } }
+        // The stack steps into depth on the same curve a swap uses, as soon
+        // as it is on screen: the empty state has no entrance of its own to
+        // wait for, so a delay here would be a pause before nothing.
+        .onAppear { withAnimation(Theme.slide) { placed = true } }
     }
 
     /// Constant 6 degree vertical skew about the card centre.
