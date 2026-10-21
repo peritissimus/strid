@@ -29,7 +29,7 @@ public enum IndianBankingRecognizers {
         [
             bankAccount, ifsc, pan, aadhaar, upiID, micr, phone,
             pinCode, customerID, branchCode, txnRef, dob, creditCard, ipAddress,
-            maskedCard, alphaTxnRef, NarrationRecognizer(), IndianPlaceRecognizer(),
+            maskedCard, alphaTxnRef, gstin, orderID, NarrationRecognizer(), IndianPlaceRecognizer(), AddressBlockRecognizer(),
         ]
     }
 
@@ -73,6 +73,36 @@ public enum IndianBankingRecognizers {
         patterns: [#"\b[A-Z]{5}\d{4}[A-Z]\b"#],
         baseScore: 0.85,
         contextWords: ["pan", "permanent account", "tax", "income tax", "pan card", "pan no"]
+    )
+
+    /// GSTIN: `SS PPPPPNNNNP E Z C` = 2-digit state code, the holder's PAN, an entity code,
+    /// the literal `Z`, and a base-36 check character validated by `Checksums.gstin`.
+    /// Appears on every Indian tax invoice; for sole proprietors it embeds their personal PAN.
+    public static let gstin = RegexRecognizer(
+        entityType: .inGSTIN,
+        patterns: [#"\b\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]\b"#],
+        baseScore: 0.6,
+        contextWords: ["gst", "gstin", "gst registration", "gst no", "gstn"],
+        contextBoost: 0.05,
+        validator: { Checksums.gstin($0) },
+        validatedScore: 0.95,
+        keepUnvalidatedWithContext: true
+    )
+
+    /// Order / invoice / booking identifiers that tie a document to one customer.
+    ///
+    /// Shapes: Amazon order numbers (`171-8264519-3350731`), Flipkart (`OD` + 15-21 digits),
+    /// and any alphanumeric value with at least one digit following an order/invoice/bill/
+    /// booking/PNR/AWB label and a colon or hash. "Order Date:" and "Invoice Value:" do not
+    /// match because the optional qualifier only admits no/number/id/details/ref.
+    public static let orderID = CaptureRecognizer(
+        entityType: .orderID,
+        patterns: [
+            #"\b(\d{3}-\d{7}-\d{7})\b"#,
+            #"\b(OD\d{15,21})\b"#,
+            #"(?i)\b(?:order|invoice|bill|receipt|booking|pnr|ticket|consignment|awb|tracking|shipment|policy)\s*(?:no|number|id|details|ref|reference)?\s*\.?\s*[:#]\s*((?=[A-Z/\-]*\d)[A-Z0-9][A-Z0-9/\-]{4,})"#,
+        ],
+        score: 0.9
     )
 
     /// Aadhaar: 12 digits, optionally spaced as XXXX XXXX XXXX

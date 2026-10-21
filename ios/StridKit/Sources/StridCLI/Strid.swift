@@ -25,7 +25,7 @@ struct Strid: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "strid",
         abstract: "Detect and redact PII from text documents. Runs fully on-device.",
-        subcommands: [Redact.self, Restore.self, Detect.self, Eval.self, Entities.self]
+        subcommands: [Redact.self, Restore.self, Detect.self, TextDump.self, Eval.self, Entities.self]
     )
 }
 
@@ -396,7 +396,7 @@ struct Eval: ParsableCommand {
     /// reported as a txn ref is still redacted.
     static let equivalent: [Set<String>] = [
         ["PHONE", "IN_PHONE"], ["IN_TXN_REF", "IN_BANK_ACCOUNT", "IN_CUSTOMER_ID", "IN_MICR"],
-        ["LOCATION", "IN_PIN_CODE"],
+        ["LOCATION", "IN_PIN_CODE", "ADDRESS"], ["ORDER_ID", "IN_TXN_REF"],
     ]
     /// `true` if the two type names are identical or in the same `equivalent` group.
     static func sameType(_ a: String, _ b: String) -> Bool {
@@ -498,6 +498,36 @@ struct Eval: ParsableCommand {
         let dx = x.filter(\.isNumber), dy = y.filter(\.isNumber)
         guard dx.count >= 8, dx.count == dy.count else { return false }
         return zip(dx, dy).filter { $0 != $1 }.count <= 1
+    }
+}
+
+// MARK: - text
+
+/// `strid text`: prints the text the engine would scan for a document (PDF text layer, OCR for
+/// images and scanned pages, DOCX body). For understanding why a detection did or did not fire.
+struct TextDump: ParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "text",
+        abstract: "Print the extracted text that detection runs on."
+    )
+
+    @OptionGroup var input: InputFile
+    @OptionGroup var document: DocumentFlags
+
+    /// `-n` / `--numbers`: prefix each line with its 1-based line number.
+    @Flag(name: [.short, .long], help: "Number the lines.")
+    var numbers = false
+
+    func run() throws {
+        guard let text = try input.readText(options: document.options) else {
+            Stderr.print("Warning: input is empty")
+            return
+        }
+        if numbers {
+            for (i, line) in text.components(separatedBy: "\n").enumerated() { print("\(i + 1)\t\(line)") }
+        } else {
+            print(text)
+        }
     }
 }
 

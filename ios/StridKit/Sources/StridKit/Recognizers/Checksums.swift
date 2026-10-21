@@ -11,6 +11,29 @@ import Foundation
 
 /// Checksum validators used to cut false positives on numeric identifiers.
 public enum Checksums {
+    /// GSTIN check digit (15th character) per the GSTN specification.
+    ///
+    /// Characters are valued in base 36 (0-9 then A-Z). Positions alternate weights 1, 2, 1, 2...
+    /// from the first character; each product is split into quotient and remainder base 36 and
+    /// both are summed. The check character is `(36 - sum mod 36) mod 36` in base 36.
+    public static func gstin(_ s: String) -> Bool {
+        let chars = Array(s.uppercased())
+        guard chars.count == 15 else { return false }
+        func value(_ c: Character) -> Int? {
+            if let d = c.wholeNumberValue, c.isASCII { return d }
+            guard let a = c.asciiValue, a >= 65, a <= 90 else { return nil }
+            return Int(a) - 65 + 10
+        }
+        var sum = 0
+        for (i, c) in chars[0..<14].enumerated() {
+            guard let v = value(c) else { return false }
+            let product = v * (i % 2 == 0 ? 1 : 2)
+            sum += product / 36 + product % 36
+        }
+        guard let check = value(chars[14]) else { return false }
+        return (36 - sum % 36) % 36 == check
+    }
+
     /// Verhoeff checksum, used by UIDAI for Aadhaar numbers.
     ///
     /// Verhoeff is a dihedral-group (D5) check-digit scheme that catches all single-digit errors

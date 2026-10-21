@@ -290,7 +290,7 @@ final class DocumentViewModel {
     func colorForType(_ type: PIIEntityType) -> Color {
         switch type {
         // Critical PII - Error red
-        case .person, .inDOB, .inPAN, .inAadhaar, .creditCard, .inBankAccount:
+        case .person, .inDOB, .inPAN, .inAadhaar, .creditCard, .inBankAccount, .inGSTIN:
             .stridError
 
         // Contact information - Accent teal
@@ -298,11 +298,11 @@ final class DocumentViewModel {
             .stridAccent
 
         // Location information - Warning orange
-        case .location, .inPINCode:
+        case .location, .inPINCode, .address:
             .stridWarning
 
         // Financial/Banking codes - Info blue
-        case .inIFSC, .inBranchCode, .inMICR, .inTxnRef:
+        case .inIFSC, .inBranchCode, .inMICR, .inTxnRef, .orderID:
             .stridInfo
 
         // Organizational/Generic - Dark gray

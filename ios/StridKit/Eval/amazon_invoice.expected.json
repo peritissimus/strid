@@ -1,0 +1,76 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "Kavya Raghunathan"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "Flat 7B, Prestige Lakeside Habitat, Varthur Road"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "Gunjur, Whitefield"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "560087"
+    },
+    {
+      "type": "IN_GSTIN",
+      "text": "29AAJCB4821P1Z4"
+    },
+    {
+      "type": "IN_PAN",
+      "text": "AAJCB4821P"
+    },
+    {
+      "type": "ORDER_ID",
+      "text": "171-8264519-3350731"
+    },
+    {
+      "type": "ORDER_ID",
+      "text": "BLR7-2140187"
+    },
+    {
+      "type": "ORDER_ID",
+      "text": "KA-BLR7-1234567-2526"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "2hG8pQ7sK3nXyZ1Lm4Vw"
+    }
+  ],
+  "not": [
+    {
+      "text": "amazon.in"
+    },
+    {
+      "text": "Tax Invoice"
+    },
+    {
+      "text": "Invoice Value"
+    },
+    {
+      "text": "Order Date"
+    },
+    {
+      "text": "Mode of Payment"
+    },
+    {
+      "text": "HSN:85183000"
+    },
+    {
+      "text": "B07PR1CL3S"
+    },
+    {
+      "text": "1,299.00"
+    },
+    {
+      "text": "Authorized Signatory"
+    },
+    {
+      "text": "State/UT Code"
+    }
+  ]
+}

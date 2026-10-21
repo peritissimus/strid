@@ -195,7 +195,7 @@ public final class StridEngine: Sendable {
     private static func specificity(_ t: PIIEntityType) -> Int {
         switch t {
         case .phone, .location, .organization, .url: 0
-        case .person: 1
+        case .person, .address: 1
         default: 2
         }
     }

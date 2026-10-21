@@ -76,3 +76,77 @@ struct WrappedNarrationTests {
         #expect(f.contains { $0.type == .inTxnRef && $0.text == "510123456789" })
     }
 }
+
+@Suite("Role-labelled names")
+struct RoleLabelTests {
+    private func names(_ text: String) -> [String] {
+        NarrationRecognizer().recognize(in: text).map { String(text[$0.range]) }
+    }
+    @Test func nomineeAndManagerAreCaught() {
+        #expect(names("Account Type: Savings Nominee: Sunita Sharma") == ["Sunita Sharma"])
+        #expect(names("Relationship Manager: Neha Iyer, neha@x.com") == ["Neha Iyer"])
+        #expect(names("Joint Holder: RAHUL SHARMA") == ["RAHUL SHARMA"])
+    }
+    @Test func nameDoesNotRunOntoNextLine() {
+        #expect(names("Nominee: Sunita Sharma\nAadhaar (masked): XXXX") == ["Sunita Sharma"])
+    }
+}
+
+@Suite("GSTIN checksum")
+struct GSTINTests {
+    @Test func validAndInvalid() {
+        #expect(Checksums.gstin("29AAJCB4821P1Z4") == true)
+        // Published example from GST FAQs.
+        #expect(Checksums.gstin("27AAPFU0939F1ZV") == true)
+        #expect(Checksums.gstin("27AAPFU0939F1ZX") == false)
+        #expect(Checksums.gstin("27AAPFU0939F1Z") == false)
+    }
+}
+
+@Suite("GSTIN recognizer")
+struct GSTINRecognizerTests {
+    @Test func labelledButCorruptedIsStillCaught() {
+        let hits = IndianBankingRecognizers.gstin.recognize(in: "GST Registration No: 29AAJCB4821P1ZQ")
+        #expect(hits.map(\.text) == ["29AAJCB4821P1ZQ"])
+        #expect(hits.first.map { $0.score < 0.9 } == true)
+    }
+    @Test func unlabelledAndCorruptedIsDropped() {
+        #expect(IndianBankingRecognizers.gstin.recognize(in: "ref 29AAJCB4821P1ZQ paid").isEmpty)
+    }
+    @Test func validOneScoresHigh() {
+        let hits = IndianBankingRecognizers.gstin.recognize(in: "27AAPFU0939F1ZV")
+        #expect(hits.first.map { $0.score >= 0.95 } == true)
+    }
+}
+
+@Suite("Address blocks")
+struct AddressBlockTests {
+    private func run(_ text: String) -> [(String, String)] {
+        AddressBlockRecognizer().recognize(in: text).map { ($0.type.rawValue, String(text[$0.range])) }
+    }
+    @Test func labelledBlockYieldsNameAndAddress() {
+        let text = """
+        Billing Address :
+        Kavya Raghunathan
+        Flat 7B, Prestige Lakeside Habitat, Varthur Road
+        Gunjur, Whitefield
+        BENGALURU, KARNATAKA, 560087
+        IN
+        State/UT Code: 29
+        """
+        let got = run(text)
+        #expect(got.contains { $0 == ("PERSON", "Kavya Raghunathan") })
+        let addr = got.first { $0.0 == "ADDRESS" }?.1 ?? ""
+        #expect(addr.hasPrefix("Flat 7B"))
+        #expect(addr.hasSuffix("560087"))
+        #expect(!addr.contains("State/UT"))
+    }
+    @Test func companyFirstLineIsNotAPerson() {
+        let got = run("Address: Brightline Retail Private Limited\nSurvey No. 45/2, Soukya Road\nBengaluru 560067")
+        #expect(!got.contains { $0.0 == "PERSON" })
+        #expect(got.first { $0.0 == "ADDRESS" }?.1.hasPrefix("Brightline") == true)
+    }
+    @Test func unlabelledPlaceNamesAreIgnored() {
+        #expect(run("Branch: Bandra West, Mumbai 400050").isEmpty)
+    }
+}

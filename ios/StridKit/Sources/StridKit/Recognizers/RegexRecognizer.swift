@@ -37,6 +37,8 @@ public struct RegexRecognizer: Recognizer {
     public let contextAfter: Int
     /// Optional checksum / structural validator. A failing match is dropped.
     public let validator: (@Sendable (String) -> Bool)?
+    /// When true, a match that fails `validator` survives if context words are present.
+    private let keepUnvalidatedWithContext: Bool
     /// Score when the validator passes (validators are strong evidence).
     public let validatedScore: Double
 
@@ -59,8 +61,10 @@ public struct RegexRecognizer: Recognizer {
         contextWindow: Int = 100,
         contextAfter: Int? = nil,
         validator: (@Sendable (String) -> Bool)? = nil,
-        validatedScore: Double = 0.85
+        validatedScore: Double = 0.85,
+        keepUnvalidatedWithContext: Bool = false
     ) {
+        self.keepUnvalidatedWithContext = keepUnvalidatedWithContext
         self.entityType = entityType
         self.patterns = patterns.compactMap { try? NSRegularExpression(pattern: $0, options: []) }
         self.baseScore = baseScore
@@ -93,11 +97,18 @@ public struct RegexRecognizer: Recognizer {
                 let matched = String(text[swiftRange])
 
                 var score = baseScore
+                let inContext = !contextWords.isEmpty && hasContext(around: match.range, in: text, nsText: nsText)
                 if let validator {
-                    guard validator(matched) else { continue }
-                    score = max(score, validatedScore)
+                    if validator(matched) {
+                        score = max(score, validatedScore)
+                    } else if !(keepUnvalidatedWithContext && inContext) {
+                        // Checksum failure with no label nearby: almost certainly not this type.
+                        continue
+                    }
+                    // Checksum failure next to an explicit label ("GST Registration No:") is kept at
+                    // `baseScore`: a single OCR-garbled character must not unredact a labelled ID.
                 }
-                if !contextWords.isEmpty && hasContext(around: match.range, in: text, nsText: nsText) {
+                if inContext {
                     score = min(score + contextBoost, 1.0)
                 }
 
@@ -120,10 +131,46 @@ public struct RegexRecognizer: Recognizer {
     /// so `"pan"` also matches inside "company"; context words are chosen with that in mind and
     /// the boost is bounded, so an accidental hit never promotes a match beyond 1.0.
     private func hasContext(around range: NSRange, in text: String, nsText: NSString) -> Bool {
-        let start = max(0, range.location - contextWindow)
-        let end = min(nsText.length, range.location + range.length + contextAfter)
+        Self.hasContext(around: range, in: text, nsText: nsText, words: contextWords, before: contextWindow, after: contextAfter)
+    }
+
+    /// Shared context test so other regex-based recognizers score the same way.
+    static func hasContext(around range: NSRange, in text: String, nsText: NSString, words: [String], before: Int, after: Int) -> Bool {
+        let start = max(0, range.location - before)
+        let end = min(nsText.length, range.location + range.length + after)
         let windowRange = NSRange(location: start, length: end - start)
         let window = nsText.substring(with: windowRange).lowercased()
-        return contextWords.contains { window.contains($0) }
+        return words.contains { window.contains($0) }
     }
+}
+
+/// Like `RegexRecognizer`, but the entity is capture group 1 rather than the whole match.
+///
+/// Used where the value only means something because of what precedes it ("Order Number:",
+/// "Invoice No :") and ICU's bounded-length lookbehind cannot express the label. The label is
+/// matched but not redacted.
+public struct CaptureRecognizer: Recognizer {
+    public let entityType: PIIEntityType
+    private let patterns: [NSRegularExpression]
+    private let score: Double
+
+    public init(entityType: PIIEntityType, patterns: [String], score: Double = 0.9) {
+        self.entityType = entityType
+        self.patterns = patterns.compactMap { try? NSRegularExpression(pattern: $0, options: []) }
+        self.score = score
+    }
+
+    public func recognize(in text: String) -> [PIIEntity] {
+        var out: [PIIEntity] = []
+        let ns = text as NSString
+        for regex in patterns {
+            for m in regex.matches(in: text, range: NSRange(location: 0, length: ns.length)) where m.numberOfRanges > 1 {
+                let r = m.range(at: 1)
+                guard r.location != NSNotFound, let swiftRange = Range(r, in: text) else { continue }
+                out.append(PIIEntity(type: entityType, text: String(text[swiftRange]), range: swiftRange, score: score))
+            }
+        }
+        return out
+    }
+
 }

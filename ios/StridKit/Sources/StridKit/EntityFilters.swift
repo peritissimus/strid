@@ -29,6 +29,27 @@ public enum EntityFilters {
         "total", "opening balance", "closing balance", "page", "neft", "imps", "rtgs", "atm", "pos", "emi",
         "salary", "ltd", "pvt", "limited", "india", "gst", "tds", "nominee", "mobile", "email", "phone", "address",
         "period", "from", "to", "of", "the", "and", "for", "mr", "mrs", "ms", "shri", "smt",
+        // Invoice vocabulary: NLTagger reads these headings as organisations.
+        "invoice", "tax invoice", "invoice value", "invoice number", "invoice details", "invoice date",
+        "order number", "order date", "bill of supply", "cash memo", "amount in words", "sold by",
+        "billing address", "shipping address", "place of supply", "place of delivery", "authorized signatory",
+        "authorised signatory", "mode of payment", "credit card", "debit card", "net banking", "shipping charges",
+        "cgst", "sgst", "igst", "hsn", "qty", "unit price", "net amount", "tax rate", "tax type", "tax amount",
+        "total amount", "state/ut code", "reverse charge", "payment transaction id", "original for recipient",
+    ]
+
+    /// Household-name merchants, banks and agencies. Their names and bare domains identify the
+    /// counterparty, not the customer, and blacking them out is what makes a redacted invoice
+    /// look broken. Matched case-insensitively against the whole entity text.
+    static let publicOrganisations: Set<String> = [
+        "amazon", "amazon.in", "amazon.com", "amazon seller services", "amazon retail india", "flipkart", "myntra",
+        "ajio", "meesho", "nykaa", "bigbasket", "blinkit", "zepto", "swiggy", "zomato", "uber", "ola", "rapido",
+        "irctc", "makemytrip", "goibibo", "cleartrip", "redbus", "indigo", "air india", "vistara",
+        "hdfc", "hdfc bank", "icici", "icici bank", "sbi", "state bank of india", "axis bank", "kotak",
+        "kotak mahindra bank", "yes bank", "idfc first bank", "indusind bank", "punjab national bank", "bank of baroda",
+        "canara bank", "union bank of india", "paytm", "phonepe", "google pay", "gpay", "bhim", "cred", "razorpay",
+        "lic", "uidai", "nsdl", "income tax department", "reserve bank of india", "rbi", "epfo", "sebi",
+        "apple", "google", "microsoft", "netflix", "spotify", "jio", "airtel", "vi", "bsnl", "tata", "reliance",
     ]
 
     /// Drops entities that match a known false-positive shape for their type.
@@ -44,6 +65,8 @@ public enum EntityFilters {
             case .person, .location, .organization:
                 // Model-derived name-like types: reject known labels outright.
                 if labels.contains(lower) { return false }
+                // Counterparty brands are not the customer's PII.
+                if e.type == .organization, publicOrganisations.contains(lower) { return false }
                 // Single short token is almost never a usable name/place.
                 // ("Raj" would be lost here, but so would hundreds of "Dr", "Sr", "No" tags.)
                 if !t.contains(" ") && t.count <= 3 { return false }
@@ -56,6 +79,13 @@ public enum EntityFilters {
                 // The branch-code regex is `[A-Z0-9]{4,6}`, which happily matches the *word* "IFSC"
                 // sitting right next to "branch code"; a real branch code always has a digit.
                 return t.rangeOfCharacter(from: .decimalDigits) != nil
+            case .url:
+                // A brand's bare domain ("amazon.in", "Amazon.in/business") identifies the merchant,
+                // not the person. URLs with a query string or a user-ish path segment are kept.
+                let host = lower.replacingOccurrences(of: #"^https?://(www\.)?"#, with: "", options: .regularExpression)
+                    .split(separator: "/").first.map(String.init) ?? lower
+                let pathDepth = lower.split(separator: "/").count - (lower.hasPrefix("http") ? 3 : 1)
+                return !(publicOrganisations.contains(host) && pathDepth <= 1 && !lower.contains("?"))
             default:
                 // Structured identifiers (PAN, IFSC, Aadhaar, ...) are governed by their own regex
                 // shapes, validators and context scoring; no generic filtering applies.

@@ -41,6 +41,9 @@ extension PIIEntityType {
         case .inBranchCode: return "number"
         case .inTxnRef: return "number.circle"
         case .inDOB: return "calendar"
+        case .inGSTIN: return "doc.text.magnifyingglass"
+        case .orderID: return "shippingbox"
+        case .address: return "house"
         }
     }
 }

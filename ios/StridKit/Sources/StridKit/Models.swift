@@ -71,6 +71,14 @@ public enum PIIEntityType: String, CaseIterable, Codable, Sendable {
     case inTxnRef = "IN_TXN_REF"
     /// Date of birth. Only dates near birth context, so transaction dates are left alone.
     case inDOB = "IN_DOB"
+    /// GST identification number (15 chars: state code, PAN, entity code, Z, check digit).
+    case inGSTIN = "IN_GSTIN"
+    /// Order, invoice, booking or shipment identifier: Amazon 3-7-7, Flipkart OD..., or any
+    /// alphanumeric value after an "Order Number:" / "Invoice No:" style label.
+    case orderID = "ORDER_ID"
+    /// A postal address block captured after a "Billing/Shipping Address:" style label,
+    /// as one span rather than scattered place names.
+    case address = "ADDRESS"
 
     /// Human-readable label for UI lists and the `strid entities` table.
     public var displayName: String {
@@ -95,6 +103,9 @@ public enum PIIEntityType: String, CaseIterable, Codable, Sendable {
         case .inBranchCode: "Branch Code"
         case .inTxnRef: "Txn Reference"
         case .inDOB: "Date of Birth"
+        case .inGSTIN: "GSTIN"
+        case .orderID: "Order / Invoice No"
+        case .address: "Address"
         }
     }
 }
