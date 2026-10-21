@@ -3,34 +3,40 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		004F5D5D1608FC7989DDA578 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD548F5E59501E838557823 /* ViewExtensions.swift */; };
 		019382A492754F7376815103 /* GetScannedDocumentsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710D15B3053F79C5AEFD858E /* GetScannedDocumentsUseCase.swift */; };
+		055322C0BF77BB70C1C26DA2 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EFCBD4A6CE60B12B91A76CC /* HomeView.swift */; };
 		06CDC122ACA5E132B0DF016A /* DocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */; };
 		07F7DA8CCF657D6E89F4813C /* RecordRedactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */; };
 		0A8D0C6E40F2BFDDD4E24140 /* RedactPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */; };
 		0B251786C7AF1CF10088FC0F /* EmptyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A9854D56454A1789867BE2 /* EmptyDetailView.swift */; };
 		0B3142724F33EC098A590CE1 /* DetectedPII.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F871F41F057A6CA08C387 /* DetectedPII.swift */; };
 		0CBFCBFE3670C6007F2E8BCD /* RedactedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849665227BA5D186EB01069B /* RedactedTextView.swift */; };
+		0CD8A0EC4DF36C518FAA38B1 /* FileRedactionRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F430895200437478AC9FFB69 /* FileRedactionRecordRepository.swift */; };
+		0D630FEA3D17FC7002221A51 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC56D3809E05B3B6CD0E7A /* Components.swift */; };
 		0D862275017D7FE5A5D3F9BE /* DocumentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */; };
 		0F5E56CA65466F140D15C6C3 /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = 44FAB6B4C7A8B02387BF4DCD /* StridKit */; };
+		12B4F6F31C5BEFCC3439FBAC /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE357F7B49ED5E7D57CE05EA /* HomeViewModel.swift */; };
 		17BB0B726280CEFA3B44464B /* DocumentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932DA0519D54423144747AA9 /* DocumentViewModel.swift */; };
-		1CAA7D2D99BDD1AF0A8F5C7F /* StridApp.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = FB97FBB662C964B53A26087C /* StridApp.xcodeproj */; };
+		195A3F6305621AB471DE1F29 /* StridAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BCE0A2AB9D701C4E1CF87D /* StridAppTests.swift */; };
 		1EE0796C834FAF24E3FBAF36 /* ScanningProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF436044B099FC5A3E99C603 /* ScanningProgressView.swift */; };
 		1FD2690C2AD54386FA8E217B /* PlatformHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E949ED5A04798986608D05 /* PlatformHelpers.swift */; };
 		2011E633E643CE05E8939A83 /* HighlightedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189EF48B19B3840429A1D742 /* HighlightedTextView.swift */; };
 		209938231DC7E5B334883DE3 /* PIIDetectorPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */; };
+		2668AA4412A97F8876806E60 /* RecordDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92B33D9553B0C4165115EFF2 /* RecordDetailView.swift */; };
 		27DF5C13D45FC46E7208253E /* DocumentSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98370C6C168A23BFD86F4FC5 /* DocumentSidebarRow.swift */; };
 		28168A245D2ECA01EE1BE02C /* InMemoryDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */; };
 		2AD8EA3C6A7ADF56214C68DF /* ScannedDocumentResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 716560599D66EACAE7B1C26A /* ScannedDocumentResultsView.swift */; };
-		2AF79F7A2F691BB400EE6C2F /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2AF79F792F691BB400EE6C2F /* StridKit */; };
-		2AF79F7C2F691BBA00EE6C2F /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2AF79F7B2F691BBA00EE6C2F /* StridKit */; };
 		2B422A6F20965139F60B7993 /* RedactionHistoryRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B485566D7AA991C9698602 /* RedactionHistoryRepositoryPort.swift */; };
+		2B8C8BB220C7667CC3038A55 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5421C787EA5BAB3A91C16A /* DocumentScannerView.swift */; };
 		2E04A1755388E1E43EE081DD /* PIIDetectorPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */; };
+		2EE4479FF8DE1653BE8984FC /* RedactionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703B5F8838EBF259B64EE4D8 /* RedactionRecord.swift */; };
 		317A0966B116C7298FBEA20B /* ScannedDocumentRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D98C67AC3F022E02886B0BF /* ScannedDocumentRepositoryPort.swift */; };
+		32042645D11F2D105C0A00D3 /* TestFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2CC434EF96CEFF7684D01B /* TestFactories.swift */; };
 		37E3F4E690027968C40B8569 /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE0A1583FF662913F6C140 /* ColorPalette.swift */; };
 		38C94739E30DFC6F7B7441BC /* ExportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */; };
 		3B6ACAF89F403180F8DD40EF /* DocumentSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98370C6C168A23BFD86F4FC5 /* DocumentSidebarRow.swift */; };
@@ -43,13 +49,22 @@
 		4D676F9D6C2AC350F13E4854 /* HighlightedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189EF48B19B3840429A1D742 /* HighlightedTextView.swift */; };
 		50FE92778506933145E1B788 /* SaveScannedDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ED6DAEEEA2F9426D9760BF /* SaveScannedDocumentUseCase.swift */; };
 		543A0D31446908002A394A4B /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D32D4A31CA2753501F2325E /* DIContainer.swift */; };
+		5A73D85199F98E8B5D1BEF46 /* MockDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CEFBB0CD9FAF0539F3795E /* MockDependencies.swift */; };
 		5D0BCC3D95E1EE8717F8EBE9 /* GetRedactionHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */; };
+		638E4F9F1CF49FCCE6C2A78D /* StridDocuments in Frameworks */ = {isa = PBXBuildFile; productRef = 35C625F9797D346FC06AC1B8 /* StridDocuments */; };
 		668971FD0F8EDB8E78681159 /* ImportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */; };
+		6CC121739DB0F24F199494A4 /* RedactFileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60151FCA27155B1B57E4C93D /* RedactFileUseCase.swift */; };
 		6CECC6E6A11AB60F9ADA58A9 /* RedactedDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */; };
+		71CB8694E7849D69A1AEE8C1 /* DocumentListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B7F6BBAB7057F4EC3EABCC /* DocumentListViewModelTests.swift */; };
 		75223E54388F8A02D296C92D /* ExportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */; };
 		76D0FD38ACCA2E6253E3F6F0 /* StridApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D843A7179201530FACD17E /* StridApp.swift */; };
 		78683EA8641D36D23DEDD440 /* DocumentSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C7D02322F1B4C5CF6FD6C /* DocumentSidebarView.swift */; };
+		786E0645F9BC3FD8474AA2DE /* MockDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5478C245A1A611B8DF8FF26 /* MockDIContainer.swift */; };
 		78D2815B41F7E5BC78DAECCB /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD548F5E59501E838557823 /* ViewExtensions.swift */; };
+		7AA60E7A3F33A89679C64B51 /* FileRedactionRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F430895200437478AC9FFB69 /* FileRedactionRecordRepository.swift */; };
+		7AD09A88121C7ABCD9253245 /* DocumentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE36BAADAA05890CD6A0876 /* DocumentPreview.swift */; };
+		7AF1883466E1BE438B975E9A /* StridDocuments in Frameworks */ = {isa = PBXBuildFile; productRef = F7534A3F8B3F9ABF8DE261C8 /* StridDocuments */; };
+		7C3C9FE94AC918E5E3625F26 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EFCBD4A6CE60B12B91A76CC /* HomeView.swift */; };
 		7E899B5BC4ABB7C313747BF4 /* RecordRedactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */; };
 		819B04AE4D8D3232C171EBD2 /* SummarySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC14A348697F7B9859D7D6 /* SummarySheet.swift */; };
 		8538B8B4267A0A8D0BE6305A /* DetectPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */; };
@@ -61,28 +76,38 @@
 		9333A307D8E53A7478F25BB6 /* ScannedDocumentResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 716560599D66EACAE7B1C26A /* ScannedDocumentResultsView.swift */; };
 		95F2B8F5C343EBE99C4B2E2A /* DocumentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932DA0519D54423144747AA9 /* DocumentViewModel.swift */; };
 		960889564DC347D4EFA10565 /* RedactionHistoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */; };
+		961C30317B96052EDD3E173E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 37FA446D8CF64719FDD06555 /* README.md */; };
 		968D9E808024DDE599018E7B /* DocumentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9419DB484EA07D0431B618FE /* DocumentDetailView.swift */; };
 		97D6533BB73CF59E9F734402 /* GetRedactionHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */; };
 		9844B74E1A038D4470CACD19 /* InMemoryScannedDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DD8C91F30E3F968958D44C /* InMemoryScannedDocumentRepository.swift */; };
 		99EFE95B6E2AFB96FC905C73 /* RedactedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849665227BA5D186EB01069B /* RedactedTextView.swift */; };
+		9D3233233D5A27D9D5E76C3A /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC56D3809E05B3B6CD0E7A /* Components.swift */; };
+		9EA763A6E7F4E26149131806 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5421C787EA5BAB3A91C16A /* DocumentScannerView.swift */; };
+		A0AFD4ED821E7B61B2BEB1DB /* RedactionRecordRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB10E8B2A6F085B2DB86A080 /* RedactionRecordRepositoryPort.swift */; };
 		A3898667848EF99A78630CFD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38FD04F5FE1EC4FE6200099B /* ContentView.swift */; };
 		A7A9C850DF9F5CF6BB881E81 /* GetScannedDocumentsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710D15B3053F79C5AEFD858E /* GetScannedDocumentsUseCase.swift */; };
 		A986BED565564370C50E2EB1 /* RedactPIIUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */; };
+		AD44DC89D325BD1DBBC772A8 /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = F484E6B494BECC98E2F38253 /* StridKit */; };
+		ADE1048C2FB4BD3C81164E73 /* RedactionRecordRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB10E8B2A6F085B2DB86A080 /* RedactionRecordRepositoryPort.swift */; };
+		AF94526A0AC97D6BB5950BEC /* DocumentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE36BAADAA05890CD6A0876 /* DocumentPreview.swift */; };
 		B3772FA85492734C90DB70E4 /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE0A1583FF662913F6C140 /* ColorPalette.swift */; };
 		B68598B2C76421835879E1BA /* SaveScannedDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ED6DAEEEA2F9426D9760BF /* SaveScannedDocumentUseCase.swift */; };
 		B8CF3FFCC659A0ED2959802F /* InMemoryScannedDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DD8C91F30E3F968958D44C /* InMemoryScannedDocumentRepository.swift */; };
+		B9A8DA60E7C5CB8B6E3745CC /* RedactFileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60151FCA27155B1B57E4C93D /* RedactFileUseCase.swift */; };
 		BB7205CE7F779CDE6580DC37 /* DocumentSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C7D02322F1B4C5CF6FD6C /* DocumentSidebarView.swift */; };
 		BD41C9E7C02EBD96838BBEE7 /* NoSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EACE3DAFF00C6DBB63CB9A3 /* NoSelectionView.swift */; };
 		BD77D4FD8F4CBA8E381C718A /* DeleteScannedDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB54678122D05C913F1C9BB /* DeleteScannedDocumentUseCase.swift */; };
+		BEC0AACCDC36012E837C07C5 /* RedactionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703B5F8838EBF259B64EE4D8 /* RedactionRecord.swift */; };
 		BF22E1AC87515E56C6527921 /* InMemoryDocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */; };
 		C23DCFF9AAE521DD7760254A /* SummarySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC14A348697F7B9859D7D6 /* SummarySheet.swift */; };
 		C5AB7FAD7B15FB9514B59906 /* SamplePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B13BD92139A58776F0994BF /* SamplePickerSheet.swift */; };
-		CD33BCB42E71D0152152081B /* StridApp.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = FB97FBB662C964B53A26087C /* StridApp.xcodeproj */; };
+		CBF3787673D490C3B4E948C3 /* RecordDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92B33D9553B0C4165115EFF2 /* RecordDetailView.swift */; };
 		CE76227F9FBCCA5409723E6A /* ImportDocumentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */; };
 		CF146C781EE7951E56D2F96E /* RedactionHistoryRepositoryPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B485566D7AA991C9698602 /* RedactionHistoryRepositoryPort.swift */; };
 		CFB8346CF0F6230044799D33 /* SampleDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C408BF14B7AC561B6EA713F /* SampleDocument.swift */; };
 		D0676760CF885CD618C2C1EC /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97406A85B5E80E2B261830 /* Document.swift */; };
 		D15AE31DB32C2A0495118B22 /* PlatformHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E949ED5A04798986608D05 /* PlatformHelpers.swift */; };
+		D15CE8B91E4534412017FF90 /* StridKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7C8C4C11720937462A6E63D9 /* StridKit */; };
 		D1D0F4EA34138B3DBDAFE2F4 /* SampleDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C408BF14B7AC561B6EA713F /* SampleDocument.swift */; };
 		D47CC5C1AE14DC3717DAAA05 /* ScannedDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC39531746A1048E247437B7 /* ScannedDocument.swift */; };
 		D69416C16A02661BD6D555CB /* ScannedDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC39531746A1048E247437B7 /* ScannedDocument.swift */; };
@@ -92,7 +117,11 @@
 		E2BC73E23EEB3C10D6080EB7 /* RedactionHistoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */; };
 		E2E7C81B48C2483096254141 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38FD04F5FE1EC4FE6200099B /* ContentView.swift */; };
 		E2EA8158701D5122FE1CAB28 /* NoSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EACE3DAFF00C6DBB63CB9A3 /* NoSelectionView.swift */; };
+		E38C97ED7BC057E0BEE65A9D /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE357F7B49ED5E7D57CE05EA /* HomeViewModel.swift */; };
+		E445DD538CA9D592B04AE2A3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C083342D6214E255BED9FDD9 /* Theme.swift */; };
+		E45413EFA62E309E2E722146 /* StridAppMacTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3948185080937E9FD65BE816 /* StridAppMacTests.swift */; };
 		E8A93A90DF7B408458634121 /* InMemoryRedactionHistoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2C08412102DD79EF97CCFC /* InMemoryRedactionHistoryRepository.swift */; };
+		EB9F06CD2976979996207E27 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C083342D6214E255BED9FDD9 /* Theme.swift */; };
 		EDC1C396EE5172C782D98A94 /* DocumentListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B59EEA3089B4E7512176FE /* DocumentListViewModel.swift */; };
 		EEAB7DDEFDA18FB1E14110A7 /* ScanningProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF436044B099FC5A3E99C603 /* ScanningProgressView.swift */; };
 		F450F92882539D239E77B113 /* DocumentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */; };
@@ -106,14 +135,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2AF79F552F691AEF00EE6C2F /* PBXContainerItemProxy */ = {
+		1B579C3B2280FF7532289398 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5D6ACA564A974D7EE436D95C /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = EC0FB368C06EEC5581F1649B;
 			remoteInfo = StridApp_iOS;
 		};
-		2AF79F732F691B2700EE6C2F /* PBXContainerItemProxy */ = {
+		96C00A7821D1646A6DB34319 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5D6ACA564A974D7EE436D95C /* Project object */;
 			proxyType = 1;
@@ -124,15 +153,19 @@
 
 /* Begin PBXFileReference section */
 		04B59EEA3089B4E7512176FE /* DocumentListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentListViewModel.swift; sourceTree = "<group>"; };
+		08B7F6BBAB7057F4EC3EABCC /* DocumentListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentListViewModelTests.swift; sourceTree = "<group>"; };
 		0EACE3DAFF00C6DBB63CB9A3 /* NoSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSelectionView.swift; sourceTree = "<group>"; };
 		11ED6DAEEEA2F9426D9760BF /* SaveScannedDocumentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveScannedDocumentUseCase.swift; sourceTree = "<group>"; };
 		13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIDetectorPort.swift; sourceTree = "<group>"; };
 		189EF48B19B3840429A1D742 /* HighlightedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightedTextView.swift; sourceTree = "<group>"; };
 		1C408BF14B7AC561B6EA713F /* SampleDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDocument.swift; sourceTree = "<group>"; };
-		2AF79F512F691AEF00EE6C2F /* StridAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StridAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2AF79F6F2F691B2700EE6C2F /* StridAppMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StridAppMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DE36BAADAA05890CD6A0876 /* DocumentPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPreview.swift; sourceTree = "<group>"; };
+		1EBC56D3809E05B3B6CD0E7A /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		1EFCBD4A6CE60B12B91A76CC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		36A9854D56454A1789867BE2 /* EmptyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDetailView.swift; sourceTree = "<group>"; };
+		37FA446D8CF64719FDD06555 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		38FD04F5FE1EC4FE6200099B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3948185080937E9FD65BE816 /* StridAppMacTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridAppMacTests.swift; sourceTree = "<group>"; };
 		3B13BD92139A58776F0994BF /* SamplePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePickerSheet.swift; sourceTree = "<group>"; };
 		3CF774A7D1E6C807926E9883 /* OriginalTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginalTextView.swift; sourceTree = "<group>"; };
 		3D32D4A31CA2753501F2325E /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
@@ -140,61 +173,70 @@
 		426F871F41F057A6CA08C387 /* DetectedPII.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedPII.swift; sourceTree = "<group>"; };
 		4D98C67AC3F022E02886B0BF /* ScannedDocumentRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannedDocumentRepositoryPort.swift; sourceTree = "<group>"; };
 		54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactPIIUseCase.swift; sourceTree = "<group>"; };
+		5B5421C787EA5BAB3A91C16A /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScannerView.swift; sourceTree = "<group>"; };
+		60151FCA27155B1B57E4C93D /* RedactFileUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactFileUseCase.swift; sourceTree = "<group>"; };
 		62EC14A348697F7B9859D7D6 /* SummarySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummarySheet.swift; sourceTree = "<group>"; };
 		64DD8C91F30E3F968958D44C /* InMemoryScannedDocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryScannedDocumentRepository.swift; sourceTree = "<group>"; };
+		68CEFBB0CD9FAF0539F3795E /* MockDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDependencies.swift; sourceTree = "<group>"; };
 		691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocumentUseCase.swift; sourceTree = "<group>"; };
+		703B5F8838EBF259B64EE4D8 /* RedactionRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionRecord.swift; sourceTree = "<group>"; };
 		710D15B3053F79C5AEFD858E /* GetScannedDocumentsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetScannedDocumentsUseCase.swift; sourceTree = "<group>"; };
 		716560599D66EACAE7B1C26A /* ScannedDocumentResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannedDocumentResultsView.swift; sourceTree = "<group>"; };
 		726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordRedactionUseCase.swift; sourceTree = "<group>"; };
 		72E949ED5A04798986608D05 /* PlatformHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformHelpers.swift; sourceTree = "<group>"; };
 		787C7D02322F1B4C5CF6FD6C /* DocumentSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSidebarView.swift; sourceTree = "<group>"; };
 		849665227BA5D186EB01069B /* RedactedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactedTextView.swift; sourceTree = "<group>"; };
+		84BCE0A2AB9D701C4E1CF87D /* StridAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridAppTests.swift; sourceTree = "<group>"; };
 		855B63E6B3EB4C87348CCE24 /* AppNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationState.swift; sourceTree = "<group>"; };
 		914352EDBACD3534E1C9260D /* StridKitPIIDetectorAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridKitPIIDetectorAdapter.swift; sourceTree = "<group>"; };
+		92B33D9553B0C4165115EFF2 /* RecordDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordDetailView.swift; sourceTree = "<group>"; };
 		932DA0519D54423144747AA9 /* DocumentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewModel.swift; sourceTree = "<group>"; };
 		9419DB484EA07D0431B618FE /* DocumentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentDetailView.swift; sourceTree = "<group>"; };
 		97D843A7179201530FACD17E /* StridApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StridApp.swift; sourceTree = "<group>"; };
 		98370C6C168A23BFD86F4FC5 /* DocumentSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSidebarRow.swift; sourceTree = "<group>"; };
 		A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionHistoryEntry.swift; sourceTree = "<group>"; };
 		AAE26C28DE276383659A141A /* StridKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StridKit; path = ../StridKit; sourceTree = SOURCE_ROOT; };
+		AE357F7B49ED5E7D57CE05EA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		B531061C09E28EA9B6138DF0 /* GetRedactionHistoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRedactionHistoryUseCase.swift; sourceTree = "<group>"; };
 		BC39531746A1048E247437B7 /* ScannedDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannedDocument.swift; sourceTree = "<group>"; };
+		C083342D6214E255BED9FDD9 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactedDocument.swift; sourceTree = "<group>"; };
 		C4B485566D7AA991C9698602 /* RedactionHistoryRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionHistoryRepositoryPort.swift; sourceTree = "<group>"; };
+		C7E2C5F4CCF14D4FFFF4FDA5 /* StridAppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StridAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C85DBEC249B98706FDC1624F /* ExportDocumentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportDocumentUseCase.swift; sourceTree = "<group>"; };
+		CE2CC434EF96CEFF7684D01B /* TestFactories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFactories.swift; sourceTree = "<group>"; };
 		CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryDocumentRepository.swift; sourceTree = "<group>"; };
-		CF359D4F5054BCBB80B08959 /* StridApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StridApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF359D4F5054BCBB80B08959 /* StridApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StridApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB838F9EA3ACF81E39EB9DD /* DocumentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentState.swift; sourceTree = "<group>"; };
+		D6EDCF1D8FCD70A95CBFAAEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DBC66860755056E4C78EAAB6 /* StridApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StridApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0CE0A1583FF662913F6C140 /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentRepositoryPort.swift; sourceTree = "<group>"; };
+		EB10E8B2A6F085B2DB86A080 /* RedactionRecordRepositoryPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactionRecordRepositoryPort.swift; sourceTree = "<group>"; };
+		EE812A81A7A7AB60937F228B /* StridAppMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StridAppMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F430895200437478AC9FFB69 /* FileRedactionRecordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRedactionRecordRepository.swift; sourceTree = "<group>"; };
+		F5478C245A1A611B8DF8FF26 /* MockDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDIContainer.swift; sourceTree = "<group>"; };
 		FAB54678122D05C913F1C9BB /* DeleteScannedDocumentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteScannedDocumentUseCase.swift; sourceTree = "<group>"; };
-		FB97FBB662C964B53A26087C /* StridApp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = StridApp.xcodeproj; sourceTree = "<group>"; };
 		FCCD002F94BC8D2A8CC3671C /* DetectPIIUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectPIIUseCase.swift; sourceTree = "<group>"; };
 		FD2C08412102DD79EF97CCFC /* InMemoryRedactionHistoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryRedactionHistoryRepository.swift; sourceTree = "<group>"; };
 		FDD548F5E59501E838557823 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		FF436044B099FC5A3E99C603 /* ScanningProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningProgressView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		2AF79F522F691AEF00EE6C2F /* StridAppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StridAppTests; sourceTree = "<group>"; };
-		2AF79F702F691B2700EE6C2F /* StridAppMacTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StridAppMacTests; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
-		2AF79F4E2F691AEF00EE6C2F /* Frameworks */ = {
+		0A6F877E80576C3066DF999E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2AF79F7A2F691BB400EE6C2F /* StridKit in Frameworks */,
+				D15CE8B91E4534412017FF90 /* StridKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2AF79F6C2F691B2700EE6C2F /* Frameworks */ = {
+		309698947BFDDC1128B2B879 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2AF79F7C2F691BBA00EE6C2F /* StridKit in Frameworks */,
+				AD44DC89D325BD1DBBC772A8 /* StridKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,6 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DFD192E0D09D56D5FB93FC79 /* StridKit in Frameworks */,
+				7AF1883466E1BE438B975E9A /* StridDocuments in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F5E56CA65466F140D15C6C3 /* StridKit in Frameworks */,
+				638E4F9F1CF49FCCE6C2A78D /* StridDocuments in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +278,7 @@
 				E7896E00D61C139C0B190D99 /* DocumentRepositoryPort.swift */,
 				13421F5BDD277D3BAEC41FCE /* PIIDetectorPort.swift */,
 				C4B485566D7AA991C9698602 /* RedactionHistoryRepositoryPort.swift */,
+				EB10E8B2A6F085B2DB86A080 /* RedactionRecordRepositoryPort.swift */,
 				4D98C67AC3F022E02886B0BF /* ScannedDocumentRepositoryPort.swift */,
 			);
 			path = Ports;
@@ -247,16 +292,22 @@
 			path = DI;
 			sourceTree = "<group>";
 		};
-		2AF79F4B2F68832000EE6C2F /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
-		2AF79F782F691BB400EE6C2F /* Frameworks */ = {
+		290D06CCE57E9DA69B48E9C6 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				68CEFBB0CD9FAF0539F3795E /* MockDependencies.swift */,
+				F5478C245A1A611B8DF8FF26 /* MockDIContainer.swift */,
+				CE2CC434EF96CEFF7684D01B /* TestFactories.swift */,
 			);
-			name = Frameworks;
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		29ADDD0BEB6EA20191DC31AF /* Unit */ = {
+			isa = PBXGroup;
+			children = (
+				A641EC6341EBD792C9E43B26 /* ViewModels */,
+			);
+			path = Unit;
 			sourceTree = "<group>";
 		};
 		2DB3B691612042A9F6D94819 /* Helpers */ = {
@@ -271,6 +322,7 @@
 		362ABAC5DF96A618378B79FC /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				F430895200437478AC9FFB69 /* FileRedactionRecordRepository.swift */,
 				CECC8F3AF9DCEA922A835BE8 /* InMemoryDocumentRepository.swift */,
 				FD2C08412102DD79EF97CCFC /* InMemoryRedactionHistoryRepository.swift */,
 				64DD8C91F30E3F968958D44C /* InMemoryScannedDocumentRepository.swift */,
@@ -293,6 +345,25 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		3C39BAE3CB7A62D6FCB3BD83 /* StridAppMacTests */ = {
+			isa = PBXGroup;
+			children = (
+				3948185080937E9FD65BE816 /* StridAppMacTests.swift */,
+			);
+			path = StridAppMacTests;
+			sourceTree = "<group>";
+		};
+		480FBDB4053385AF558DF960 /* StridAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				37FA446D8CF64719FDD06555 /* README.md */,
+				84BCE0A2AB9D701C4E1CF87D /* StridAppTests.swift */,
+				290D06CCE57E9DA69B48E9C6 /* Helpers */,
+				29ADDD0BEB6EA20191DC31AF /* Unit */,
+			);
+			path = StridAppTests;
+			sourceTree = "<group>";
+		};
 		573249731357C0AA6805DF63 = {
 			isa = PBXGroup;
 			children = (
@@ -302,10 +373,9 @@
 				6A68EF2DADE504D05BE7109D /* Domain */,
 				F0724EC96340C50C3608B213 /* Packages */,
 				E9FC8B533A35A38B08507C5E /* StridApp */,
-				2AF79F522F691AEF00EE6C2F /* StridAppTests */,
-				2AF79F702F691B2700EE6C2F /* StridAppMacTests */,
+				3C39BAE3CB7A62D6FCB3BD83 /* StridAppMacTests */,
+				480FBDB4053385AF558DF960 /* StridAppTests */,
 				9E0260CCDDB670441F4A3264 /* Products */,
-				2AF79F782F691BB400EE6C2F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -330,6 +400,7 @@
 		786214F47E143082E7F189BA /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				ED01FBC9358C3752CCD692D1 /* Bencho */,
 				2DB3B691612042A9F6D94819 /* Helpers */,
 				00528C2C730A6454903A31A5 /* ViewModels */,
 				3B28E6ECC07789B226038527 /* Views */,
@@ -351,10 +422,18 @@
 			children = (
 				CF359D4F5054BCBB80B08959 /* StridApp.app */,
 				DBC66860755056E4C78EAAB6 /* StridApp.app */,
-				2AF79F512F691AEF00EE6C2F /* StridAppTests.xctest */,
-				2AF79F6F2F691B2700EE6C2F /* StridAppMacTests.xctest */,
+				EE812A81A7A7AB60937F228B /* StridAppMacTests.xctest */,
+				C7E2C5F4CCF14D4FFFF4FDA5 /* StridAppTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A641EC6341EBD792C9E43B26 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				08B7F6BBAB7057F4EC3EABCC /* DocumentListViewModelTests.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		B8BC2ABF4CF55192236AE6A9 /* Inbound */ = {
@@ -389,11 +468,29 @@
 			isa = PBXGroup;
 			children = (
 				38FD04F5FE1EC4FE6200099B /* ContentView.swift */,
+				D6EDCF1D8FCD70A95CBFAAEF /* Info.plist */,
 				97D843A7179201530FACD17E /* StridApp.swift */,
-				FB97FBB662C964B53A26087C /* StridApp.xcodeproj */,
+				F5DA971718565C3C039546F8 /* Adapters */,
+				74D90BBA43468AADD88BAFAB /* Design */,
+				1FC531923ACDABD8CCEBB896 /* DI */,
+				6A68EF2DADE504D05BE7109D /* Domain */,
 			);
 			name = StridApp;
 			path = .;
+			sourceTree = "<group>";
+		};
+		ED01FBC9358C3752CCD692D1 /* Bencho */ = {
+			isa = PBXGroup;
+			children = (
+				1EBC56D3809E05B3B6CD0E7A /* Components.swift */,
+				1DE36BAADAA05890CD6A0876 /* DocumentPreview.swift */,
+				5B5421C787EA5BAB3A91C16A /* DocumentScannerView.swift */,
+				1EFCBD4A6CE60B12B91A76CC /* HomeView.swift */,
+				AE357F7B49ED5E7D57CE05EA /* HomeViewModel.swift */,
+				92B33D9553B0C4165115EFF2 /* RecordDetailView.swift */,
+				C083342D6214E255BED9FDD9 /* Theme.swift */,
+			);
+			path = Bencho;
 			sourceTree = "<group>";
 		};
 		F0724EC96340C50C3608B213 /* Packages */ = {
@@ -414,6 +511,7 @@
 				710D15B3053F79C5AEFD858E /* GetScannedDocumentsUseCase.swift */,
 				691469146B858FAE548351B2 /* ImportDocumentUseCase.swift */,
 				726EFEDE5A72E4E5F52574C5 /* RecordRedactionUseCase.swift */,
+				60151FCA27155B1B57E4C93D /* RedactFileUseCase.swift */,
 				54D9D9316472CA1E925AB9F2 /* RedactPIIUseCase.swift */,
 				11ED6DAEEEA2F9426D9760BF /* SaveScannedDocumentUseCase.swift */,
 			);
@@ -427,6 +525,7 @@
 				3F97406A85B5E80E2B261830 /* Document.swift */,
 				C4958CA66F5D69A4D1927A32 /* RedactedDocument.swift */,
 				A4B9F11FB857BD834E361BB5 /* RedactionHistoryEntry.swift */,
+				703B5F8838EBF259B64EE4D8 /* RedactionRecord.swift */,
 				1C408BF14B7AC561B6EA713F /* SampleDocument.swift */,
 				BC39531746A1048E247437B7 /* ScannedDocument.swift */,
 			);
@@ -445,60 +544,11 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2AF79F502F691AEF00EE6C2F /* StridAppTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2AF79F572F691AEF00EE6C2F /* Build configuration list for PBXNativeTarget "StridAppTests" */;
-			buildPhases = (
-				2AF79F4D2F691AEF00EE6C2F /* Sources */,
-				2AF79F4E2F691AEF00EE6C2F /* Frameworks */,
-				2AF79F4F2F691AEF00EE6C2F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2AF79F562F691AEF00EE6C2F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2AF79F522F691AEF00EE6C2F /* StridAppTests */,
-			);
-			name = StridAppTests;
-			packageProductDependencies = (
-				2AF79F792F691BB400EE6C2F /* StridKit */,
-			);
-			productName = StridAppTests;
-			productReference = 2AF79F512F691AEF00EE6C2F /* StridAppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		2AF79F6E2F691B2700EE6C2F /* StridAppMacTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2AF79F752F691B2700EE6C2F /* Build configuration list for PBXNativeTarget "StridAppMacTests" */;
-			buildPhases = (
-				2AF79F6B2F691B2700EE6C2F /* Sources */,
-				2AF79F6C2F691B2700EE6C2F /* Frameworks */,
-				2AF79F6D2F691B2700EE6C2F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2AF79F742F691B2700EE6C2F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2AF79F702F691B2700EE6C2F /* StridAppMacTests */,
-			);
-			name = StridAppMacTests;
-			packageProductDependencies = (
-				2AF79F7B2F691BBA00EE6C2F /* StridKit */,
-			);
-			productName = StridAppMacTests;
-			productReference = 2AF79F6F2F691B2700EE6C2F /* StridAppMacTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		3835EC6A9CEAAB8EFB3261AD /* StridApp_macOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 68250AFDB1D9C270EAD0FF04 /* Build configuration list for PBXNativeTarget "StridApp_macOS" */;
 			buildPhases = (
 				35794A9B6BE9C5F739B6D9BB /* Sources */,
-				7F21150FA8AA6902B8B6EEED /* Resources */,
 				44534399A6B988F71E3FAC5F /* Frameworks */,
 			);
 			buildRules = (
@@ -508,17 +558,58 @@
 			name = StridApp_macOS;
 			packageProductDependencies = (
 				E7987F7639E0196693595EF1 /* StridKit */,
+				F7534A3F8B3F9ABF8DE261C8 /* StridDocuments */,
 			);
 			productName = StridApp_macOS;
 			productReference = DBC66860755056E4C78EAAB6 /* StridApp.app */;
 			productType = "com.apple.product-type.application";
+		};
+		715088A21D356999ADA87781 /* StridAppMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1255810C5B716ED53BAC2F7C /* Build configuration list for PBXNativeTarget "StridAppMacTests" */;
+			buildPhases = (
+				5207102665C27CF651C56768 /* Sources */,
+				0A6F877E80576C3066DF999E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6072AD7097C4E63E316601D5 /* PBXTargetDependency */,
+			);
+			name = StridAppMacTests;
+			packageProductDependencies = (
+				7C8C4C11720937462A6E63D9 /* StridKit */,
+			);
+			productName = StridAppMacTests;
+			productReference = EE812A81A7A7AB60937F228B /* StridAppMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CE313B0D654CB0CDB4E6557D /* StridAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 73FF39EC4227EE3B01072BE4 /* Build configuration list for PBXNativeTarget "StridAppTests" */;
+			buildPhases = (
+				23792A8621FDF42730FDBF62 /* Sources */,
+				8DC9CC56718A5AA724AF9A89 /* Resources */,
+				309698947BFDDC1128B2B879 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DC5A8E6A7D23D74AA3724B94 /* PBXTargetDependency */,
+			);
+			name = StridAppTests;
+			packageProductDependencies = (
+				F484E6B494BECC98E2F38253 /* StridKit */,
+			);
+			productName = StridAppTests;
+			productReference = C7E2C5F4CCF14D4FFFF4FDA5 /* StridAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		EC0FB368C06EEC5581F1649B /* StridApp_iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 766DB707AFEACF6D932564D3 /* Build configuration list for PBXNativeTarget "StridApp_iOS" */;
 			buildPhases = (
 				0A820E87893622E8D21E540B /* Sources */,
-				671465DCCD88C2866084C750 /* Resources */,
 				871C7F7B8FF67035704D8DB5 /* Frameworks */,
 			);
 			buildRules = (
@@ -528,6 +619,7 @@
 			name = StridApp_iOS;
 			packageProductDependencies = (
 				44FAB6B4C7A8B02387BF4DCD /* StridKit */,
+				35C625F9797D346FC06AC1B8 /* StridDocuments */,
 			);
 			productName = StridApp_iOS;
 			productReference = CF359D4F5054BCBB80B08959 /* StridApp.app */;
@@ -540,17 +632,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					2AF79F502F691AEF00EE6C2F = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = EC0FB368C06EEC5581F1649B;
-					};
-					2AF79F6E2F691B2700EE6C2F = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = 3835EC6A9CEAAB8EFB3261AD;
-					};
 					3835EC6A9CEAAB8EFB3261AD = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -574,51 +657,24 @@
 			packageReferences = (
 				9B38A6364E4DF9D4A143C2A5 /* XCLocalSwiftPackageReference "../StridKit" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 2AF79F4B2F68832000EE6C2F /* Products */;
-					ProjectRef = FB97FBB662C964B53A26087C /* StridApp.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
+				715088A21D356999ADA87781 /* StridAppMacTests */,
+				CE313B0D654CB0CDB4E6557D /* StridAppTests */,
 				EC0FB368C06EEC5581F1649B /* StridApp_iOS */,
 				3835EC6A9CEAAB8EFB3261AD /* StridApp_macOS */,
-				2AF79F502F691AEF00EE6C2F /* StridAppTests */,
-				2AF79F6E2F691B2700EE6C2F /* StridAppMacTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2AF79F4F2F691AEF00EE6C2F /* Resources */ = {
+		8DC9CC56718A5AA724AF9A89 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2AF79F6D2F691B2700EE6C2F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		671465DCCD88C2866084C750 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CD33BCB42E71D0152152081B /* StridApp.xcodeproj in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7F21150FA8AA6902B8B6EEED /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1CAA7D2D99BDD1AF0A8F5C7F /* StridApp.xcodeproj in Resources */,
+				961C30317B96052EDD3E173E /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -631,6 +687,7 @@
 			files = (
 				4A5FF4C4E9169BA5D0D5F019 /* AppNavigationState.swift in Sources */,
 				37E3F4E690027968C40B8569 /* ColorPalette.swift in Sources */,
+				9D3233233D5A27D9D5E76C3A /* Components.swift in Sources */,
 				A3898667848EF99A78630CFD /* ContentView.swift in Sources */,
 				543A0D31446908002A394A4B /* DIContainer.swift in Sources */,
 				BD77D4FD8F4CBA8E381C718A /* DeleteScannedDocumentUseCase.swift in Sources */,
@@ -639,16 +696,21 @@
 				D0676760CF885CD618C2C1EC /* Document.swift in Sources */,
 				968D9E808024DDE599018E7B /* DocumentDetailView.swift in Sources */,
 				EDC1C396EE5172C782D98A94 /* DocumentListViewModel.swift in Sources */,
+				7AD09A88121C7ABCD9253245 /* DocumentPreview.swift in Sources */,
 				06CDC122ACA5E132B0DF016A /* DocumentRepositoryPort.swift in Sources */,
+				9EA763A6E7F4E26149131806 /* DocumentScannerView.swift in Sources */,
 				3B6ACAF89F403180F8DD40EF /* DocumentSidebarRow.swift in Sources */,
 				BB7205CE7F779CDE6580DC37 /* DocumentSidebarView.swift in Sources */,
 				F450F92882539D239E77B113 /* DocumentState.swift in Sources */,
 				17BB0B726280CEFA3B44464B /* DocumentViewModel.swift in Sources */,
 				0B251786C7AF1CF10088FC0F /* EmptyDetailView.swift in Sources */,
 				75223E54388F8A02D296C92D /* ExportDocumentUseCase.swift in Sources */,
+				0CD8A0EC4DF36C518FAA38B1 /* FileRedactionRecordRepository.swift in Sources */,
 				5D0BCC3D95E1EE8717F8EBE9 /* GetRedactionHistoryUseCase.swift in Sources */,
 				019382A492754F7376815103 /* GetScannedDocumentsUseCase.swift in Sources */,
 				4D676F9D6C2AC350F13E4854 /* HighlightedTextView.swift in Sources */,
+				055322C0BF77BB70C1C26DA2 /* HomeView.swift in Sources */,
+				12B4F6F31C5BEFCC3439FBAC /* HomeViewModel.swift in Sources */,
 				668971FD0F8EDB8E78681159 /* ImportDocumentUseCase.swift in Sources */,
 				BF22E1AC87515E56C6527921 /* InMemoryDocumentRepository.swift in Sources */,
 				DC4510DC33B605156F301DFE /* InMemoryRedactionHistoryRepository.swift in Sources */,
@@ -657,12 +719,16 @@
 				F649D3F49F3B2293F2C8E515 /* OriginalTextView.swift in Sources */,
 				2E04A1755388E1E43EE081DD /* PIIDetectorPort.swift in Sources */,
 				1FD2690C2AD54386FA8E217B /* PlatformHelpers.swift in Sources */,
+				2668AA4412A97F8876806E60 /* RecordDetailView.swift in Sources */,
 				07F7DA8CCF657D6E89F4813C /* RecordRedactionUseCase.swift in Sources */,
+				6CC121739DB0F24F199494A4 /* RedactFileUseCase.swift in Sources */,
 				0A8D0C6E40F2BFDDD4E24140 /* RedactPIIUseCase.swift in Sources */,
 				FE723326180DBBE2844F4317 /* RedactedDocument.swift in Sources */,
 				99EFE95B6E2AFB96FC905C73 /* RedactedTextView.swift in Sources */,
 				E2BC73E23EEB3C10D6080EB7 /* RedactionHistoryEntry.swift in Sources */,
 				2B422A6F20965139F60B7993 /* RedactionHistoryRepositoryPort.swift in Sources */,
+				2EE4479FF8DE1653BE8984FC /* RedactionRecord.swift in Sources */,
+				A0AFD4ED821E7B61B2BEB1DB /* RedactionRecordRepositoryPort.swift in Sources */,
 				D1D0F4EA34138B3DBDAFE2F4 /* SampleDocument.swift in Sources */,
 				C5AB7FAD7B15FB9514B59906 /* SamplePickerSheet.swift in Sources */,
 				B68598B2C76421835879E1BA /* SaveScannedDocumentUseCase.swift in Sources */,
@@ -673,21 +739,20 @@
 				76D0FD38ACCA2E6253E3F6F0 /* StridApp.swift in Sources */,
 				F89504A3BFC9E5C1581F264C /* StridKitPIIDetectorAdapter.swift in Sources */,
 				C23DCFF9AAE521DD7760254A /* SummarySheet.swift in Sources */,
+				EB9F06CD2976979996207E27 /* Theme.swift in Sources */,
 				004F5D5D1608FC7989DDA578 /* ViewExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2AF79F4D2F691AEF00EE6C2F /* Sources */ = {
+		23792A8621FDF42730FDBF62 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2AF79F6B2F691B2700EE6C2F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				71CB8694E7849D69A1AEE8C1 /* DocumentListViewModelTests.swift in Sources */,
+				786E0645F9BC3FD8474AA2DE /* MockDIContainer.swift in Sources */,
+				5A73D85199F98E8B5D1BEF46 /* MockDependencies.swift in Sources */,
+				195A3F6305621AB471DE1F29 /* StridAppTests.swift in Sources */,
+				32042645D11F2D105C0A00D3 /* TestFactories.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -697,6 +762,7 @@
 			files = (
 				FC27F24F4779714C9359234E /* AppNavigationState.swift in Sources */,
 				B3772FA85492734C90DB70E4 /* ColorPalette.swift in Sources */,
+				0D630FEA3D17FC7002221A51 /* Components.swift in Sources */,
 				E2E7C81B48C2483096254141 /* ContentView.swift in Sources */,
 				3C04C57E4E4AC82621A68D95 /* DIContainer.swift in Sources */,
 				FD80DE7107D1822B7DBB63BD /* DeleteScannedDocumentUseCase.swift in Sources */,
@@ -705,16 +771,21 @@
 				F6F1AFAE736CD9AA94D80F0E /* Document.swift in Sources */,
 				49A8E4E7BEB83CF7F2981709 /* DocumentDetailView.swift in Sources */,
 				3C70AA03FE19B804ED1993CA /* DocumentListViewModel.swift in Sources */,
+				AF94526A0AC97D6BB5950BEC /* DocumentPreview.swift in Sources */,
 				8DEBBBDB3873E09DB492B64D /* DocumentRepositoryPort.swift in Sources */,
+				2B8C8BB220C7667CC3038A55 /* DocumentScannerView.swift in Sources */,
 				27DF5C13D45FC46E7208253E /* DocumentSidebarRow.swift in Sources */,
 				78683EA8641D36D23DEDD440 /* DocumentSidebarView.swift in Sources */,
 				0D862275017D7FE5A5D3F9BE /* DocumentState.swift in Sources */,
 				95F2B8F5C343EBE99C4B2E2A /* DocumentViewModel.swift in Sources */,
 				DEEFBD56A688483747347D94 /* EmptyDetailView.swift in Sources */,
 				38C94739E30DFC6F7B7441BC /* ExportDocumentUseCase.swift in Sources */,
+				7AA60E7A3F33A89679C64B51 /* FileRedactionRecordRepository.swift in Sources */,
 				97D6533BB73CF59E9F734402 /* GetRedactionHistoryUseCase.swift in Sources */,
 				A7A9C850DF9F5CF6BB881E81 /* GetScannedDocumentsUseCase.swift in Sources */,
 				2011E633E643CE05E8939A83 /* HighlightedTextView.swift in Sources */,
+				7C3C9FE94AC918E5E3625F26 /* HomeView.swift in Sources */,
+				E38C97ED7BC057E0BEE65A9D /* HomeViewModel.swift in Sources */,
 				CE76227F9FBCCA5409723E6A /* ImportDocumentUseCase.swift in Sources */,
 				28168A245D2ECA01EE1BE02C /* InMemoryDocumentRepository.swift in Sources */,
 				E8A93A90DF7B408458634121 /* InMemoryRedactionHistoryRepository.swift in Sources */,
@@ -723,12 +794,16 @@
 				8600909B24BB8EFA188CC01A /* OriginalTextView.swift in Sources */,
 				209938231DC7E5B334883DE3 /* PIIDetectorPort.swift in Sources */,
 				D15AE31DB32C2A0495118B22 /* PlatformHelpers.swift in Sources */,
+				CBF3787673D490C3B4E948C3 /* RecordDetailView.swift in Sources */,
 				7E899B5BC4ABB7C313747BF4 /* RecordRedactionUseCase.swift in Sources */,
+				B9A8DA60E7C5CB8B6E3745CC /* RedactFileUseCase.swift in Sources */,
 				A986BED565564370C50E2EB1 /* RedactPIIUseCase.swift in Sources */,
 				6CECC6E6A11AB60F9ADA58A9 /* RedactedDocument.swift in Sources */,
 				0CBFCBFE3670C6007F2E8BCD /* RedactedTextView.swift in Sources */,
 				960889564DC347D4EFA10565 /* RedactionHistoryEntry.swift in Sources */,
 				CF146C781EE7951E56D2F96E /* RedactionHistoryRepositoryPort.swift in Sources */,
+				BEC0AACCDC36012E837C07C5 /* RedactionRecord.swift in Sources */,
+				ADE1048C2FB4BD3C81164E73 /* RedactionRecordRepositoryPort.swift in Sources */,
 				CFB8346CF0F6230044799D33 /* SampleDocument.swift in Sources */,
 				857518B7C17471C92EF349CF /* SamplePickerSheet.swift in Sources */,
 				50FE92778506933145E1B788 /* SaveScannedDocumentUseCase.swift in Sources */,
@@ -739,51 +814,68 @@
 				4B2A1FD988E9B299C9ED6A45 /* StridApp.swift in Sources */,
 				8AC475EB3A85FE4644B5841D /* StridKitPIIDetectorAdapter.swift in Sources */,
 				819B04AE4D8D3232C171EBD2 /* SummarySheet.swift in Sources */,
+				E445DD538CA9D592B04AE2A3 /* Theme.swift in Sources */,
 				78D2815B41F7E5BC78DAECCB /* ViewExtensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5207102665C27CF651C56768 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E45413EFA62E309E2E722146 /* StridAppMacTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2AF79F562F691AEF00EE6C2F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EC0FB368C06EEC5581F1649B /* StridApp_iOS */;
-			targetProxy = 2AF79F552F691AEF00EE6C2F /* PBXContainerItemProxy */;
-		};
-		2AF79F742F691B2700EE6C2F /* PBXTargetDependency */ = {
+		6072AD7097C4E63E316601D5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3835EC6A9CEAAB8EFB3261AD /* StridApp_macOS */;
-			targetProxy = 2AF79F732F691B2700EE6C2F /* PBXContainerItemProxy */;
+			targetProxy = 96C00A7821D1646A6DB34319 /* PBXContainerItemProxy */;
+		};
+		DC5A8E6A7D23D74AA3724B94 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC0FB368C06EEC5581F1649B /* StridApp_iOS */;
+			targetProxy = 1B579C3B2280FF7532289398 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		00A704202E3DFBA6E6553E31 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.strid.StridAppTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/StridApp";
+			};
+			name = Release;
+		};
 		21C904CBDB0F33A890246CF5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.strid.StridApp;
 				PRODUCT_NAME = StridApp;
 				SDKROOT = macosx;
@@ -793,123 +885,6 @@
 			};
 			name = Debug;
 		};
-		2AF79F582F691AEF00EE6C2F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
-			};
-			name = Debug;
-		};
-		2AF79F592F691AEF00EE6C2F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		2AF79F762F691B2700EE6C2F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppMacTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
-			};
-			name = Debug;
-		};
-		2AF79F772F691B2700EE6C2F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.peritissimus.StridAppMacTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StridApp";
-			};
-			name = Release;
-		};
 		5CB03EF2BACB22ED550BD5C2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -917,19 +892,9 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -950,25 +915,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.strid.StridApp;
 				PRODUCT_NAME = StridApp;
 				SDKROOT = macosx;
@@ -1012,7 +966,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1024,12 +977,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -1070,7 +1022,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1088,16 +1039,72 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C3E1138B14077C3BC636B76C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strid.StridAppMacTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/Contents/MacOS/StridApp";
+			};
+			name = Release;
+		};
+		CB74BF46DB38AECC89CE8FC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strid.StridAppMacTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/Contents/MacOS/StridApp";
+			};
+			name = Debug;
+		};
+		D0951949E80D5FACEC49B27A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.strid.StridAppTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StridApp.app/StridApp";
 			};
 			name = Debug;
 		};
@@ -1108,19 +1115,9 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphoneos*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphonesimulator*]" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1138,20 +1135,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2AF79F572F691AEF00EE6C2F /* Build configuration list for PBXNativeTarget "StridAppTests" */ = {
+		1255810C5B716ED53BAC2F7C /* Build configuration list for PBXNativeTarget "StridAppMacTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2AF79F582F691AEF00EE6C2F /* Debug */,
-				2AF79F592F691AEF00EE6C2F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		2AF79F752F691B2700EE6C2F /* Build configuration list for PBXNativeTarget "StridAppMacTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2AF79F762F691B2700EE6C2F /* Debug */,
-				2AF79F772F691B2700EE6C2F /* Release */,
+				CB74BF46DB38AECC89CE8FC9 /* Debug */,
+				C3E1138B14077C3BC636B76C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -1161,6 +1149,15 @@
 			buildConfigurations = (
 				21C904CBDB0F33A890246CF5 /* Debug */,
 				88AB416C005A600D2C603FD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		73FF39EC4227EE3B01072BE4 /* Build configuration list for PBXNativeTarget "StridAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0951949E80D5FACEC49B27A /* Debug */,
+				00A704202E3DFBA6E6553E31 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -1193,23 +1190,29 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2AF79F792F691BB400EE6C2F /* StridKit */ = {
+		35C625F9797D346FC06AC1B8 /* StridDocuments */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9B38A6364E4DF9D4A143C2A5 /* XCLocalSwiftPackageReference "../StridKit" */;
-			productName = StridKit;
-		};
-		2AF79F7B2F691BBA00EE6C2F /* StridKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B38A6364E4DF9D4A143C2A5 /* XCLocalSwiftPackageReference "../StridKit" */;
-			productName = StridKit;
+			productName = StridDocuments;
 		};
 		44FAB6B4C7A8B02387BF4DCD /* StridKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StridKit;
+		};
+		7C8C4C11720937462A6E63D9 /* StridKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StridKit;
 		};
 		E7987F7639E0196693595EF1 /* StridKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StridKit;
+		};
+		F484E6B494BECC98E2F38253 /* StridKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StridKit;
+		};
+		F7534A3F8B3F9ABF8DE261C8 /* StridDocuments */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StridDocuments;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

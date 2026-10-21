@@ -2,8 +2,8 @@ name: StridApp
 options:
   bundleIdPrefix: com.strid
   deploymentTarget:
-    iOS: "26.0"
-    macOS: "15.0"
+    iOS: "17.0"
+    macOS: "14.0"
 
 packages:
   StridKit:
@@ -14,47 +14,107 @@ targets:
     type: application
     platform: [iOS, macOS]
     deploymentTarget:
-      iOS: "26.0"
-      macOS: "15.0"
+      iOS: "17.0"
+      macOS: "14.0"
     sources:
       - path: .
         excludes:
           - "*.yml"
           - "*.md"
+          - "StridAppTests/**"
+          - "StridAppMacTests/**"
+          - "StridApp.xcodeproj/**"
     dependencies:
       - package: StridKit
+        product: StridKit
+      - package: StridKit
+        product: StridDocuments
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: Strid
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UIUserInterfaceStyle: Dark
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        NSCameraUsageDescription: Strid scans documents with the camera so it can redact them on device.
+        NSPhotoLibraryUsageDescription: Strid reads the photo you pick so it can redact it on device.
+        LSApplicationCategoryType: public.app-category.productivity
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: PDF
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [com.adobe.pdf]
+          - CFBundleTypeName: Image
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [public.image]
+          - CFBundleTypeName: Text
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [public.plain-text, public.comma-separated-values-text, public.rtf, org.openxmlformats.wordprocessingml.document]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.strid.StridApp
         DEVELOPMENT_TEAM: ""
         CODE_SIGN_STYLE: Automatic
         SWIFT_VERSION: "5.9"
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.productivity"
+        GENERATE_INFOPLIST_FILE: NO
       configs:
         Debug:
           TARGETED_DEVICE_FAMILY[sdk=iphoneos*]: "1,2"
           TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]: "1,2"
-          INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]: YES
-          INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]: YES
-          INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]: YES
-          INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]: YES
-          INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]: YES
-          INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]: YES
-          INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphoneos*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-          INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphonesimulator*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-          INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphoneos*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-          INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphonesimulator*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         Release:
           TARGETED_DEVICE_FAMILY[sdk=iphoneos*]: "1,2"
           TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]: "1,2"
-          INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]: YES
-          INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]: YES
-          INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]: YES
-          INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]: YES
-          INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]: YES
-          INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]: YES
-          INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphoneos*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-          INFOPLIST_KEY_UISupportedInterfaceOrientations[sdk=iphonesimulator*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-          INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphoneos*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-          INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=iphonesimulator*]: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+
+  StridAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources: [StridAppTests]
+    dependencies:
+      - target: StridApp_iOS
+      - package: StridKit
+        product: StridKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.9"
+
+  StridAppMacTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources: [StridAppMacTests]
+    dependencies:
+      - target: StridApp_macOS
+      - package: StridKit
+        product: StridKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.9"
+
+schemes:
+  StridApp_macOS:
+    build:
+      targets:
+        StridApp_macOS: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets: [StridAppMacTests]
+  StridApp_iOS:
+    build:
+      targets:
+        StridApp_iOS: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets: [StridAppTests]

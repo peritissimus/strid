@@ -1,19 +1,57 @@
+//
+//  SampleDocument.swift
+//  StridApp
+//
+//  Hexagonal architecture role: **domain entity** plus static fixture data.
+//
+//  Sample documents let a first-time user try the detector without importing
+//  anything sensitive of their own. They are deliberately dense with varied,
+//  entirely fictional PII (Indian banking identifiers, US SSNs, emails, phone
+//  numbers, dates of birth, addresses) so a single sample exercises many
+//  recognizers at once. When a sample is loaded it becomes an ordinary
+//  `Document` with `DocumentSource.sample`.
+//
+//  None of the identifiers below belong to real people; they follow the
+//  *format* of real identifiers (e.g. PAN `ABCDE1234F`, IFSC `HDFC0001234`)
+//  only so the pattern-based recognizers fire.
+//
+
 import Foundation
 
 /// Predefined sample documents for demonstration
+///
+/// Not `Codable`: samples live in code, never on disk. Once loaded, the text
+/// is copied into a persistable `Document` / `ScannedDocument`.
 struct SampleDocument: Identifiable {
+    /// Identifier for list rendering. Regenerated on every launch because the
+    /// statics below call `UUID()`; nothing persists a sample's id.
     let id: UUID
+
+    /// Short name shown in the sample picker, e.g. "Bank Account Letter".
     let title: String
+
+    /// One-line explanation of what kind of PII the sample contains.
     let description: String
+
+    /// The full sample text that will be scanned.
     let content: String
+
+    /// Grouping used by the picker to section and icon the samples.
     let category: SampleCategory
 
+    /// Thematic grouping of samples. The raw value doubles as the section
+    /// header text in the picker.
     enum SampleCategory: String, CaseIterable {
+        /// Indian bank correspondence (account numbers, IFSC, UPI, PAN, Aadhaar).
         case banking = "Banking"
+        /// Lab/medical reports (MRN, SSN, insurance policy numbers).
         case medical = "Medical"
+        /// HR / offer letters (salary, bank routing, employee ids).
         case employment = "Employment"
+        /// Casual email (passport, flight confirmations, driver's licence).
         case personal = "Personal"
 
+        /// SF Symbol name used as the category's icon in the picker.
         var icon: String {
             switch self {
             case .banking: return "banknote"
@@ -24,6 +62,14 @@ struct SampleDocument: Identifiable {
         }
     }
 
+    /// Creates a sample.
+    ///
+    /// - Parameters:
+    ///   - id: Identifier; a fresh `UUID` by default.
+    ///   - title: Picker display name.
+    ///   - description: One-line summary of the sample's contents.
+    ///   - content: Full text to scan.
+    ///   - category: Grouping for the picker.
     init(
         id: UUID = UUID(),
         title: String,
@@ -42,6 +88,7 @@ struct SampleDocument: Identifiable {
 // MARK: - Predefined Samples
 
 extension SampleDocument {
+    /// All bundled samples in the order the picker should present them.
     static let samples: [SampleDocument] = [
         .indianBankingLetter,
         .medicalReport,
@@ -49,6 +96,10 @@ extension SampleDocument {
         .personalEmail
     ]
 
+    /// Indian banking welcome letter. Targets the Indian-specific recognizers:
+    /// 16-digit account number, IFSC code, UPI handle, PAN, Aadhaar (with the
+    /// conventional 4-4-4 spacing), +91 phone, customer id, transaction ref
+    /// and a DD/MM/YYYY date of birth.
     static let indianBankingLetter = SampleDocument(
         title: "Bank Account Letter",
         description: "Indian banking document with account details",
@@ -79,6 +130,10 @@ extension SampleDocument {
         category: .banking
     )
 
+    /// US-style laboratory report. Mixes patient identifiers (MRN, SSN,
+    /// address, US phone format) with physician licence and insurance policy
+    /// numbers, and includes non-PII clinical values (glucose, cholesterol)
+    /// that the detector should leave untouched.
     static let medicalReport = SampleDocument(
         title: "Medical Test Report",
         description: "Laboratory test results with patient information",
@@ -111,6 +166,9 @@ extension SampleDocument {
         category: .medical
     )
 
+    /// Employment offer letter. Covers a US bank account + routing number,
+    /// salary figure (should not be flagged as PII), employee id, SSN, and a
+    /// second person's name/phone in the emergency-contact block.
     static let employmentOffer = SampleDocument(
         title: "Employment Offer Letter",
         description: "Job offer with compensation and personal details",
@@ -153,6 +211,10 @@ extension SampleDocument {
         category: .employment
     )
 
+    /// Informal email with travel details. Exercises email headers, passport
+    /// and frequent-flyer numbers, booking confirmations, a truncated credit
+    /// card ("last 4"), multiple phone numbers, a signature-block SSN and a
+    /// US driver's licence.
     static let personalEmail = SampleDocument(
         title: "Personal Correspondence",
         description: "Email with travel and contact information",

@@ -34,13 +34,23 @@ final class MockPIIDetector: PIIDetectorPort {
 /// Mock document repository for testing
 actor MockDocumentRepository: DocumentRepositoryPort {
     var documents: [UUID: Document] = [:]
+    var current: Document?
     var saveCallCount = 0
     var getCallCount = 0
 
-    func save(_ document: Document) async {
+    func save(document: Document) async throws {
         saveCallCount += 1
         documents[document.id] = document
     }
+
+    func load(id: UUID) async throws -> Document? {
+        getCallCount += 1
+        return documents[id]
+    }
+
+    func loadCurrent() async -> Document? { current }
+    func saveCurrent(_ document: Document) async { current = document }
+    func clearCurrent() async { current = nil }
 
     func getDocument(id: UUID) async -> Document? {
         getCallCount += 1
@@ -124,14 +134,27 @@ actor MockRedactionHistoryRepository: RedactionHistoryRepositoryPort {
     var entries: [RedactionHistoryEntry] = []
     var saveCallCount = 0
 
-    func saveRedactionEntry(_ entry: RedactionHistoryEntry) async {
+    func addEntry(_ entry: RedactionHistoryEntry) async {
         saveCallCount += 1
         entries.append(entry)
     }
 
-    func getRedactionHistory() async -> [RedactionHistoryEntry] {
+    func getAllEntries() async -> [RedactionHistoryEntry] {
         entries.sorted { $0.timestamp > $1.timestamp }
     }
+
+    func getEntries(forDocument documentId: UUID) async -> [RedactionHistoryEntry] {
+        entries.filter { $0.documentId == documentId }
+    }
+
+    func deleteEntry(withId id: UUID) async {
+        entries.removeAll { $0.id == id }
+    }
+
+    func getTotalRedactionCount() async -> Int { entries.count }
+
+    func saveRedactionEntry(_ entry: RedactionHistoryEntry) async { await addEntry(entry) }
+    func getRedactionHistory() async -> [RedactionHistoryEntry] { await getAllEntries() }
 
     func clearHistory() async {
         entries.removeAll()
