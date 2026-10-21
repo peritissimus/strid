@@ -6,6 +6,7 @@ public enum IndianBankingRecognizers {
         [
             bankAccount, ifsc, pan, aadhaar, upiID, micr, phone,
             pinCode, customerID, branchCode, txnRef, dob, creditCard, ipAddress,
+            maskedCard, alphaTxnRef, NarrationRecognizer(), IndianPlaceRecognizer(),
         ]
     }
 
@@ -45,7 +46,9 @@ public enum IndianBankingRecognizers {
         patterns: [#"\b[2-9]\d{3}\s?\d{4}\s?\d{4}\b"#],
         baseScore: 0.4,
         contextWords: ["aadhaar", "aadhar", "uid", "uidai", "unique id", "aadhaar no"],
-        contextBoost: 0.45
+        contextBoost: 0.45,
+        validator: { Checksums.verhoeff(Checksums.digitsOnly($0)) },
+        validatedScore: 0.8
     )
 
     /// UPI ID: vpa@bankhandle patterns
@@ -53,9 +56,9 @@ public enum IndianBankingRecognizers {
         entityType: .inUPIID,
         patterns: [
             // Known bank handles
-            #"[\w.\-]+@(?:ok(?:sbi|icici|axis|hdfc)|ybl|paytm|upi|apl|ibl|axl|kmbl|barodampay|freecharge|okhdfcbank|ikwik|mahb|indus|sbi|icici|hdfcbank|axisbank|kotak|rbl|federal|idbi|bandhan|pnb|bob|canarabank|indianbank|iob|uboi|unionbankofindia|rxairtel|airtel|jio|slice|cred|jupiter|fi|niyobank|dbs|scb|citi|hsbc|sc|equitas|au0101)\b"#,
+            #"[\w.]+@(?:ok(?:sbi|icici|axis|hdfc)|ybl|paytm|upi|apl|ibl|axl|kmbl|barodampay|freecharge|okhdfcbank|ikwik|mahb|indus|sbi|icici|hdfcbank|axisbank|kotak|rbl|federal|idbi|bandhan|pnb|bob|canarabank|indianbank|iob|uboi|unionbankofindia|rxairtel|airtel|jio|slice|cred|jupiter|fi|niyobank|dbs|scb|citi|hsbc|sc|equitas|au0101)\b"#,
             // Generic word@word in UPI context
-            #"[\w.\-]+@[A-Za-z]{2,20}\b"#,
+            #"[\w.]+@[A-Za-z]{2,20}\b"#,
         ],
         baseScore: 0.5,
         contextWords: ["upi", "vpa", "payment", "transfer", "paid", "upi-", "neft", "imps"],
@@ -68,7 +71,8 @@ public enum IndianBankingRecognizers {
         patterns: [#"\b\d{9}\b"#],
         baseScore: 0.3,
         contextWords: ["micr", "cheque", "check"],
-        contextBoost: 0.5
+        contextBoost: 0.6,
+        contextWindow: 30
     )
 
     /// Indian phone: +91 or 0 prefix, 10 digits
@@ -87,8 +91,18 @@ public enum IndianBankingRecognizers {
         entityType: .inPINCode,
         patterns: [#"\b[1-9]\d{5}\b"#],
         baseScore: 0.3,
-        contextWords: ["pin", "pincode", "pin code", "postal", "zip", "post office", "sector", "city"],
-        contextBoost: 0.35
+        contextWords: [
+            "pin", "pincode", "pin code", "postal", "zip", "post office", "sector", "city", "address",
+            "road", "nagar", "marg", "street", "lane", "colony", "apartments", "residency", "society", "layout",
+            "mumbai", "delhi", "bengaluru", "bangalore", "chennai", "kolkata", "hyderabad", "pune", "ahmedabad",
+            "jaipur", "lucknow", "surat", "kanpur", "nagpur", "indore", "bhopal", "patna", "kochi", "goa", "noida", "gurugram", "gurgaon",
+            "maharashtra", "karnataka", "tamil nadu", "kerala", "gujarat", "rajasthan", "uttar pradesh", "west bengal",
+            "telangana", "andhra pradesh", "madhya pradesh", "bihar", "punjab", "haryana", "odisha", "assam", "jharkhand",
+            "chhattisgarh", "uttarakhand", "himachal", "delhi",
+        ],
+        contextBoost: 0.4,
+        contextWindow: 60,
+        contextAfter: 20
     )
 
     /// Customer ID (CIF): 7-11 digits near customer context
@@ -105,18 +119,24 @@ public enum IndianBankingRecognizers {
         entityType: .inBranchCode,
         patterns: [#"\b[A-Z0-9]{4,6}\b"#],
         baseScore: 0.2,
-        contextWords: ["branch code", "branch no", "branch"],
-        contextBoost: 0.45
+        contextWords: ["branch code", "branch no", "br code", "br. code"],
+        contextBoost: 0.45,
+        contextWindow: 25,
+        contextAfter: 5
     )
 
     /// Transaction references: 12-20 digit numbers
     public static let txnRef = RegexRecognizer(
         entityType: .inTxnRef,
-        patterns: [#"\b\d{12,20}\b"#],
+        patterns: [
+            #"\b\d{12,20}\b"#,
+            // Slash/hyphen-delimited refs inside narrations: BIL/ONL/000123456, NEFT/N2452.../, -0012345678
+            #"(?<=[/\-])\d{6,11}\b(?!@)"#,
+        ],
         baseScore: 0.6,
         contextWords: [
             "ref", "ref no", "reference", "chq", "cheque", "txn", "transaction",
-            "utr", "rrn", "chq./ref.no", "ref.no",
+            "utr", "rrn", "chq./ref.no", "ref.no", "upi", "imps", "neft", "rtgs", "narration", "emi", "loan",
         ]
     )
 
@@ -129,7 +149,9 @@ public enum IndianBankingRecognizers {
         ],
         baseScore: 0.3,
         contextWords: ["birth", "dob", "born", "date of birth", "d.o.b", "d/o/b", "birthday"],
-        contextBoost: 0.55
+        contextBoost: 0.55,
+        contextWindow: 20,
+        contextAfter: 3
     )
 
     // MARK: - Universal (regex-based)
@@ -140,9 +162,33 @@ public enum IndianBankingRecognizers {
         patterns: [
             // With separators (high confidence)
             #"\b\d{4}[\s\-]\d{4}[\s\-]\d{4}[\s\-]\d{1,7}\b"#,
+            // Unseparated 16 digits (validated by Luhn so plain account numbers do not match)
+            #"\b\d{16}\b"#,
         ],
-        baseScore: 0.8,
-        contextWords: ["credit card", "card", "visa", "mastercard", "amex", "debit"]
+        baseScore: 0.5,
+        contextWords: ["credit card", "card", "visa", "mastercard", "amex", "debit", "pos"],
+        validator: { Checksums.luhn(Checksums.digitsOnly($0)) },
+        validatedScore: 0.95
+    )
+
+    /// Masked card numbers as printed in statements: 4567XXXXXXXX8901, 4567 **** **** 8901
+    public static let maskedCard = RegexRecognizer(
+        entityType: .creditCard,
+        patterns: [#"\b\d{4,6}[\sXx*\-]{4,14}\d{4}\b"#],
+        baseScore: 0.75,
+        contextWords: ["card", "atm", "pos", "debit", "credit"]
+    )
+
+    /// Alphanumeric transaction references: UTR / RRN / cheque / loan refs like N245251234567, S98765432, HL6001234
+    public static let alphaTxnRef = RegexRecognizer(
+        entityType: .inTxnRef,
+        patterns: [
+            #"\b[A-Z]{1,4}\d{7,16}\b"#,
+            #"\b[A-Z]{4}[A-Z0-9]\d{11,}\b"#,
+        ],
+        baseScore: 0.45,
+        contextWords: ["ref", "reference", "utr", "rrn", "txn", "transaction", "chq", "cheque", "neft", "imps", "rtgs", "upi"],
+        contextBoost: 0.3
     )
 
     /// IP addresses: IPv4
