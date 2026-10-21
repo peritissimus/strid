@@ -97,6 +97,11 @@ public struct NarrationRecognizer: Recognizer {
         // "Name: Ananya Krishnan" / "Customer Name : RAHUL SHARMA" / "Employee Name: ..."
         // Same Title Case / ALL CAPS name body as above, after an optional qualifier and "Name:".
         #"\b(?:Employee |Customer |Account Holder |Applicant |Beneficiary |Nominee )?Name\s*:\s*((?:[A-Z][a-z]+\.?\s+){1,3}[A-Z][a-z]+|(?:[A-Z]{2,}\s+){1,3}[A-Z]{2,})"#,
+        // Role labels that introduce a person without the word "Name": "Nominee: Sunita Sharma",
+        // "Relationship Manager: Neha Iyer", "Joint Holder: ...", "Guardian: ...". These names are
+        // otherwise left to the NLP tagger, which on iOS finds markedly fewer of them than on macOS.
+        // Separators are spaces/tabs only so a name never runs onto the next line's first word.
+        #"\b(?:Nominee|Guardian|Relationship Manager|Account Holder|Joint Holder|Authori[sz]ed Signatory|Beneficiary|Payee|Remitter|Drawer|Spouse|Father|Mother|Husband|Wife)(?:'s)?[ \t]*:[ \t]*((?:[A-Z][a-z]+\.?[ \t]+){1,3}[A-Z][a-z]+|(?:[A-Z]{2,}[ \t]+){1,3}[A-Z]{2,})"#,
     ].compactMap { try? NSRegularExpression(pattern: $0) }
 
     /// Runs every template and emits a `.person` entity per distinct captured name span.
