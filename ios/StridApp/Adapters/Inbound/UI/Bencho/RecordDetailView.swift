@@ -124,24 +124,40 @@ struct RecordDetailView: View {
 
     /// Tall file preview with a corner badge naming the side.
     ///
-    /// `.id(side)` forces a fresh `DocumentPreview` when the side flips, so
-    /// the PDF/image view reloads instead of trying to diff; the opacity
-    /// transition then cross-fades old and new.
+    /// Both sides stay mounted and `side` only sets which one is opaque, so
+    /// flipping is a cross-fade between two loaded documents rather than a
+    /// reload: no blank frame while the new file decodes, and each side
+    /// keeps its own scroll position. The badges work the same way.
     private var preview: some View {
-        DocumentPreview(url: side == .redacted ? record.outputURL : record.inputURL, kind: record.kind)
-            .frame(height: 440)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
-            .overlay(alignment: .topLeading) {
-                // Green for the safe copy, ember for the sensitive original.
-                Badge(text: side == .redacted ? "REDACTED" : "ORIGINAL", tint: side == .redacted ? Theme.ok : Theme.ember)
-                    .background(Theme.surface, in: Capsule())
-                    .shadow(color: .black.opacity(0.35), radius: 8, y: 3)
-                    .padding(12)
+        ZStack {
+            DocumentPreview(url: record.inputURL, kind: record.kind)
+                .opacity(side == .original ? 1 : 0)
+                .allowsHitTesting(side == .original)
+            DocumentPreview(url: record.outputURL, kind: record.kind)
+                .opacity(side == .redacted ? 1 : 0)
+                .allowsHitTesting(side == .redacted)
+        }
+        .frame(height: 440)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
+        .overlay(alignment: .topLeading) {
+            // Green for the safe copy, ember for the sensitive original.
+            ZStack(alignment: .leading) {
+                sideBadge("REDACTED", tint: Theme.ok).opacity(side == .redacted ? 1 : 0)
+                sideBadge("ORIGINAL", tint: Theme.ember).opacity(side == .original ? 1 : 0)
             }
-            .id(side)
-            .transition(.opacity)
-            .animation(Theme.quick, value: side)
+            .padding(12)
+        }
+        // Same spring as the segmented thumb, so the flip is one move.
+        .animation(Theme.snappy, value: side)
+    }
+
+    /// Corner badge on an opaque surface with a hairline edge, so it reads
+    /// over a white page without a shadow.
+    private func sideBadge(_ text: String, tint: Color) -> some View {
+        Badge(text: text, tint: tint)
+            .background(Theme.surface, in: Capsule())
+            .overlay(Capsule().strokeBorder(Theme.edge, lineWidth: 0.5))
     }
 
     /// Big total plus a wrapping row of per-type chips, or a reassurance
@@ -263,7 +279,6 @@ struct RecordDetailView: View {
                 HStack(spacing: 8) { Image(systemName: "square.and.arrow.up").font(.system(size: 14, weight: .semibold)); Text("Share redacted") }
             }
             .buttonStyle(PrimaryPillStyle())
-            .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
             ForEach(Assistant.allCases) { a in
                 AssistantButton(assistant: a) { handOff(to: a) }
             }
@@ -275,6 +290,7 @@ struct RecordDetailView: View {
             }
             .buttonStyle(PressableStyle())
         }
+        .floating()
         .padding(.bottom, 18)
     }
 }
