@@ -79,7 +79,7 @@ struct RecordDetailView: View {
             BottomScrim()
             actions
             // Lifted above the action row.
-            ToastStack(center: vm.toasts).padding(.bottom, 92)
+            ToastStack(center: vm.toasts).padding(.bottom, 78)
         }
         // Custom top bar replaces the system navigation bar on iOS.
         .hideNavigationBar()
@@ -292,7 +292,7 @@ struct RecordDetailView: View {
             .buttonStyle(PressableStyle())
         }
         .floating()
-        .padding(.bottom, 18)
+        .padding(.bottom, 4)
     }
 }
 

@@ -21,8 +21,11 @@ struct ReviewView: View {
     let onConfirm: (Set<PIIEntityType>, Set<String>) -> Void
     let onCancel: () -> Void
 
-    /// Types switched off. Seeded from the profile's sensitivity so the sheet
-    /// opens showing what would happen with no changes.
+    /// Types switched off, over every type, not only those the preview found:
+    /// the final pass runs its own OCR and can surface a type the preview
+    /// missed, and that type must still follow the chosen sensitivity.
+    /// Seeded from the profile so the sheet opens showing what would happen
+    /// with no changes.
     @State private var disabled: Set<PIIEntityType> = []
     /// Normalised values unticked individually.
     @State private var excluded: Set<String> = []
@@ -62,7 +65,7 @@ struct ReviewView: View {
         }
         .preferredColorScheme(.dark)
         .onAppear {
-            disabled = Set(byType.keys).filter { !profile.isEnabled($0) }
+            disabled = Set(PIIEntityType.allCases).filter { !profile.isEnabled($0) }
         }
     }
 
@@ -84,9 +87,8 @@ struct ReviewView: View {
 
     /// Which preset the current switches amount to, if any.
     private var preset: RedactionProfile.Sensitivity? {
-        let present = Set(byType.keys)
         if disabled.isEmpty { return .everything }
-        if disabled == present.subtracting(RedactionProfile.personalTypes) { return .personal }
+        if disabled == Set(PIIEntityType.allCases).subtracting(RedactionProfile.personalTypes) { return .personal }
         return nil
     }
 
@@ -115,7 +117,7 @@ struct ReviewView: View {
     private var presets: some View {
         HStack(spacing: 8) {
             presetPill(.everything) { disabled = [] }
-            presetPill(.personal) { disabled = Set(byType.keys).subtracting(RedactionProfile.personalTypes) }
+            presetPill(.personal) { disabled = Set(PIIEntityType.allCases).subtracting(RedactionProfile.personalTypes) }
             Text("Custom").font(Theme.label()).foregroundStyle(preset == nil ? Theme.ink : Theme.ink4)
                 .padding(.horizontal, 14).padding(.vertical, 9)
                 .background(preset == nil ? Theme.cardHi : .clear, in: Capsule())
@@ -215,7 +217,7 @@ struct ReviewView: View {
         }
         .buttonStyle(PrimaryPillStyle())
         .floating()
-        .padding(.bottom, 18)
+        .padding(.bottom, 4)
         .animation(Theme.snappy, value: redactedCount)
     }
 }

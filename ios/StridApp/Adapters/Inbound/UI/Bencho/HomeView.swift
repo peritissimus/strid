@@ -49,7 +49,7 @@ struct HomeView: View {
                 BottomScrim()
                 floatingBar
                 // Lifted above the floating bar.
-                ToastStack(center: vm.toasts).padding(.bottom, 92)
+                ToastStack(center: vm.toasts).padding(.bottom, 78)
                 // Always mounted; opacity is a fixed transform of `isWorking`, so the
                 // fade never depends on a removal transition firing.
                 ProcessingOverlay(stage: stageText, active: vm.isWorking)
@@ -276,7 +276,7 @@ struct HomeView: View {
         }
         // The one shadow: these sit over the scrolling list.
         .floating()
-        .padding(.bottom, 18)
+        .padding(.bottom, 4)
     }
 }
 

@@ -132,10 +132,20 @@ struct FlowLayout: Layout {
 /// Fades the scroll content out beneath a floating bar so cards never read
 /// through the gaps between its buttons. Pure paint: no hit testing.
 struct BottomScrim: View {
-    var height: CGFloat = 140
+    var height: CGFloat = 170
     var body: some View {
-        LinearGradient(colors: [Theme.bg.opacity(0), Theme.bg], startPoint: .top, endPoint: .bottom)
+        // Fully opaque from just above the bar down, and painted through the
+        // bottom safe area: the scroll content runs under the home indicator,
+        // so a scrim that stops at the safe-area edge leaves chips readable
+        // beneath the buttons.
+        LinearGradient(stops: [
+            .init(color: Theme.bg.opacity(0), location: 0),
+            .init(color: Theme.bg.opacity(0.92), location: 0.45),
+            .init(color: Theme.bg, location: 0.65),
+            .init(color: Theme.bg, location: 1),
+        ], startPoint: .top, endPoint: .bottom)
             .frame(height: height)
+            .ignoresSafeArea(edges: .bottom)
             .allowsHitTesting(false)
     }
 }
