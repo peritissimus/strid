@@ -1,0 +1,36 @@
+{
+  "entities" : [
+    {
+      "text" : "RJP2846153",
+      "type" : "IN_VOTER_ID"
+    },
+    {
+      "text" : "Rohan Venkatesh",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "Srinivas Venkatesh",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "21/08/1990",
+      "type" : "IN_DOB"
+    },
+    {
+      "text" : "4th Block, 100 Ft Road, Koramangala",
+      "type" : "ADDRESS"
+    },
+    {
+      "text" : "560034",
+      "type" : "IN_PIN_CODE"
+    }
+  ],
+  "not" : [
+    {
+      "text" : "ELECTION COMMISSION OF INDIA"
+    },
+    {
+      "text" : "Elector's Photo Identity Card"
+    }
+  ]
+}

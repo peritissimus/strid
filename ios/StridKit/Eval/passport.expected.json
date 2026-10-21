@@ -1,0 +1,50 @@
+{
+  "entities" : [
+    {
+      "text" : "M8231456",
+      "type" : "IN_PASSPORT"
+    },
+    {
+      "text" : "VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "ROHAN",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "21/08/1990",
+      "type" : "IN_DOB"
+    },
+    {
+      "text" : "BENGALURU",
+      "type" : "LOCATION"
+    },
+    {
+      "text" : "KARNATAKA",
+      "type" : "LOCATION"
+    },
+    {
+      "text" : "P<INDVENKATESH<<ROHAN",
+      "type" : "IN_PASSPORT"
+    },
+    {
+      "text" : "M8231456<4IND9008215M3104129",
+      "type" : "IN_PASSPORT"
+    }
+  ],
+  "not" : [
+    {
+      "text" : "REPUBLIC OF INDIA"
+    },
+    {
+      "text" : "PASSPORT"
+    },
+    {
+      "text" : "Nationality"
+    },
+    {
+      "text" : "Place of Birth"
+    }
+  ]
+}

@@ -34,6 +34,36 @@ public enum Checksums {
         return (36 - sum % 36) % 36 == check
     }
 
+    /// IBAN check (ISO 7064 mod 97-10): the country code and check digits are moved to the end,
+    /// letters become two-digit numbers (A = 10 … Z = 35) and the whole must be 1 modulo 97.
+    public static func iban(_ s: String) -> Bool {
+        let clean = s.uppercased().filter { $0.isLetter || $0.isNumber }
+        guard clean.count >= 15, clean.count <= 34 else { return false }
+        let rearranged = clean.dropFirst(4) + clean.prefix(4)
+        var remainder = 0
+        for c in rearranged {
+            let v: Int
+            if let d = c.wholeNumberValue, c.isASCII { v = d }
+            else if let a = c.asciiValue, a >= 65, a <= 90 { v = Int(a) - 55 }
+            else { return false }
+            remainder = v >= 10 ? (remainder * 100 + v) % 97 : (remainder * 10 + v) % 97
+        }
+        return remainder == 1
+    }
+
+    /// Two-letter state and union-territory codes that start a vehicle registration mark or a
+    /// driving licence number. Old codes still seen on documents (OR, UA, CG) are included.
+    public static let vehicleStateCodes: Set<String> = [
+        "AN", "AP", "AR", "AS", "BR", "CG", "CH", "DD", "DL", "DN", "GA", "GJ", "HP", "HR", "JH", "JK", "KA", "KL",
+        "LA", "LD", "MH", "ML", "MN", "MP", "MZ", "NL", "OD", "OR", "PB", "PY", "RJ", "SK", "TN", "TR", "TS", "TG",
+        "UA", "UK", "UP", "WB",
+    ]
+
+    /// Whether `s` starts with a state code from `vehicleStateCodes`.
+    public static func startsWithStateCode(_ s: String) -> Bool {
+        vehicleStateCodes.contains(String(s.uppercased().prefix(2)))
+    }
+
     /// Verhoeff checksum, used by UIDAI for Aadhaar numbers.
     ///
     /// Verhoeff is a dihedral-group (D5) check-digit scheme that catches all single-digit errors

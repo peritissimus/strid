@@ -30,7 +30,7 @@ public enum IndianBankingRecognizers {
             bankAccount, ifsc, pan, aadhaar, aadhaarVID, upiID, micr, phone,
             pinCode, customerID, branchCode, txnRef, dob, creditCard, ipAddress,
             maskedCard, alphaTxnRef, gstin, orderID, NarrationRecognizer(), IndianPlaceRecognizer(), AddressBlockRecognizer(),
-        ]
+        ] + IndianIdentityRecognizers.all()
     }
 
     // MARK: - Indian Banking
@@ -379,7 +379,7 @@ public enum IndianBankingRecognizers {
             #"\b[A-Z]{1,4}\d{7,16}\b"#,
             #"\b[A-Z]{4}[A-Z0-9]\d{11,}\b"#,
             // Merchant / gateway reference blobs: 7+ chars of [A-Z0-9.-], at least 4 digits and 2 letters.
-            #"\b(?=[A-Za-z0-9.\-]{7,}\b)(?=(?:[A-Za-z.\-]*\d){4})(?=(?:[\d.\-]*[A-Za-z]){2})[A-Za-z0-9][A-Za-z0-9.\-]*[A-Za-z0-9]\b"#,
+            #"\b(?!\d{1,2}-[A-Za-z]{3}-\d{2,4}\b)(?![A-Za-z]{3}-\d{2,4}\b)(?=[A-Za-z0-9.\-]{7,}\b)(?=(?:[A-Za-z.\-]*\d){4})(?=(?:[\d.\-]*[A-Za-z]){2})[A-Za-z0-9][A-Za-z0-9.\-]*[A-Za-z0-9]\b"#,
             // Bank-prefixed refs with few digits (the head of a wrapped NEFT/IMPS ref): IDFBH260, HDFCN5..
             #"\b[A-Z]{4,6}[A-Z]?\d{2,6}\b(?=[ \t]*(?:\n|$))"#,
         ],

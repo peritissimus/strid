@@ -1,0 +1,51 @@
+{
+  "entities" : [
+    {
+      "text" : "KA 05 MJ 4821",
+      "type" : "IN_VEHICLE_REG"
+    },
+    {
+      "text" : "MA3EWDE1S00482915",
+      "type" : "IN_VEHICLE_REG"
+    },
+    {
+      "text" : "K12MN4582113",
+      "type" : "IN_VEHICLE_REG"
+    },
+    {
+      "text" : "ROHAN VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "SRINIVAS VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "A3, NAVEEN TERRACES, KORAMANGALA",
+      "type" : "ADDRESS"
+    },
+    {
+      "text" : "560034",
+      "type" : "IN_PIN_CODE"
+    },
+    {
+      "text" : "9845012345",
+      "type" : "PHONE"
+    },
+    {
+      "text" : "MARUTI SUZUKI INDIA LTD",
+      "type" : "ORGANIZATION"
+    }
+  ],
+  "not" : [
+    {
+      "text" : "CERTIFICATE OF REGISTRATION"
+    },
+    {
+      "text" : "PETROL"
+    },
+    {
+      "text" : "SWIFT VXI"
+    }
+  ]
+}

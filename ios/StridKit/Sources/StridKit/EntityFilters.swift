@@ -29,6 +29,7 @@ public enum EntityFilters {
         "total", "opening balance", "closing balance", "page", "neft", "imps", "rtgs", "atm", "pos", "emi",
         "salary", "ltd", "pvt", "limited", "india", "gst", "tds", "nominee", "mobile", "email", "phone", "address",
         "period", "from", "to", "of", "the", "and", "for", "mr", "mrs", "ms", "shri", "smt",
+        "regn", "place", "indian", "petrol", "diesel", "cng", "electric", "nationality", "sex", "signature",
         // Invoice vocabulary: NLTagger reads these headings as organisations.
         "invoice", "tax invoice", "invoice value", "invoice number", "invoice details", "invoice date",
         "order number", "order date", "bill of supply", "cash memo", "amount in words", "sold by",
@@ -41,6 +42,14 @@ public enum EntityFilters {
     /// Household-name merchants, banks and agencies. Their names and bare domains identify the
     /// counterparty, not the customer, and blacking them out is what makes a redacted invoice
     /// look broken. Matched case-insensitively against the whole entity text.
+    static let authority = try! NSRegularExpression(pattern:
+        #"\b(?:government|govt\.?|republic of india|election commission|income tax|ministry|department|regional transport|transport (?:department|office)|uidai|unique identification|passport office|reserve bank|central board|commissioner)\b"#)
+
+    /// "hdfc bank limited" → "hdfc bank", so brand lists need one spelling.
+    static func withoutLegalSuffix(_ s: String) -> String {
+        s.replacingOccurrences(of: #"\s+(?:private|pvt\.?|limited|ltd\.?|llp|inc\.?|plc)(?:\s+(?:limited|ltd\.?))?$"#, with: "", options: .regularExpression)
+    }
+
     static let publicOrganisations: Set<String> = [
         "amazon", "amazon.in", "amazon.com", "amazon seller services", "amazon retail india", "flipkart", "myntra",
         "ajio", "meesho", "nykaa", "bigbasket", "blinkit", "zepto", "swiggy", "zomato", "uber", "ola", "rapido",
@@ -65,8 +74,13 @@ public enum EntityFilters {
             case .person, .location, .organization:
                 // Model-derived name-like types: reject known labels outright.
                 if labels.contains(lower) { return false }
+                // Issuing authorities and headings ("GOVERNMENT OF KARNATAKA", "ELECTION COMMISSION
+                // OF INDIA", "REPUBLIC OF INDIA") name the state, not the holder.
+                if Self.authority.firstMatch(in: lower, range: NSRange(location: 0, length: (lower as NSString).length)) != nil { return false }
                 // Counterparty brands are not the customer's PII.
-                if e.type == .organization, publicOrganisations.contains(lower) { return false }
+                if e.type == .organization, publicOrganisations.contains(lower) || publicOrganisations.contains(Self.withoutLegalSuffix(lower)) { return false }
+                // "OF INDIA", "THE EMPLOYER": a tag that starts on a function word is a fragment.
+                if let first = lower.split(separator: " ").first, ["of", "the", "and", "for", "to"].contains(String(first)) { return false }
                 // Single short token is almost never a usable name/place.
                 // ("Raj" would be lost here, but so would hundreds of "Dr", "Sr", "No" tags.)
                 if !t.contains(" ") && t.count <= 3 { return false }

@@ -78,7 +78,7 @@ public final class StridEngine: Sendable {
         // Stages 4 + 5, then field-label relabelling. A label never moves a finding into a type the
         // policy disabled ("Ref 5254123456" found as an account number stays one when references
         // are switched off), so the finding is still redacted under its original type.
-        return relabelByFieldLabel(extendAcrossWraps(deduplicateOverlaps(splitContainers(filtered, in: text)), in: text), in: text, enabled: policy.enabledTypes)
+        return relabelByFieldLabel(extendAcrossWraps(deduplicateOverlaps(splitContainers(dropAuthorityPlaces(filtered, in: text), in: text)), in: text), in: text, enabled: policy.enabledTypes)
     }
 
     // MARK: - Field labels
@@ -90,6 +90,14 @@ public final class StridEngine: Sendable {
     /// before the value, is authoritative, so each numeric or code-like entity preceded by a known
     /// label is reported under that label's type. Redaction is unaffected; only the type changes.
     private static let fieldLabels: [(NSRegularExpression, PIIEntityType)] = [
+        // Identity-document labels come first: "PF A/c No" must win over the generic "A/c No".
+        (#"passport(?:\s*(?:no|number))?\.?"#, .inPassport),
+        (#"(?:epic(?:\s*(?:no|number))?|voter\s*id(?:\s*(?:no|number))?|elector'?s?\s*(?:photo\s*)?identity\s*card\s*(?:no|number)?)\.?"#, .inVoterID),
+        (#"(?:dl(?:\s*(?:no|number))?|driving\s*licen[cs]e(?:\s*(?:no|number))?|licen[cs]e(?:\s*(?:no|number)))\.?"#, .inDrivingLicence),
+        (#"(?:regn\.?(?:\s*(?:no|number))?|(?<!gst\s)(?<!gstin\s)(?:vehicle\s*)?registration\s*(?:no|number|mark)|vehicle\s*(?:no|number|regn)|reg\.?\s*(?:no|number))\.?"#, .inVehicleReg),
+        (#"(?:uan(?:\s*(?:no|number))?|universal\s*account\s*(?:no|number)|pf\s*(?:a/c|account|member)?\s*(?:no|number|id)|epf\s*(?:no|number))\.?"#, .inUAN),
+        (#"tan(?:\s*(?:no|number))?\.?"#, .inTAN),
+        (#"(?:cin|corporate\s*identi(?:ty|fication)\s*(?:no|number))\.?"#, .inCIN),
         (#"(?:phone|mobile|mob|tel|telephone|contact)(?:\s*(?:no|number|#))?\.?"#, .phone),
         (#"(?:cust(?:omer)?\s*(?:id|no|number)|cif(?:\s*(?:id|no))?|client\s*id)\.?"#, .inCustomerID),
         (#"micr(?:\s*(?:code|no))?\.?"#, .inMICR),
@@ -111,6 +119,7 @@ public final class StridEngine: Sendable {
     private static let relabelable: Set<PIIEntityType> = [
         .phone, .inPhone, .inCustomerID, .inMICR, .inBankAccount, .inTxnRef, .inPINCode, .inBranchCode,
         .inAadhaar, .inPAN, .inIFSC, .inGSTIN, .creditCard, .orderID, .location,
+        .inPassport, .inVoterID, .inDrivingLicence, .inVehicleReg, .inUAN, .inTAN, .inCIN,
     ]
 
     private func relabelByFieldLabel(_ entities: [PIIEntity], in text: String, enabled: Set<PIIEntityType>?) -> [PIIEntity] {
@@ -128,12 +137,31 @@ public final class StridEngine: Sendable {
             let prefix = String(text[lineStart..<e.range.lowerBound])
             guard !prefix.isEmpty else { return e }
             let ns = prefix as NSString
-            for (regex, type) in Self.fieldLabels where type != e.type && (enabled?.contains(type) ?? true) {
+            // The first label that matches decides; when it is the entity's own type ("PF A/c No"
+            // before a PF number) the later, more generic labels ("A/c No") must not override it.
+            for (regex, type) in Self.fieldLabels where enabled?.contains(type) ?? true {
                 if regex.firstMatch(in: prefix, range: NSRange(location: 0, length: ns.length)) != nil {
-                    return PIIEntity(type: type, text: e.text, range: e.range, score: e.score)
+                    return type == e.type ? e : PIIEntity(type: type, text: e.text, range: e.range, score: e.score)
                 }
             }
             return e
+        }
+    }
+
+    // MARK: - Authorities
+
+    private static let authorityPrefix = try! NSRegularExpression(pattern:
+        #"(?i)(?:government|govt\.?|state|republic|bank|university|high court|rto|commission|commissioner|ministry|department|council|municipal corporation)\s+of\s*$"#)
+
+    /// "GOVERNMENT OF KARNATAKA", "REPUBLIC OF INDIA", "BANK OF BARODA": the place names the
+    /// issuing authority, not where the holder lives. Such locations are dropped whatever
+    /// recognizer produced them.
+    private func dropAuthorityPlaces(_ entities: [PIIEntity], in text: String) -> [PIIEntity] {
+        entities.filter { e in
+            guard e.type == .location else { return true }
+            let start = text.index(e.range.lowerBound, offsetBy: -40, limitedBy: text.startIndex) ?? text.startIndex
+            let before = String(text[start..<e.range.lowerBound])
+            return Self.authorityPrefix.firstMatch(in: before, range: NSRange(location: 0, length: (before as NSString).length)) == nil
         }
     }
 

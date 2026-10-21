@@ -1,0 +1,31 @@
+{
+  "entities" : [
+    {
+      "text" : "ABCPV1234K",
+      "type" : "IN_PAN"
+    },
+    {
+      "text" : "ROHAN VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "SRINIVAS VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "21/08/1990",
+      "type" : "IN_DOB"
+    }
+  ],
+  "not" : [
+    {
+      "text" : "INCOME TAX DEPARTMENT"
+    },
+    {
+      "text" : "Permanent Account Number Card"
+    },
+    {
+      "text" : "GOVT. OF INDIA"
+    }
+  ]
+}

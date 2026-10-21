@@ -52,6 +52,8 @@ public struct IndianPlaceRecognizer: Recognizer {
         let ns = text as NSString
         return Self.regex.matches(in: text, range: NSRange(location: 0, length: ns.length)).compactMap { m in
             guard let r = Range(m.range, in: text) else { return nil }
+            let before = ns.substring(with: NSRange(location: max(0, m.range.location - 24), length: min(24, m.range.location))).lowercased()
+            if before.range(of: #"(?:government|govt\.?|state|republic|bank|university|high court|rto) of\s*$"#, options: .regularExpression) != nil { return nil }
             return PIIEntity(type: .location, text: String(text[r]), range: r, score: 0.7)
         }
     }

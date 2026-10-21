@@ -74,6 +74,7 @@ public enum Barcodes {
     /// PAN, e-documents) is printed at 10–35% of the page or card width; bank and brand logos,
     /// which share the texture signature, are 4–8%.
     static let minEdgeFraction = 0.09
+    static let minRawFill = 0.45
 
     /// Tuning aid: `STRID_CODES_ROI=x,y,w,h` (source pixels) collects per-tile statistics inside
     /// and outside that rectangle; `denseRegions` prints percentiles for both to stderr.
@@ -202,6 +203,7 @@ public enum Barcodes {
         }
         // Morphological closing on the tile grid: a code with a few blurred or specular tiles
         // stays one component, while isolated noise tiles do not grow into anything.
+        let raw = ok
         ok = close(ok, cols: cols, rows: rows)
 
         // Connected components over qualifying tiles (4-neighbourhood).
@@ -210,10 +212,11 @@ public enum Barcodes {
         for start in 0..<(cols * rows) where ok[start] && !seen[start] {
             var stack = [start]
             seen[start] = true
-            var count = 0
+            var count = 0, rawCount = 0
             var minX = cols, maxX = -1, minY = rows, maxY = -1
             while let i = stack.popLast() {
                 count += 1
+                if raw[i] { rawCount += 1 }
                 let x = i % cols, y = i / cols
                 minX = min(minX, x); maxX = max(maxX, x); minY = min(minY, y); maxY = max(maxY, y)
                 for (nx, ny) in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)] {
@@ -225,7 +228,10 @@ public enum Barcodes {
             let bw = maxX - minX + 1, bh = maxY - minY + 1
             let fill = Double(count) / Double(bw * bh)
             let aspect = Double(bw) / Double(bh)
-            guard count >= minTiles, fill >= minFill, aspectRange.contains(aspect),
+            // Closing may knit a sparse scatter of busy text tiles into a block; a code is dense
+            // before closing too.
+            let rawFill = Double(rawCount) / Double(bw * bh)
+            guard count >= minTiles, fill >= minFill, rawFill >= minRawFill, aspectRange.contains(aspect),
                   Double(min(bw, bh) * tile) >= minEdgeFraction * Double(w) else { continue }
             // Back to source pixels, padded by one tile so the quiet zone and edge modules are covered.
             let pad = Double(tile)

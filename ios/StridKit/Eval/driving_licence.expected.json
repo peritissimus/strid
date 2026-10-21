@@ -1,0 +1,43 @@
+{
+  "entities" : [
+    {
+      "text" : "KA05 20180012345",
+      "type" : "IN_DRIVING_LICENCE"
+    },
+    {
+      "text" : "ROHAN VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "SRINIVAS VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "21/08/1990",
+      "type" : "IN_DOB"
+    },
+    {
+      "text" : "A3, NAVEEN TERRACES, 4TH BLOCK",
+      "type" : "ADDRESS"
+    },
+    {
+      "text" : "KORAMANGALA",
+      "type" : "ADDRESS"
+    },
+    {
+      "text" : "560034",
+      "type" : "IN_PIN_CODE"
+    }
+  ],
+  "not" : [
+    {
+      "text" : "DRIVING LICENCE"
+    },
+    {
+      "text" : "GOVERNMENT OF KARNATAKA"
+    },
+    {
+      "text" : "COV"
+    }
+  ]
+}

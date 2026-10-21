@@ -45,6 +45,13 @@ extension PIIEntityType {
         case .orderID: return "shippingbox"
         case .address: return "house"
         case .barcode: return "qrcode"
+        case .inPassport: return "airplane"
+        case .inVoterID: return "checkmark.seal"
+        case .inDrivingLicence: return "car"
+        case .inVehicleReg: return "licenseplate"
+        case .inUAN: return "building.columns.circle"
+        case .inTAN: return "percent"
+        case .inCIN: return "building.2.crop.circle"
         }
     }
 }

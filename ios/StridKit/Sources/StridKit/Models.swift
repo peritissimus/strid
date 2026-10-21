@@ -82,6 +82,20 @@ public enum PIIEntityType: String, CaseIterable, Codable, Sendable {
     /// A QR code or barcode found on a scanned page; redacted as a whole because such codes
     /// usually encode the printed personal data (Aadhaar QR, PAN QR, cheque MICR barcode).
     case barcode = "BARCODE"
+    /// Indian passport number (letter + 7 digits) or a passport MRZ line.
+    case inPassport = "IN_PASSPORT"
+    /// Voter ID (EPIC) number: 3 letters + 7 digits.
+    case inVoterID = "IN_VOTER_ID"
+    /// Driving licence number: state code, RTO code, year of issue, serial.
+    case inDrivingLicence = "IN_DRIVING_LICENCE"
+    /// Vehicle registration mark (KA01AB1234, 22BH1234AA).
+    case inVehicleReg = "IN_VEHICLE_REG"
+    /// EPF Universal Account Number or PF member account number.
+    case inUAN = "IN_UAN"
+    /// Tax Deduction Account Number of an employer or deductor.
+    case inTAN = "IN_TAN"
+    /// Corporate Identification Number of a company.
+    case inCIN = "IN_CIN"
 
     /// Human-readable label for UI lists and the `strid entities` table.
     public var displayName: String {
@@ -110,6 +124,13 @@ public enum PIIEntityType: String, CaseIterable, Codable, Sendable {
         case .orderID: "Order / Invoice No"
         case .address: "Address"
         case .barcode: "QR / Barcode"
+        case .inPassport: "Passport"
+        case .inVoterID: "Voter ID"
+        case .inDrivingLicence: "Driving Licence"
+        case .inVehicleReg: "Vehicle Number"
+        case .inUAN: "UAN / PF Number"
+        case .inTAN: "TAN"
+        case .inCIN: "CIN"
         }
     }
 }

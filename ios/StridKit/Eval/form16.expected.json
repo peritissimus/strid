@@ -1,0 +1,77 @@
+{
+  "entities" : [
+    {
+      "text" : "ROHAN VENKATESH",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "4TH BLOCK, KORAMANGALA",
+      "type" : "ADDRESS"
+    },
+    {
+      "text" : "560034",
+      "type" : "IN_PIN_CODE"
+    },
+    {
+      "text" : "9845012345",
+      "type" : "PHONE"
+    },
+    {
+      "text" : "U72200KA2015PTC081234",
+      "type" : "IN_CIN"
+    },
+    {
+      "text" : "AAJCR4821P",
+      "type" : "IN_PAN"
+    },
+    {
+      "text" : "BLRR12345F",
+      "type" : "IN_TAN"
+    },
+    {
+      "text" : "ABCPV1234K",
+      "type" : "IN_PAN"
+    },
+    {
+      "text" : "100987654321",
+      "type" : "IN_UAN"
+    },
+    {
+      "text" : "PRIYA NAIR",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "RZPX PRIVATE LIMITED",
+      "type" : "ORGANIZATION"
+    },
+    {
+      "text" : "560103",
+      "type" : "IN_PIN_CODE"
+    },
+    {
+      "text" : "K. NAIR",
+      "type" : "PERSON"
+    },
+    {
+      "text" : "EMP00417",
+      "type" : "IN_CUSTOMER_ID"
+    }
+  ],
+  "not" : [
+    {
+      "text" : "FORM NO. 16"
+    },
+    {
+      "text" : "PART A"
+    },
+    {
+      "text" : "Assessment Year"
+    },
+    {
+      "text" : "Verification"
+    },
+    {
+      "text" : "Certificate under Section 203"
+    }
+  ]
+}
