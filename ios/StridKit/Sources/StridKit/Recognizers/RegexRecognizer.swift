@@ -7,22 +7,35 @@ public struct RegexRecognizer: Recognizer {
     public let baseScore: Double
     public let contextWords: [String]
     public let contextBoost: Double
-
     /// How far (in characters) to look around a match for context words.
-    private let contextWindow = 100
+    public let contextWindow: Int
+    /// Characters to look *after* the match; defaults to `contextWindow`. Set small for label: value fields.
+    public let contextAfter: Int
+    /// Optional checksum / structural validator. A failing match is dropped.
+    public let validator: (@Sendable (String) -> Bool)?
+    /// Score when the validator passes (validators are strong evidence).
+    public let validatedScore: Double
 
     public init(
         entityType: PIIEntityType,
         patterns: [String],
         baseScore: Double = 0.6,
         contextWords: [String] = [],
-        contextBoost: Double = 0.35
+        contextBoost: Double = 0.35,
+        contextWindow: Int = 100,
+        contextAfter: Int? = nil,
+        validator: (@Sendable (String) -> Bool)? = nil,
+        validatedScore: Double = 0.85
     ) {
         self.entityType = entityType
         self.patterns = patterns.compactMap { try? NSRegularExpression(pattern: $0, options: []) }
         self.baseScore = baseScore
         self.contextWords = contextWords.map { $0.lowercased() }
         self.contextBoost = contextBoost
+        self.contextWindow = contextWindow
+        self.contextAfter = contextAfter ?? contextWindow
+        self.validator = validator
+        self.validatedScore = validatedScore
     }
 
     public func recognize(in text: String) -> [PIIEntity] {
@@ -36,6 +49,10 @@ public struct RegexRecognizer: Recognizer {
                 let matched = String(text[swiftRange])
 
                 var score = baseScore
+                if let validator {
+                    guard validator(matched) else { continue }
+                    score = max(score, validatedScore)
+                }
                 if !contextWords.isEmpty && hasContext(around: match.range, in: text, nsText: nsText) {
                     score = min(score + contextBoost, 1.0)
                 }
@@ -54,7 +71,7 @@ public struct RegexRecognizer: Recognizer {
 
     private func hasContext(around range: NSRange, in text: String, nsText: NSString) -> Bool {
         let start = max(0, range.location - contextWindow)
-        let end = min(nsText.length, range.location + range.length + contextWindow)
+        let end = min(nsText.length, range.location + range.length + contextAfter)
         let windowRange = NSRange(location: start, length: end - start)
         let window = nsText.substring(with: windowRange).lowercased()
         return contextWords.contains { window.contains($0) }
