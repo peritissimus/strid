@@ -267,35 +267,86 @@ struct ToastStack: View {
 /// screen before any redaction exists.
 ///
 /// All cards start perfectly stacked; on appear they animate into a fan,
-/// each rotated and offset a little more than the last. The gradient and the
-/// small dark bar in the corner suggest a document without drawing one.
+/// each rotated and offset a little more than the last. Tapping the fan
+/// sends the front card to the back: it sweeps out to the right and down
+/// while the others slide forward, then arcs round and tucks in behind.
+/// The gradient and the small dark bar in the corner suggest a document
+/// without drawing one.
 struct StackedCards: View {
+    /// One card: a stable identity plus its tint.
+    private struct Card: Identifiable {
+        let id: Int
+        let tint: Color
+    }
+
     /// Drives the stacked -> fanned transition.
     @State private var fanned = false
-    /// Card colours, back to front after the `reversed()` below.
-    let tints: [Color] = [Theme.pick, Theme.ok, Theme.guide, Color(hex: 0xF5A524)]
+    /// Cards front to back. Rotated at the start of each flight so every
+    /// card springs to its new slot in one motion.
+    @State private var cards: [Card] = [Theme.pick, Theme.ok, Theme.guide, Color(hex: 0xF5A524)]
+        .enumerated().map { Card(id: $0.offset, tint: $0.element) }
+    /// The card in flight; nil when the stack is at rest.
+    @State private var flying: Int?
+    /// Whether the flying card is pulled out to the side. Its own spring
+    /// overlaps the slot spring, and the sum of the two traces the arc.
+    @State private var swung = false
+    /// Flips once the flying card is out at the edge, so it is drawn under
+    /// the stack as it comes back in.
+    @State private var behind = false
+
     var body: some View {
         ZStack {
-            // Reversed so index 0 is drawn last (on top) while still being
-            // the least rotated card.
-            ForEach(Array(tints.enumerated().reversed()), id: \.offset) { i, c in
+            ForEach(cards) { card in
+                let slot = cards.firstIndex { $0.id == card.id } ?? 0
+                let inFlight = flying == card.id
+                let out = inFlight && swung
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(LinearGradient(colors: [c.opacity(0.9), c.opacity(0.35)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .fill(LinearGradient(colors: [card.tint.opacity(0.9), card.tint.opacity(0.35)], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(.white.opacity(0.25), lineWidth: 0.5))
                     .frame(width: 120, height: 150)
                     // A redaction-bar motif in the bottom-left corner.
                     .overlay(alignment: .bottomLeading) {
                         RoundedRectangle(cornerRadius: 4).fill(.black.opacity(0.55)).frame(width: 58, height: 10).padding(12)
                     }
-                    // Fan: 7 degrees per card, centred around -10 degrees.
-                    .rotationEffect(.degrees(fanned ? Double(i) * 7 - 10 : 0))
-                    // Spread sideways and lift each successive card slightly.
-                    .offset(x: fanned ? CGFloat(i) * 22 - 30 : 0, y: fanned ? CGFloat(i) * -4 : 0)
-                    .shadow(color: .black.opacity(0.45), radius: 16, y: 10)
+                    .scaleEffect(out ? 1.05 : 1)
+                    // Fan: 7 degrees per card centred around -10; the swung
+                    // card tilts further out.
+                    .rotationEffect(.degrees((fanned ? Double(slot) * 7 - 10 : 0) + (out ? 10 : 0)))
+                    // Slot spread: 22pt sideways, 4pt lift per card. The
+                    // swing adds a push right and down on top of that.
+                    .offset(x: (fanned ? CGFloat(slot) * 22 - 30 : 0) + (out ? 78 : 0),
+                            y: (fanned ? CGFloat(slot) * -4 : 0) + (out ? 30 : 0))
+                    .shadow(color: .black.opacity(inFlight ? 0.6 : 0.45), radius: inFlight ? 22 : 16, y: inFlight ? 16 : 10)
+                    .zIndex(inFlight && !behind ? 10 : Double(cards.count - slot))
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture(perform: cycle)
         // Short delay so the fan happens after the screen has settled in.
         .onAppear { withAnimation(Theme.settle.delay(0.15)) { fanned = true } }
+    }
+
+    /// Send the front card to the back. Two springs overlap: the slot
+    /// spring carries every card to its new place over ~0.6s, and a quicker
+    /// swing spring pushes the flying card out right, then releases it a
+    /// beat later. Their sum is one continuous arc. Z-order flips at the
+    /// apex, when the card is clear of the stack.
+    private func cycle() {
+        guard flying == nil, let front = cards.first else { return }
+        Haptic.tap()
+        behind = false
+        flying = front.id
+        withAnimation(.spring(response: 0.65, dampingFraction: 0.86)) {
+            cards.append(cards.removeFirst())
+        }
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { swung = true }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(0.3))
+            behind = true
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) { swung = false }
+            try? await Task.sleep(for: .seconds(0.6))
+            flying = nil
+        }
     }
 }
 
