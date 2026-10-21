@@ -25,7 +25,7 @@ struct Strid: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "strid",
         abstract: "Detect and redact PII from text documents. Runs fully on-device.",
-        subcommands: [Redact.self, Restore.self, Detect.self, TextDump.self, Eval.self, Entities.self]
+        subcommands: [Redact.self, Restore.self, Detect.self, TextDump.self, Codes.self, Eval.self, Entities.self]
     )
 }
 
@@ -527,6 +527,26 @@ struct TextDump: ParsableCommand {
             for (i, line) in text.components(separatedBy: "\n").enumerated() { print("\(i + 1)\t\(line)") }
         } else {
             print(text)
+        }
+    }
+}
+
+// MARK: - codes
+
+/// `strid codes`: lists the QR/barcode rectangles the document layer would box on each page,
+/// split by detector (Vision decode vs. texture), for tuning on fixtures. Never decodes payloads.
+struct Codes: ParsableCommand {
+    static let configuration = CommandConfiguration(abstract: "List QR / barcode regions found on each page.")
+
+    @OptionGroup var input: InputFile
+
+    func run() throws {
+        let url = URL(fileURLWithPath: input.inputFile)
+        for (i, image) in try PageImages.load(url).enumerated() {
+            let v = Barcodes.vision(in: image), d = Barcodes.denseRegions(in: image)
+            print("page \(i + 1): \(image.width)x\(image.height) vision=\(v.count) texture=\(d.count)")
+            for r in v { print("  vision  \(Int(r.minX)),\(Int(r.minY)) \(Int(r.width))x\(Int(r.height))") }
+            for r in d { print("  texture \(Int(r.minX)),\(Int(r.minY)) \(Int(r.width))x\(Int(r.height))") }
         }
     }
 }

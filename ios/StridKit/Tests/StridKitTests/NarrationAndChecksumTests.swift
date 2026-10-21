@@ -221,6 +221,13 @@ struct AddressBlockTests {
         for part in ["ward no 12", "gandhi ward", "kothrud", "411038"] { #expect(joined.contains(part), "missing \(part)") }
         #expect(!joined.contains("5th Floor"))
     }
+    @Test func garbledRegionalScriptAboveEnglishLabelIsAnAddress() {
+        // What Vision makes of a Hindi address block with hi-IN in the language list.
+        let text = "Unique Identification Authority of India\nикщл пхнл явцс яхшгнлкг, вёрд н 17,\nбодхи, амла, бётул,\nмадхя прадеш - 460553\nAddress:\nC/O: Arun Sharma, ward no 17, mahatma\ngandhi ward, bodkhi, Amla, Betul,\nMadhya Pradesh - 460553"
+        let addr = texts(text, .address)
+        #expect(addr.contains { $0.contains("икщл") && $0.contains("бодхи") })
+        #expect(!addr.contains { $0.contains("Authority") })
+    }
     @Test func hindiPinAnchoredBlock() {
         let text = "Unique Identification Authority of India\nपता:\nद्वारा: रमेश कुलकर्णी, वॉर्ड न 12,\nकोथरूड, पुणे,\nमहाराष्ट्र - 411038"
         let addr = texts(text, .address)

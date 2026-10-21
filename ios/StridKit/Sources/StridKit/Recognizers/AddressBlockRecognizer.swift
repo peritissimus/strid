@@ -131,6 +131,18 @@ public struct AddressBlockRecognizer: Recognizer {
                 }
             }
             taken[i] = true
+            // Indian ID cards print the regional-language address directly above the English one.
+            // OCR of that script is unreliable (Devanagari often comes back as Cyrillic or Greek
+            // look-alikes), so the lines are recognised by script, not content: contiguous lines
+            // above the label that are mostly non-Latin letters form a mirror block.
+            var k = i - 1
+            var mirror: [Line] = []
+            while k >= 0, mirror.count < Self.maxLines, !taken[k], Self.isMostlyNonLatin(lines[k].trimmed) {
+                mirror.insert(lines[k], at: 0)
+                taken[k] = true
+                k -= 1
+            }
+            if !mirror.isEmpty { Self.emit(mirror, in: text, into: &out, score: 0.85) }
             var j = i + 1
             var nameEmitted = false
             var closedByPin = false
@@ -247,7 +259,7 @@ public struct AddressBlockRecognizer: Recognizer {
 
     /// Emits one ADDRESS entity spanning `block` (first line start to last line end), after
     /// dropping page furniture from either end of the block.
-    static func emit(_ block: [Line], in text: String, into out: inout [PIIEntity]) {
+    static func emit(_ block: [Line], in text: String, into out: inout [PIIEntity], score: Double = 0.9) {
         var block = block
         func isFurniture(_ l: Line) -> Bool {
             let t = l.trimmed
@@ -258,7 +270,17 @@ public struct AddressBlockRecognizer: Recognizer {
         guard let first = block.first, let last = block.last else { return }
         let span = NSRange(location: first.range.location, length: NSMaxRange(last.range) - first.range.location)
         guard let sr = Range(span, in: text) else { return }
-        out.append(PIIEntity(type: .address, text: String(text[sr]), range: sr, score: 0.9))
+        out.append(PIIEntity(type: .address, text: String(text[sr]), range: sr, score: score))
+    }
+
+    /// At least half of the line's letters are outside Latin script (Devanagari, or the Cyrillic /
+    /// Greek shapes Vision produces for it), and there are at least three such letters.
+    static func isMostlyNonLatin(_ s: String) -> Bool {
+        var latin = 0, other = 0
+        for ch in s where ch.isLetter {
+            if let v = ch.unicodeScalars.first?.value, v < 0x0250 { latin += 1 } else { other += 1 }
+        }
+        return other >= 3 && other >= latin
     }
 
     static func isTerminator(_ s: String) -> Bool {
