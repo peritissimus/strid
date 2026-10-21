@@ -7,9 +7,9 @@
 //  either from a tapped `RecordCard` or automatically when a job finishes and
 //  `HomeViewModel.selected` is set.
 //
-//  Layout, top to bottom: custom top bar (back, name, metadata, Redacted |
-//  Original toggle), a tall file preview, the item-count summary with entity
-//  chips, the vault-key card for reversible jobs, any engine warnings, and a
+//  Layout, top to bottom: custom top bar (back, name, Redacted | Original
+//  toggle), a tall file preview, the item-count summary with file facts and
+//  entity chips, the vault-key card for reversible jobs, any engine warnings, and a
 //  floating action row (Share redacted, Delete) pinned to the bottom.
 //
 
@@ -106,7 +106,7 @@ struct RecordDetailView: View {
 
     // MARK: Pieces
 
-    /// Round back button, name + metadata line, and the side toggle.
+    /// Round back button, name, and the side toggle.
     private var topBar: some View {
         HStack(spacing: 12) {
             Button { dismiss() } label: {
@@ -114,14 +114,11 @@ struct RecordDetailView: View {
                     .foregroundStyle(Theme.ink).frame(width: 40, height: 40)
                     .background(Theme.card, in: Circle())
             }.buttonStyle(PressableStyle())
-            VStack(alignment: .leading, spacing: 2) {
-                Text(record.name).font(Theme.title(17)).foregroundStyle(Theme.ink).lineLimit(1)
-                // "PDF · 3 pages · 12 Mar 14:05"
-                Text("\(record.kindLabel) · \(record.pages) page\(record.pages == 1 ? "" : "s") · \(record.createdAt, format: .dateTime.day().month().hour().minute())")
-                    .font(Theme.body(12)).foregroundStyle(Theme.ink4)
-            }
-            Spacer()
+            Text(record.name).font(Theme.title(17)).foregroundStyle(Theme.ink)
+                .lineLimit(1).truncationMode(.middle)
+                .frame(maxWidth: .infinity, alignment: .leading)
             SegmentedPill(options: [(Side.redacted, "Redacted"), (Side.original, "Original")], selection: $side)
+                .fixedSize()
         }
     }
 
@@ -138,6 +135,8 @@ struct RecordDetailView: View {
             .overlay(alignment: .topLeading) {
                 // Green for the safe copy, ember for the sensitive original.
                 Badge(text: side == .redacted ? "REDACTED" : "ORIGINAL", tint: side == .redacted ? Theme.ok : Theme.ember)
+                    .background(Theme.surface, in: Capsule())
+                    .shadow(color: .black.opacity(0.35), radius: 8, y: 3)
                     .padding(12)
             }
             .id(side)
@@ -155,6 +154,10 @@ struct RecordDetailView: View {
                 Text("items redacted").font(Theme.body(14)).foregroundStyle(Theme.ink3)
                 Spacer()
             }
+            // File facts live here rather than in the header so the title
+            // and the side toggle have the full width. "PDF · 3 pages · 12 Mar 14:05"
+            Text("\(record.kindLabel) · \(record.pages) page\(record.pages == 1 ? "" : "s") · \(record.createdAt, format: .dateTime.day().month().hour().minute())")
+                .font(Theme.mono(12)).foregroundStyle(Theme.ink4)
             if record.total == 0 {
                 Text("Nothing personal found. The file was copied through unchanged.")
                     .font(Theme.body(13)).foregroundStyle(Theme.ink3)

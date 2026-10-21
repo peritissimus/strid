@@ -156,16 +156,12 @@ struct HomeView: View {
         .scrollIndicators(.hidden)
     }
 
-    /// Wordmark, reversible toggle, and one-line pitch.
+    /// Wordmark and reversible toggle.
     private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text("Strid").font(Theme.display(34)).tracking(-0.8).foregroundStyle(Theme.ink)
-                Spacer()
-                reversibleToggle
-            }
-            Text("Drop in a statement, ID or photo. PII comes out black, on device.")
-                .font(Theme.body(14)).foregroundStyle(Theme.ink3)
+        HStack {
+            Text("Strid").font(Theme.display(34)).tracking(-0.8).foregroundStyle(Theme.ink)
+            Spacer()
+            reversibleToggle
         }
     }
 
@@ -263,7 +259,8 @@ struct RecordCard: View {
             Thumb(record: record)
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
-                    Text(record.name).font(Theme.title(16)).foregroundStyle(Theme.ink).lineLimit(1)
+                    Text(record.name).font(Theme.title(16)).foregroundStyle(Theme.ink)
+                        .lineLimit(1).truncationMode(.middle)
                     if record.reversible { Image(systemName: "key.fill").font(.system(size: 10, weight: .bold)).foregroundStyle(Theme.ink4) }
                 }
                 HStack(spacing: 6) {
@@ -275,18 +272,19 @@ struct RecordCard: View {
                 }
                 dots
             }
+            .layoutPriority(1)
             Spacer(minLength: 0)
             Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.ink5)
         }
         .card(radius: 22, padding: 14)
     }
 
-    /// Up to six tinted capsules, one per entity type (most frequent first).
+    /// Up to six muted capsules, one per entity type (most frequent first).
     /// Width scales with count: 3pt per item, clamped to 8...36pt.
     private var dots: some View {
         HStack(spacing: 4) {
             ForEach(record.sortedCounts.prefix(6), id: \.type) { c in
-                Capsule().fill(Theme.tint(for: c.type.rawValue))
+                Capsule().fill(Theme.ink5)
                     .frame(width: max(8, CGFloat(min(c.count, 12)) * 3), height: 4)
             }
         }

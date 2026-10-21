@@ -92,27 +92,6 @@ enum Theme {
     static func label(_ size: CGFloat = 13) -> Font { .system(size: size, weight: .medium) }
     /// Monospaced: counts, badges, section labels, vault key, text previews.
     static func mono(_ size: CGFloat = 12) -> Font { .system(size: size, weight: .medium, design: .monospaced) }
-
-    /// Per-entity tint used for chips and highlights.
-    ///
-    /// Keyed by `PIIEntityType.rawValue` so it can be used from places that
-    /// only have the string (persisted `RedactionRecord.counts`). Groups
-    /// related types onto one colour: contact details purple, identity
-    /// documents ember, money/account identifiers amber, places green,
-    /// routing codes grey, DOB pink, PERSON the blue accent. Unknown types
-    /// fall back to secondary ink.
-    static func tint(for raw: String) -> Color {
-        switch raw {
-        case "PERSON": pick
-        case "EMAIL", "PHONE", "IN_PHONE", "URL": Color(hex: 0x8B7CF6)
-        case "IN_AADHAAR", "IN_PAN", "US_SSN": ember
-        case "CREDIT_CARD", "IN_BANK_ACCOUNT", "IN_IFSC", "IN_UPI_ID", "IN_MICR", "IN_CUSTOMER_ID": Color(hex: 0xF5A524)
-        case "LOCATION", "IN_PIN_CODE": ok
-        case "IN_TXN_REF", "IN_BRANCH_CODE": ink3
-        case "IN_DOB": guide
-        default: ink2
-        }
-    }
 }
 
 extension Color {

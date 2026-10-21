@@ -40,6 +40,7 @@ struct SegmentedPill<T: Hashable>: View {
                 } label: {
                     Text(label)
                         .font(Theme.label(13))
+                        .lineLimit(1).fixedSize()
                         // Black on the white thumb, muted ink elsewhere.
                         .foregroundStyle(selection == value ? .black : Theme.ink3)
                         .padding(.horizontal, 14).padding(.vertical, 7)
@@ -70,8 +71,6 @@ struct EntityChip: View {
     let count: Int
     var body: some View {
         HStack(spacing: 7) {
-            // Colour dot from the shared per-entity tint map.
-            Circle().fill(Theme.tint(for: type.rawValue)).frame(width: 6, height: 6)
             Text(type.displayName).font(Theme.label(13)).foregroundStyle(Theme.ink2)
             Text("\(count)")
                 .font(Theme.mono(12)).foregroundStyle(Theme.ink)
@@ -322,6 +321,7 @@ struct Badge: View {
         Text(text)
             .font(Theme.mono(11))
             .foregroundStyle(tint)
+            .lineLimit(1).fixedSize()
             .padding(.horizontal, 8).padding(.vertical, 4)
             .background(Theme.inlay, in: Capsule())
     }

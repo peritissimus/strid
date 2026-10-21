@@ -78,16 +78,17 @@ struct PDFKitView: UIViewRepresentable {
     }
 }
 
-/// Zoomable image preview. Scrolls in both axes and starts centred so a
-/// scaled-to-fit image sits in the middle of the card.
+/// Image preview fitted to the card width; scrolls vertically for tall pages.
 struct ImageFileView: View {
     let url: URL
     var body: some View {
         if let img = UIImage(contentsOfFile: url.path) {
-            ScrollView([.horizontal, .vertical]) {
+            // Fit to the card width and scroll vertically, so a tall page
+            // shows from its top instead of a blank patch of its middle.
+            ScrollView(.vertical) {
                 Image(uiImage: img).resizable().scaledToFit()
+                    .frame(maxWidth: .infinity)
             }
-            .defaultScrollAnchor(.center)
         } else { Text("Can't show image").foregroundStyle(Theme.ink4) }
     }
 }
@@ -111,13 +112,12 @@ struct PDFKitView: NSViewRepresentable {
     }
 }
 
-/// Image preview for macOS. No default scroll anchor API is used here; the
-/// image simply scrolls from the top-left.
+/// Image preview for macOS, fitted to the card width.
 struct ImageFileView: View {
     let url: URL
     var body: some View {
         if let img = NSImage(contentsOf: url) {
-            ScrollView([.horizontal, .vertical]) { Image(nsImage: img).resizable().scaledToFit() }
+            ScrollView(.vertical) { Image(nsImage: img).resizable().scaledToFit().frame(maxWidth: .infinity) }
         } else { Text("Can't show image").foregroundStyle(Theme.ink4) }
     }
 }
