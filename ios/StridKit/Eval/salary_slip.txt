@@ -1,0 +1,16 @@
+TECHNOVA SOLUTIONS PVT LTD
+Salary Slip for September 2025
+
+Employee Name: Ananya Krishnan          Employee ID: TN04521
+Designation: Senior Engineer            Department: Platform
+PAN: BXYPS1234K                         UAN: 100234567890
+Bank: ICICI Bank, A/c No 002301567890   IFSC: ICIC0000023
+Date of Joining: 12/03/2019             DOB: 22/11/1992
+Address: 7B, Lotus Residency, Sarjapur Road, Bengaluru 560103
+Mobile: 9845012345   Email: ananya.k@technova.in
+
+Earnings            Amount      Deductions        Amount
+Basic             85,000.00     PF              10,200.00
+HRA               34,000.00     Professional Tax   200.00
+Special Allowance 21,000.00     TDS             18,450.00
+Gross            140,000.00     Net Pay        111,150.00

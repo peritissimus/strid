@@ -1,0 +1,61 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "Ananya Krishnan"
+    },
+    {
+      "type": "IN_PAN",
+      "text": "BXYPS1234K"
+    },
+    {
+      "type": "IN_BANK_ACCOUNT",
+      "text": "002301567890"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "ICIC0000023"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "22/11/1992"
+    },
+    {
+      "type": "PHONE",
+      "text": "9845012345"
+    },
+    {
+      "type": "EMAIL",
+      "text": "ananya.k@technova.in"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Sarjapur Road"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "560103"
+    },
+    {
+      "text": "100234567890"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Bengaluru"
+    }
+  ],
+  "not": [
+    {
+      "text": "85,000.00"
+    },
+    {
+      "text": "Basic"
+    },
+    {
+      "text": "Gross"
+    },
+    {
+      "text": "Senior Engineer"
+    }
+  ]
+}

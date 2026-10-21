@@ -1,0 +1,190 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "RAHUL SHARMA"
+    },
+    {
+      "type": "PERSON",
+      "text": "Sunita Sharma"
+    },
+    {
+      "type": "PERSON",
+      "text": "Neha Iyer"
+    },
+    {
+      "type": "PERSON",
+      "text": "PRIYA MEHTA"
+    },
+    {
+      "type": "PERSON",
+      "text": "ANIL KUMAR"
+    },
+    {
+      "type": "PERSON",
+      "text": "SUNITA SHARMA"
+    },
+    {
+      "type": "EMAIL",
+      "text": "rahul.sharma87@gmail.com"
+    },
+    {
+      "type": "EMAIL",
+      "text": "neha.iyer@hdfcbank.com"
+    },
+    {
+      "type": "PHONE",
+      "text": "98201 23456"
+    },
+    {
+      "type": "IN_BANK_ACCOUNT",
+      "text": "50100234567890"
+    },
+    {
+      "type": "IN_CUSTOMER_ID",
+      "text": "78945612"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "HDFC0000123"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "UTIB0001234"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "ICIC0000456"
+    },
+    {
+      "type": "IN_MICR",
+      "text": "400240015"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "14/08/1987"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "priya.mehta@oksbi"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "9876501234@ybl"
+    },
+    {
+      "type": "CREDIT_CARD",
+      "text": "4111 1111 1111 1111"
+    },
+    {
+      "type": "CREDIT_CARD",
+      "text": "4567XXXXXXXX8901"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "N245251234567"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "525412345678"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "526412987654"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "60012345678"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Khar West"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Sea Breeze Apartments"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Mumbai"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Maharashtra"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Bandra West"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Lower Parel"
+    },
+    {
+      "text": "Senapati Bapat Marg"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "400050"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "400052"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "400013"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "S98765432"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "HL6001234"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "526812340001"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "0012345678"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "000123456"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "swiggy@axisbank"
+    },
+    {
+      "type": "PHONE",
+      "text": "022-6160 6161"
+    }
+  ],
+  "not": [
+    {
+      "text": "01/09/2025"
+    },
+    {
+      "text": "30/09/2025"
+    },
+    {
+      "text": "Ref No"
+    },
+    {
+      "text": "Narration"
+    },
+    {
+      "text": "STATEMENT"
+    },
+    {
+      "text": "Balance"
+    },
+    {
+      "text": "Statement Period"
+    }
+  ]
+}

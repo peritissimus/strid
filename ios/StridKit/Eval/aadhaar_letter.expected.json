@@ -1,0 +1,48 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "Vikram Singh Rathore"
+    },
+    {
+      "type": "PERSON",
+      "text": "Mahendra Singh Rathore"
+    },
+    {
+      "type": "IN_AADHAAR",
+      "text": "4999 9999 0013"
+    },
+    {
+      "type": "PHONE",
+      "text": "9414012345"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "05/06/1985"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Jaipur"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "302015"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Rajasthan"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Gandhi Nagar"
+    }
+  ],
+  "not": [
+    {
+      "text": "GOVERNMENT OF INDIA"
+    },
+    {
+      "text": "Male"
+    }
+  ]
+}
