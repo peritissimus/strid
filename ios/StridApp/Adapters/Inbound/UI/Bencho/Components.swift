@@ -6,7 +6,7 @@
 //  `RecordDetailView`:
 //  - `SegmentedPill`: two-option switch with a sliding white thumb.
 //  - `EntityChip` + `FlowLayout`: wrapping row of per-type count chips.
-//  - `BarMeter` / `SweepMeter`: determinate and indeterminate bar meters.
+//  - `SweepMeter`: indeterminate bar meter for the processing overlay.
 //  - `ToastCenter` + `ToastStack`: transient bottom toasts.
 //  - `StackedCards`: fanned-card illustration for the empty state.
 //  - `SectionLabel`, `Badge`: tiny typographic helpers.
@@ -127,32 +127,9 @@ struct FlowLayout: Layout {
     }
 }
 
-// MARK: - Bar meter (||||||||| 50)
+// MARK: - Sweep meter
 
-/// Determinate meter drawn as a row of thin bars; bars below `progress`
-/// light up and grow taller. Not currently used by a screen but kept as the
-/// determinate sibling of `SweepMeter`.
-struct BarMeter: View {
-    /// 0...1
-    var progress: Double
-    /// Number of bars across the meter.
-    var bars = 32
-    var body: some View {
-        HStack(spacing: 3) {
-            ForEach(0..<bars, id: \.self) { i in
-                let on = Double(i) / Double(bars) < progress
-                RoundedRectangle(cornerRadius: 1)
-                    .fill(on ? Theme.ink : Theme.ink5.opacity(0.5))
-                    .frame(width: 3, height: on ? 18 : 12)
-                    // Staggered delay makes the bars light up as a ripple
-                    // rather than all at once.
-                    .animation(Theme.snappy.delay(Double(i) * 0.008), value: on)
-            }
-        }
-    }
-}
-
-/// Indeterminate variant: a bright window sweeping across the bars.
+/// A bright window sweeping across a row of thin bars.
 ///
 /// Shown inside `ProcessingOverlay` while a redaction job runs. A single
 /// animated scalar `t` sweeps 0 -> 1 -> 0 forever; each bar's brightness and
