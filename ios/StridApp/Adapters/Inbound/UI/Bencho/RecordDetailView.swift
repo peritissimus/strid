@@ -151,6 +151,18 @@ struct RecordDetailView: View {
         }
         // Same spring as the segmented thumb, so the flip is one move.
         .animation(Theme.snappy, value: side)
+        // Swipe the page sideways to flip it, like turning it over: left shows
+        // the original, right brings the redacted copy back. Pure horizontal
+        // intent, so vertical drags still scroll.
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 24)
+                .onEnded { v in
+                    guard abs(v.translation.width) > abs(v.translation.height) * 1.5 else { return }
+                    let next: Side = v.translation.width < 0 ? .original : .redacted
+                    guard next != side else { return }
+                    Haptic.tap()
+                    withAnimation(Theme.snappy) { side = next }
+                })
     }
 
     /// Corner badge on an opaque surface with a hairline edge, so it reads

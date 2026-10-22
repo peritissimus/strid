@@ -463,18 +463,22 @@ struct Badge: View {
 // MARK: - Swipe to delete
 
 /// Drag a card left to reveal a trash button behind it; tap the button to
-/// delete. Built by hand because the record list is a `LazyVStack` in a
-/// `ScrollView`, not a `List`, so `swipeActions` is unavailable.
+/// delete. Drag it right past the threshold to select it (`onSelect`), which
+/// is how selection mode starts from the list. Built by hand because the
+/// record list is a `LazyVStack` in a `ScrollView`, not a `List`, so
+/// `swipeActions` is unavailable.
 ///
-/// A horizontal drag past `revealWidth / 2` snaps the card open; anything
+/// A leftward drag past `revealWidth / 2` snaps the card open; anything
 /// shorter snaps it shut. Only one card is open at a time: `openID` is shared
-/// by the list, so opening one closes the others.
+/// by the list, so opening one closes the others. A rightward drag shows a
+/// tick behind the leading edge and fires `onSelect` on release.
 struct SwipeToDelete<Content: View>: View {
     let id: UUID
     @Binding var openID: UUID?
     /// False (selection mode) ignores drags entirely.
     var enabled = true
     let onDelete: () -> Void
+    var onSelect: (() -> Void)? = nil
     @ViewBuilder let content: () -> Content
 
     @GestureState private var drag: CGFloat = 0
@@ -483,12 +487,26 @@ struct SwipeToDelete<Content: View>: View {
     private var isOpen: Bool { openID == id }
     private var offset: CGFloat {
         let base: CGFloat = isOpen ? -revealWidth : 0
-        // Rubber-band past the reveal, and never past the right edge.
-        return min(0, max(base + drag, -revealWidth - 24))
+        // Rubber-band past the reveal on both sides; the right side only when
+        // there is something to select.
+        let limit = onSelect == nil ? 0 : revealWidth + 24
+        return min(limit, max(base + drag, -revealWidth - 24))
     }
+    /// 0...1 progress of a rightward drag towards selecting.
+    private var selectProgress: CGFloat { min(1, max(0, offset / revealWidth)) }
 
     var body: some View {
         ZStack(alignment: .trailing) {
+            if onSelect != nil {
+                Image(systemName: selectProgress >= 1 ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundStyle(selectProgress >= 1 ? Theme.ok : Theme.ink4)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 22)
+                    .opacity(selectProgress)
+                    .scaleEffect(0.8 + 0.2 * selectProgress)
+                    .animation(Theme.quick, value: selectProgress >= 1)
+            }
             Button {
                 Haptic.tap()
                 onDelete()
@@ -514,6 +532,11 @@ struct SwipeToDelete<Content: View>: View {
                         }
                         .onEnded { v in
                             guard enabled, abs(v.translation.width) > abs(v.translation.height) else { return }
+                            if !isOpen, let onSelect, v.translation.width > revealWidth / 2 {
+                                withAnimation(Theme.snappy) { openID = nil }
+                                onSelect()
+                                return
+                            }
                             let open = isOpen ? v.translation.width < revealWidth / 2 : v.translation.width < -revealWidth / 2
                             withAnimation(Theme.snappy) { openID = open ? id : nil }
                         })

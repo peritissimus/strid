@@ -47,6 +47,10 @@ struct HomeView: View {
     @State private var selection: Set<UUID> = []
     /// Set when the "Delete N" bar is tapped; cleared by the dialog.
     @State private var confirmBatchDelete = false
+    /// Card frames in the list's coordinate space, for drag-to-select.
+    @State private var cardFrames: [UUID: CGRect] = [:]
+    /// While dragging down the tick column: whether the run selects or deselects.
+    @State private var sweepSelects: Bool?
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -170,7 +174,10 @@ struct HomeView: View {
                         // Enumerated purely to keep a stable element id; the
                         // index itself is unused.
                         ForEach(Array(vm.filtered.enumerated()), id: \.element.id) { i, r in
-                            SwipeToDelete(id: r.id, openID: $swipeOpen, enabled: !selecting, onDelete: { pendingDelete = r }) {
+                            // Each card reports its frame so a drag down the tick
+                            // column can select every card it passes.
+                            let row =
+                            SwipeToDelete(id: r.id, openID: $swipeOpen, enabled: !selecting, onDelete: { pendingDelete = r }, onSelect: { beginSelecting(with: r.id) }) {
                                 // A tap gesture, not a NavigationLink: a button fires on
                                 // touch-up even after a sideways drag, so every swipe would
                                 // also open the record. A tap fails once the finger moves.
@@ -180,7 +187,26 @@ struct HomeView: View {
                                         Image(systemName: on ? "checkmark.circle.fill" : "circle")
                                             .font(.system(size: 22, weight: .medium))
                                             .foregroundStyle(on ? Theme.ok : Theme.ink5)
+                                            .frame(width: 32, height: 52)
+                                            .contentShape(Rectangle())
                                             .transition(.scale.combined(with: .opacity))
+                                            // Drag down (or up) the tick column to sweep a run
+                                            // of cards, Photos-style. Starts on this tick, so
+                                            // the rest of the list still scrolls normally.
+                                            .gesture(
+                                                DragGesture(minimumDistance: 6, coordinateSpace: .named("list"))
+                                                    .onChanged { v in
+                                                        if sweepSelects == nil { sweepSelects = !selection.contains(r.id) }
+                                                        guard let want = sweepSelects, let start = cardFrames[r.id] else { return }
+                                                        let lo = min(start.midY, v.location.y), hi = max(start.midY, v.location.y)
+                                                        for (id, f) in cardFrames where f.midY >= lo && f.midY <= hi {
+                                                            if want != selection.contains(id) {
+                                                                withAnimation(Theme.quick) { if want { selection.insert(id) } else { selection.remove(id) } }
+                                                                Haptic.tap()
+                                                            }
+                                                        }
+                                                    }
+                                                    .onEnded { _ in sweepSelects = nil })
                                     }
                                     RecordCard(record: r)
                                 }
@@ -200,10 +226,16 @@ struct HomeView: View {
                                     Button(role: .destructive) { pendingDelete = r } label: { Label("Delete", systemImage: "trash") }
                                 }
                             }
+                            row
+                                .background(GeometryReader { g in
+                                    Color.clear.preference(key: CardFrameKey.self, value: [r.id: g.frame(in: .named("list"))])
+                                })
                             // New cards rise in from the bottom; removed cards just fade.
                             .transition(.asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .opacity))
                         }
                     }
+                    .coordinateSpace(name: "list")
+                    .onPreferenceChange(CardFrameKey.self) { cardFrames = $0 }
                     // Animate reflow whenever the set of visible ids changes
                     // (filter switch, insert, delete).
                     .animation(Theme.snappy, value: vm.filtered.map(\.id))
@@ -513,5 +545,13 @@ extension View {
         #else
         self
         #endif
+    }
+}
+
+/// Card id -> frame in the "list" coordinate space (see drag-to-select).
+private struct CardFrameKey: PreferenceKey {
+    static let defaultValue: [UUID: CGRect] = [:]
+    static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
+        value.merge(nextValue(), uniquingKeysWith: { $1 })
     }
 }
