@@ -8,7 +8,7 @@
 //  On-disk layout (inside the app sandbox):
 //
 //      <Application Support>/Strid/Jobs/
-//      ├── index.json                 ← [RedactionRecord] for every job
+//      ├── index.json                 ← [RedactionRecord] for every job (filenames only)
 //      ├── <job-uuid>/
 //      │   ├── original.<ext>         ← sandbox copy of the user's file
 //      │   ├── redacted.<ext>         ← redacted output
@@ -68,11 +68,56 @@ actor FileRedactionRecordRepository: RedactionRecordRepositoryPort {
     /// removed from `index.json` on the next `persist()`).
     func all() async -> [RedactionRecord] {
         if let cache { return cache }
-        let loaded: [RedactionRecord] = (try? Data(contentsOf: indexURL)).flatMap { try? JSONDecoder().decode([RedactionRecord].self, from: $0) } ?? []
-        // Drop records whose files vanished (e.g. container moved).
-        let alive = loaded.filter { fm.fileExists(atPath: $0.outputURL.path) }
+        var loaded: [RedactionRecord] = []
+        if let root = try? root, let data = try? Data(contentsOf: indexURL) {
+            let decoder = JSONDecoder()
+            decoder.userInfo[RedactionRecord.jobsRootKey] = root
+            loaded = (try? decoder.decode([RedactionRecord].self, from: data)) ?? []
+        }
+        // Drop records whose files vanished (deleted outside the index).
+        var alive = loaded.filter { fm.fileExists(atPath: $0.outputURL.path) }
+        let recovered = recoverOrphans(excluding: Set(alive.map(\.id)))
+        alive.append(contentsOf: recovered)
         cache = alive.sorted { $0.createdAt > $1.createdAt }
+        if !recovered.isEmpty { try? persist() }
         return cache!
+    }
+
+    /// Job folders with a redacted file but no index entry, turned back into
+    /// records. Builds before this one wrote absolute paths into the index
+    /// and lost every record when the container moved, leaving the folders
+    /// behind; this brings those jobs back. Their names and counts are gone,
+    /// so they come back as "Recovered" with a total of zero.
+    private func recoverOrphans(excluding known: Set<UUID>) -> [RedactionRecord] {
+        guard let root = try? root,
+              let folders = try? fm.contentsOfDirectory(at: root, includingPropertiesForKeys: [.contentModificationDateKey]) else { return [] }
+        var out: [RedactionRecord] = []
+        for folder in folders {
+            guard let id = UUID(uuidString: folder.lastPathComponent), !known.contains(id),
+                  let files = try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil),
+                  let output = files.first(where: { $0.deletingPathExtension().lastPathComponent == "redacted" && $0.pathExtension != "strid" }),
+                  let kind = Self.kind(of: output) else { continue }
+            let input = files.first { $0.deletingPathExtension().lastPathComponent == "original" } ?? output
+            let vault = files.first { $0.pathExtension == "strid" }
+            let date = (try? folder.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
+            out.append(RedactionRecord(
+                id: id, name: "Recovered \(kind == .image ? "photo" : kind.rawValue.uppercased())", kind: kind,
+                inputURL: input, outputURL: output, vaultURL: vault, pages: 1, counts: [:],
+                warnings: ["Recovered after an update. The summary of what was found was lost; the files are intact."],
+                createdAt: date, reversible: vault != nil))
+        }
+        return out
+    }
+
+    /// App-owned kind for a job file, by extension.
+    private static func kind(of url: URL) -> RedactionRecord.Kind? {
+        switch url.pathExtension.lowercased() {
+        case "pdf": .pdf
+        case "txt", "md", "csv", "json", "log": .text
+        case "docx": .docx
+        case "png", "jpg", "jpeg", "heic", "heif", "tiff", "tif", "bmp", "gif", "webp": .image
+        default: nil
+        }
     }
 
     /// Upserts `record` at the head of the list and rewrites the index.

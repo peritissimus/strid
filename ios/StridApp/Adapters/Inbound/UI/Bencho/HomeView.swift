@@ -38,6 +38,10 @@ struct HomeView: View {
     /// Navigation path. Holds at most one record; set programmatically when a
     /// job finishes and by `NavigationLink(value:)` taps.
     @State private var path: [RedactionRecord] = []
+    /// The card currently swiped open, if any (one at a time).
+    @State private var swipeOpen: UUID?
+    /// Record awaiting the delete confirmation from a swipe or long-press.
+    @State private var pendingDelete: RedactionRecord?
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -106,6 +110,12 @@ struct HomeView: View {
         #endif
         // Profile and review sheets. The review sheet cannot be swiped away
         // without a decision because a temp copy of the original is waiting.
+        .confirmationDialog("Delete this redaction?", isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } }), titleVisibility: .visible) {
+            Button("Delete original and redacted copy", role: .destructive) {
+                if let r = pendingDelete { swipeOpen = nil; Task { await vm.delete(r) } }
+                pendingDelete = nil
+            }
+        }
         .sheet(isPresented: $vm.showProfile) { ProfileView(store: vm.profiles) }
         .sheet(item: $vm.review) { rv in
             ReviewView(state: rv, profile: vm.profiles.profile,
@@ -148,14 +158,22 @@ struct HomeView: View {
                         // Enumerated purely to keep a stable element id; the
                         // index itself is unused.
                         ForEach(Array(vm.filtered.enumerated()), id: \.element.id) { i, r in
-                            NavigationLink(value: r) { RecordCard(record: r) }
-                                // Gentler press than the default so cards do not shrink much.
-                                .buttonStyle(PressableStyle(scale: 0.98, dim: 0.92))
-                                // New cards rise in from the bottom; removed cards just fade.
-                                .transition(.asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .opacity))
-                                .contextMenu {
-                                    Button(role: .destructive) { Task { await vm.delete(r) } } label: { Label("Delete", systemImage: "trash") }
-                                }
+                            SwipeToDelete(id: r.id, openID: $swipeOpen, onDelete: { pendingDelete = r }) {
+                                // A tap gesture, not a NavigationLink: a button fires on
+                                // touch-up even after a sideways drag, so every swipe would
+                                // also open the record. A tap fails once the finger moves.
+                                RecordCard(record: r)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        if swipeOpen != nil { withAnimation(Theme.snappy) { swipeOpen = nil } }
+                                        else { Haptic.tap(); path.append(r) }
+                                    }
+                                    .contextMenu {
+                                        Button(role: .destructive) { pendingDelete = r } label: { Label("Delete", systemImage: "trash") }
+                                    }
+                            }
+                            // New cards rise in from the bottom; removed cards just fade.
+                            .transition(.asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .opacity))
                         }
                     }
                     // Animate reflow whenever the set of visible ids changes

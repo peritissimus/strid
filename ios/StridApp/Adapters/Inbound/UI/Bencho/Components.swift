@@ -459,3 +459,64 @@ struct Badge: View {
             .background(Theme.inlay, in: Capsule())
     }
 }
+
+// MARK: - Swipe to delete
+
+/// Drag a card left to reveal a trash button behind it; tap the button to
+/// delete. Built by hand because the record list is a `LazyVStack` in a
+/// `ScrollView`, not a `List`, so `swipeActions` is unavailable.
+///
+/// A horizontal drag past `revealWidth / 2` snaps the card open; anything
+/// shorter snaps it shut. Only one card is open at a time: `openID` is shared
+/// by the list, so opening one closes the others.
+struct SwipeToDelete<Content: View>: View {
+    let id: UUID
+    @Binding var openID: UUID?
+    let onDelete: () -> Void
+    @ViewBuilder let content: () -> Content
+
+    @GestureState private var drag: CGFloat = 0
+    private let revealWidth: CGFloat = 72
+
+    private var isOpen: Bool { openID == id }
+    private var offset: CGFloat {
+        let base: CGFloat = isOpen ? -revealWidth : 0
+        // Rubber-band past the reveal, and never past the right edge.
+        return min(0, max(base + drag, -revealWidth - 24))
+    }
+
+    var body: some View {
+        ZStack(alignment: .trailing) {
+            Button {
+                Haptic.tap()
+                onDelete()
+            } label: {
+                Image(systemName: "trash").font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Theme.ink)
+                    .frame(width: revealWidth - 12, height: 52)
+                    .background(Theme.guide.opacity(0.85), in: RoundedRectangle(cornerRadius: Theme.radiusInner, style: .continuous))
+            }
+            .buttonStyle(PressableStyle())
+            .accessibilityLabel("Delete")
+            .opacity(min(1, -offset / revealWidth))
+            .scaleEffect(0.8 + 0.2 * min(1, -offset / revealWidth))
+
+            content()
+                .offset(x: offset)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 24, coordinateSpace: .local)
+                        .updating($drag) { v, state, _ in
+                            // Horizontal intent only; a vertical drag belongs to the scroll view.
+                            guard abs(v.translation.width) > abs(v.translation.height) else { return }
+                            state = v.translation.width
+                        }
+                        .onEnded { v in
+                            guard abs(v.translation.width) > abs(v.translation.height) else { return }
+                            let open = isOpen ? v.translation.width < revealWidth / 2 : v.translation.width < -revealWidth / 2
+                            withAnimation(Theme.snappy) { openID = open ? id : nil }
+                        })
+        }
+        .animation(Theme.snappy, value: isOpen)
+        .animation(Theme.quick, value: drag == 0)
+    }
+}

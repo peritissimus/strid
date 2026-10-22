@@ -22,7 +22,7 @@ import StridKit
 /// The type is `Codable` because `FileRedactionRecordRepository` serialises
 /// the whole list of records to a single JSON index file, and `Hashable` so
 /// it can drive SwiftUI navigation and selection.
-struct RedactionRecord: Identifiable, Codable, Equatable, Hashable {
+struct RedactionRecord: Identifiable, Equatable, Hashable {
     /// The broad input format of the job. Mirrors StridDocuments'
     /// `DocumentKind` but is owned by the app so the persisted JSON does not
     /// depend on library enum spellings.
@@ -49,6 +49,10 @@ struct RedactionRecord: Identifiable, Codable, Equatable, Hashable {
 
     /// Location of the sandbox copy of the original file inside the job
     /// folder. The original security-scoped URL is never stored.
+    ///
+    /// Held as an absolute URL in memory, but persisted as a filename only:
+    /// the app container moves on every install and update, so an absolute
+    /// path written today is wrong tomorrow (see `Codable` below).
     let inputURL: URL
 
     /// Location of the redacted output file inside the job folder.
@@ -112,5 +116,75 @@ struct RedactionRecord: Identifiable, Codable, Equatable, Hashable {
         case .text: "text.alignleft"
         case .docx: "doc.text"
         }
+    }
+}
+
+// MARK: - Persistence
+
+/// Persisted with filenames, not paths. Every file of a job lives in
+/// `<Jobs root>/<id>/`, so the index only needs the id and the last path
+/// component; the root is supplied by the decoder through
+/// `RedactionRecord.jobsRootKey` and the URLs are rebuilt on read.
+///
+/// Older indexes stored absolute `inputURL` / `outputURL` / `vaultURL`
+/// values. Those are accepted too, keeping only their filename, which is how
+/// records written before this change survive the container move that
+/// otherwise lost them.
+extension RedactionRecord: Codable {
+    /// `JSONDecoder.userInfo` key whose value is the Jobs root `URL`.
+    static let jobsRootKey = CodingUserInfoKey(rawValue: "strid.jobsRoot")!
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, kind, pages, counts, warnings, createdAt, reversible
+        case inputFile, outputFile, vaultFile
+        // Legacy absolute URLs.
+        case inputURL, outputURL, vaultURL
+    }
+
+    /// The folder every file of `id` lives in, under `root`.
+    static func folder(for id: UUID, in root: URL) -> URL {
+        root.appendingPathComponent(id.uuidString, isDirectory: true)
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let id = try c.decode(UUID.self, forKey: .id)
+        guard let root = decoder.userInfo[Self.jobsRootKey] as? URL else {
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "RedactionRecord needs the Jobs root in userInfo"))
+        }
+        let folder = Self.folder(for: id, in: root)
+        func file(_ new: CodingKeys, legacy: CodingKeys) throws -> String? {
+            if let name = try c.decodeIfPresent(String.self, forKey: new) { return name }
+            return try c.decodeIfPresent(URL.self, forKey: legacy)?.lastPathComponent
+        }
+        guard let input = try file(.inputFile, legacy: .inputURL), let output = try file(.outputFile, legacy: .outputURL) else {
+            throw DecodingError.keyNotFound(CodingKeys.outputFile, .init(codingPath: decoder.codingPath, debugDescription: "record has no files"))
+        }
+        self.id = id
+        name = try c.decode(String.self, forKey: .name)
+        kind = try c.decode(Kind.self, forKey: .kind)
+        inputURL = folder.appendingPathComponent(input)
+        outputURL = folder.appendingPathComponent(output)
+        vaultURL = try file(.vaultFile, legacy: .vaultURL).map { folder.appendingPathComponent($0) }
+        pages = try c.decode(Int.self, forKey: .pages)
+        counts = try c.decode([String: Int].self, forKey: .counts)
+        warnings = try c.decode([String].self, forKey: .warnings)
+        createdAt = try c.decode(Date.self, forKey: .createdAt)
+        reversible = try c.decode(Bool.self, forKey: .reversible)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(name, forKey: .name)
+        try c.encode(kind, forKey: .kind)
+        try c.encode(inputURL.lastPathComponent, forKey: .inputFile)
+        try c.encode(outputURL.lastPathComponent, forKey: .outputFile)
+        try c.encodeIfPresent(vaultURL?.lastPathComponent, forKey: .vaultFile)
+        try c.encode(pages, forKey: .pages)
+        try c.encode(counts, forKey: .counts)
+        try c.encode(warnings, forKey: .warnings)
+        try c.encode(createdAt, forKey: .createdAt)
+        try c.encode(reversible, forKey: .reversible)
     }
 }
