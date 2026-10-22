@@ -90,7 +90,7 @@ protocol RedactFileUseCase: Sendable {
     ///
     /// - Parameters:
     ///   - request: Source file and options.
-    ///   - progress: Called with short stage labels ("Reading", "Detecting",
+    ///   - progress: Called with short stage labels ("Reading", "Redacting",
     ///     "Saving") as the job advances. May be invoked off the main actor.
     /// - Returns: The persisted record describing the finished job.
     /// - Throws: `RedactFileError` for every failure mode.
@@ -150,7 +150,7 @@ final class RedactFileUseCaseImpl: RedactFileUseCase, RestoreFileUseCase {
         try? FileManager.default.removeItem(at: input)
         try FileManager.default.copyItem(at: request.sourceURL, to: input)
 
-        progress("Detecting")
+        progress("Redacting")
         // keepEncryption is false so the redacted PDF opens without a
         // password; ocrFallback lets scanned PDFs/images still be processed.
         // The vault key is only forwarded when the user asked for a

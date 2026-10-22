@@ -43,7 +43,7 @@ final class HomeViewModel {
 
     /// Whether a redaction job is running, and which stage it is in.
     ///
-    /// The stage string ("Reading", "Detecting", "Saving") comes from the use
+    /// The stage string ("Reading", "Redacting", "Saving") comes from the use
     /// case's progress callback and is shown by `ProcessingOverlay`.
     enum Phase: Equatable { case idle, working(String) }
 
