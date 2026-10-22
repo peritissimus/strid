@@ -456,14 +456,19 @@ struct RecordCard: View {
     }
 
     /// Up to six muted capsules, one per entity type (most frequent first).
-    /// Width scales with count: 3pt per item, clamped to 8...36pt.
+    /// Width scales with count: 3pt per item, clamped to 8...36pt. Each bar
+    /// may shrink below its ideal width, so six full bars never force the
+    /// card wider than the row (they did, once the selection tick shared it).
     private var dots: some View {
         HStack(spacing: 4) {
             ForEach(record.sortedCounts.prefix(6), id: \.type) { c in
+                let w = max(8, CGFloat(min(c.count, 12)) * 3)
                 Capsule().fill(Theme.ink5)
-                    .frame(width: max(8, CGFloat(min(c.count, 12)) * 3), height: 4)
+                    .frame(minWidth: 4, idealWidth: w, maxWidth: w)
+                    .frame(height: 4)
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
