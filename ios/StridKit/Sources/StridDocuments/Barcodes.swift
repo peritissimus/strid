@@ -22,7 +22,11 @@ public enum Barcodes {
     /// Vision error) return an empty list rather than throwing: a missing code is reported by the
     /// absence of a BARCODE entity, never by failing the whole document.
     static func detect(in image: CGImage) -> [CGRect] {
-        var rects = vision(in: image)
+        // The decoder does not need a 216 dpi page: a code worth boxing is at least 9% of the
+        // width (see `minEdgeFraction`), which is still 120+ px across at the decode width, and
+        // codes too small or too worn to decode are the texture detector's job anyway. Vision's
+        // time grows with pixel count, so the page is downsampled first.
+        var rects = vision(in: downsampled(image, maxWidth: decodeWidth), reference: image)
         // Vision only reports codes it can decode. A large, worn or low-resolution QR (the
         // Aadhaar back carries a version-30+ code with ~3 px modules on a phone photo) is not
         // decodable but is still readable by a better scanner, so a texture-based detector adds
@@ -34,12 +38,29 @@ public enum Barcodes {
     }
 
     /// Vision's decoder-backed detection.
-    public static func vision(in image: CGImage) -> [CGRect] {
+    public static func vision(in image: CGImage, reference: CGImage? = nil) -> [CGRect] {
         let request = VNDetectBarcodesRequest()
         let handler = VNImageRequestHandler(cgImage: image, options: [:])
         guard (try? handler.perform([request])) != nil else { return [] }
-        let size = CGSize(width: image.width, height: image.height)
+        let ref = reference ?? image
+        let size = CGSize(width: ref.width, height: ref.height)
         return (request.results ?? []).map { OCRPage.denormalise($0.boundingBox, in: size) }
+    }
+
+    /// Widest image handed to the decoder.
+    static let decodeWidth = 1400
+
+    /// `image` scaled down to at most `maxWidth` pixels wide, or itself when already narrower.
+    static func downsampled(_ image: CGImage, maxWidth: Int) -> CGImage {
+        guard image.width > maxWidth else { return image }
+        let s = Double(maxWidth) / Double(image.width)
+        let w = maxWidth, h = max(1, Int(Double(image.height) * s))
+        guard let ctx = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0,
+                                  space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        else { return image }
+        ctx.interpolationQuality = .high
+        ctx.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
+        return ctx.makeImage() ?? image
     }
 
     // MARK: - Texture detector

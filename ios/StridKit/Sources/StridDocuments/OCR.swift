@@ -156,13 +156,16 @@ enum OCR {
         return page
     }
 
+    /// `STRID_OCR_FAST=1` switches to Vision's fast recogniser, for measurement only.
+    static let fastLevel = ProcessInfo.processInfo.environment["STRID_OCR_FAST"] != nil
+
     /// Non-Latin letters in the primary reading that trigger the Hindi-first pass.
     static let regionalScriptTrigger = 6
 
     /// One Vision recognition of an already prepared bitmap.
     static func recognise(prepared: CGImage, languages: [String]) throws -> OCRPage {
         let request = VNRecognizeTextRequest()
-        request.recognitionLevel = .accurate
+        request.recognitionLevel = fastLevel ? .fast : .accurate
         request.usesLanguageCorrection = false  // keep IDs and numbers verbatim
         request.recognitionLanguages = languages
         let handler = VNImageRequestHandler(cgImage: prepared, options: [:])
