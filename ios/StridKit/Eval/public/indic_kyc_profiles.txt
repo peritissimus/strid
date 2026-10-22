@@ -1,0 +1,32 @@
+KYC CUSTOMER VERIFICATION STATEMENT (SOURCE: adwaith06/indic-synthetic-profiles)
+================================================================================
+
+Record #1
+Customer Name: Sathish Shivaprasad (ಸತೀಶ್ ಶಿವಪ್ರಸಾದ)
+DOB: 04/01/1997   Gender: Male
+Aadhaar No: 7430 3911 7183   PAN: TDMPR2705I
+Mobile: +91 93834 65787   Email: vikas.gupta@yahoo.com
+Bank: ICICI Bank   Account No: 473829973763   IFSC: ICIC0539131
+UPI ID: vikas675@okaxis
+Address: #9642, 3609 Cross, 118 Main, Bengaluru, Bengaluru Urban - 564927
+City: Shivamogga, Karnataka - Pincode: 580500
+
+Record #2
+Customer Name: Chithra Parameshwaran (ചിത്ര പരമേശ്വരൻ)
+DOB: 23/04/2003   Gender: Female
+Aadhaar No: 3565 9695 7941   PAN: JMOPT9339L
+Mobile: +91 80553 62917   Email: vikas.kumar47@outlook.com
+Bank: Central Bank of India   Account No: 78821651192   IFSC: CBIN0150378
+UPI ID: suresh.reddy853@paytm
+Address: TC 9162/3675, Beach Road, Palakkad, Kerala - 692320
+City: Kozhikode, Kerala - Pincode: 685169
+
+Record #3
+Customer Name: Shankar Seetaramaiah (శంకర్ సీతారామయ్య)
+DOB: 04/07/1974   Gender: Male
+Aadhaar No: 2618 4648 7609   PAN: ZRJPO6410J
+Mobile: +91 90363 24286   Email: krishna200@yahoo.com
+Bank: Indian Overseas Bank   Account No: 906072772365   IFSC: IOBA0479248
+UPI ID: gopi.yadav@okicici
+Address: Plot No. 1429, Karimnagar, Nizamabad - 506765
+City: Ramagundam, Telangana - Pincode: 509738

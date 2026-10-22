@@ -1,0 +1,81 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "Vipin S."
+    },
+    {
+      "type": "PHONE",
+      "text": "07526184866"
+    },
+    {
+      "type": "EMAIL",
+      "text": "vipin.s258@icloud.com"
+    },
+    {
+      "type": "PERSON",
+      "text": "Shweta D."
+    },
+    {
+      "type": "PHONE",
+      "text": "08817679924"
+    },
+    {
+      "type": "EMAIL",
+      "text": "shweta.d@example.com"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "shweta.d@okbaroda"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "3 January 1982"
+    },
+    {
+      "type": "IN_PASSPORT",
+      "text": "R9012631"
+    },
+    {
+      "type": "IN_PASSPORT",
+      "text": "P4073923"
+    },
+    {
+      "type": "IN_VEHICLE_REG",
+      "text": "GJ 31 NG 0008"
+    },
+    {
+      "type": "PERSON",
+      "text": "Manish Hegde"
+    },
+    {
+      "type": "IN_PAN",
+      "text": "BSCEC6139K"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "03-07-2001"
+    },
+    {
+      "type": "CREDIT_CARD",
+      "text": "6907 9304 0143 7578"
+    },
+    {
+      "type": "CREDIT_CARD",
+      "text": "3748860136171723"
+    },
+    {
+      "type": "PERSON",
+      "text": "Rashmi P."
+    },
+    {
+      "type": "IN_AADHAAR",
+      "text": "9744 2366 1541"
+    }
+  ],
+  "not": [
+    {
+      "text": "PUBLIC BENCHMARK SAMPLES"
+    }
+  ]
+}

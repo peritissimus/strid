@@ -1,0 +1,495 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "TRADE LINKS INDIA"
+    },
+    {
+      "type": "IN_BANK_ACCOUNT",
+      "text": "78439336112"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "PROG0920445"
+    },
+    {
+      "type": "IN_MICR",
+      "text": "456316854"
+    },
+    {
+      "type": "IN_CUSTOMER_ID",
+      "text": "577725115"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "702820"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Alipore"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Kolkata"
+    },
+    {
+      "type": "LOCATION",
+      "text": "West Bengal"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "210968206613"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "ICIC0SF0002"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "929510940342"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "HDFC0004171"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "670498159700"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "956616604066"
+    },
+    {
+      "type": "PHONE",
+      "text": "9097052564"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "446289662468"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "368742409288"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "447951602541"
+    },
+    {
+      "type": "PHONE",
+      "text": "7333183915"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "728341737715"
+    },
+    {
+      "type": "PHONE",
+      "text": "8557940363"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "336203076056"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "947749222922"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "851018220366"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "863017303564"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "623097695825"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "349487998528"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "HDFC0009038"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "857406851540"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "245974395610"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "550685841633"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "977213384724"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "533294388600"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "793975948062"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "590187733891"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "270635188773"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "163512820044"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "455142811587"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "379809553812"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "457834252605"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "356849853581"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "ICIC0000011"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "827913570929"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "273427875612"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "650834173112"
+    },
+    {
+      "type": "PHONE",
+      "text": "8522417469"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "328504307889"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "544906412821"
+    },
+    {
+      "type": "PHONE",
+      "text": "8845256710"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "123815374689"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "775180999565"
+    },
+    {
+      "type": "PHONE",
+      "text": "8731919656"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "503125953079"
+    },
+    {
+      "type": "PHONE",
+      "text": "9790400869"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "942009840782"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "751136129026"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "213102212480"
+    },
+    {
+      "type": "PHONE",
+      "text": "7768799544"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "744362921769"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "469171147220"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "901235775423"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "731359724204"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "929831790524"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "460987990432"
+    },
+    {
+      "type": "PHONE",
+      "text": "9198559983"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "126276538173"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "443420225559"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "371910036764"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "213285328597"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "256761652534"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "285336525867"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "211281778829"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "199658371324"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "644134271355"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "541034268128"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "357213517799"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "769161930088"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "478426056369"
+    },
+    {
+      "type": "PHONE",
+      "text": "7289768879"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "472014442250"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "993498752371"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "537071536149"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "362713973481"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "165377554004"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "410866848656"
+    },
+    {
+      "type": "PHONE",
+      "text": "6249183902"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "600630105173"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "118549177807"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "931674830862"
+    },
+    {
+      "type": "PHONE",
+      "text": "6601393596"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "678992061478"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "844226908288"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "915641514403"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "534754213825"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "345775995432"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "959332621698"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "182093576973"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "867251037460"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "675084101912"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "219239255472"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "259069608854"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "394566296733"
+    },
+    {
+      "type": "PHONE",
+      "text": "9841874124"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "936536138846"
+    },
+    {
+      "type": "PHONE",
+      "text": "8745951918"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "439738889875"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "998034591743"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "341412834258"
+    },
+    {
+      "type": "PHONE",
+      "text": "8444366180"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "754481424204"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "818376489476"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "639820282851"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "633101275754"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "983555220673"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "397197036503"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "107800254021"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "929459255429"
+    },
+    {
+      "type": "IN_TXN_REF",
+      "text": "484432226569"
+    },
+    {
+      "type": "PHONE",
+      "text": "6174365174"
+    }
+  ],
+  "not": [
+    {
+      "text": "CURRENT ACCOUNT"
+    },
+    {
+      "text": "Closing Balance"
+    },
+    {
+      "text": "Opening Balance"
+    }
+  ]
+}

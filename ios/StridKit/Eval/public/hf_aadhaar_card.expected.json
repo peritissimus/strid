@@ -1,0 +1,25 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "Rudra"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "05-03-1993"
+    },
+    {
+      "type": "IN_AADHAAR",
+      "text": "9876 5432 1008"
+    },
+    {
+      "type": "BARCODE",
+      "text": "QR / barcode"
+    }
+  ],
+  "not": [
+    {
+      "text": "Male"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "MANOJ DESAL"
+    },
+    {
+      "type": "PERSON",
+      "text": "NEHA AGARWAL"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "03/11/2003"
+    },
+    {
+      "type": "IN_PAN",
+      "text": "DDGAH3295Y"
+    }
+  ],
+  "not": [
+    {
+      "text": "INCOME TAX DEPARTMENT"
+    },
+    {
+      "text": "Permanent Account Number Card"
+    }
+  ]
+}

@@ -70,7 +70,9 @@ public struct AddressBlockRecognizer: Recognizer {
     static let latinLabel = try! NSRegularExpression(pattern: #"^[A-Za-z][A-Za-z ./()&-]{0,30}:"#)
 
     /// Amounts and dates: table cells, never address lines.
-    static let amountOrDate = try! NSRegularExpression(pattern: #"^[\d,]+\.\d{2}$|\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}"#)
+    static let amountOrDate = try! NSRegularExpression(pattern:
+        #"(?:^|[ \t(])-?[\d,]*\d\.\d{2}(?=[ \t)]|$)|(?:Rs\.?|₹|INR)[ \t]*-?\d|\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}|\b\d{1,2}[ \t]+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*[ \t]+\d{2,4}\b|\b\d{1,2}:\d{2}(?::\d{2})?\b"#,
+        options: [.caseInsensitive])
 
     /// "KARNATAKA INDIA", "Maharashtra, India", "IN": a trailing line made only of state / country
     /// names and separators, printed under the PIN line on statements and cards.
@@ -88,7 +90,7 @@ public struct AddressBlockRecognizer: Recognizer {
 
     /// Document headers that a PIN-anchored block must not climb into.
     static let headerWords = try! NSRegularExpression(
-        pattern: #"(?i)\b(?:authority|government|govt|bank|limited|ltd|statement|invoice|receipt|tax|gst|understand|welcome)\b"#
+        pattern: #"(?i)\b(?:authority|government|govt|bank|limited|ltd|statement|invoice|receipt|tax|gst|understand|welcome|chq|cheque|clearing|upi|neft|imps|rtgs|transfer|trf|paid|sent|salary|interest|debit|credit|withdrawal|deposit|balance)\b"#
     )
 
     /// Last words that mark a line as a place or a company rather than a person.

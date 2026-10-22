@@ -257,7 +257,10 @@ public final class StridEngine: Sendable {
             // Entity ends immediately before "\n": look at the run that starts the following line.
             // A complete Aadhaar number or VID (12 / 16 digits) never wraps; the digits on the next
             // line are a different field (the helpline "1947" under the VID on the card).
-            let complete = e.type == .inAadhaar && e.text.filter(\.isNumber).count >= 12
+            // Likewise a full card number (15-16 digits): the digit on the line above is a serial
+            // or a column value, not a wrapped head.
+            let digits = e.text.filter(\.isNumber).count
+            let complete = (e.type == .inAadhaar && digits >= 12) || (e.type == .creditCard && digits >= 15)
             if !complete, upper < text.endIndex, text[upper] == "\n" {
                 let next = text.index(after: upper)
                 if let run = Self.leadingRun(in: text, from: next), Self.plausibleWrapFragment(text[run]) {
@@ -268,7 +271,7 @@ public final class StridEngine: Sendable {
             // Entity starts immediately after "\n": look at the run that ends the preceding line.
             // The head is capped at 8 characters because a long trailing run on the previous line
             // is far more likely to be a complete separate value (an amount, another reference).
-            if lower > text.startIndex, text[text.index(before: lower)] == "\n" {
+            if !complete, lower > text.startIndex, text[text.index(before: lower)] == "\n" {
                 let lineEnd = text.index(before: lower)
                 // An email or UPI handle never starts with a wrapped run of bare digits; on OCR'd
                 // pages the line above is far more likely a helpline number ("1947").

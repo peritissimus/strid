@@ -1,0 +1,171 @@
+{
+  "entities": [
+    {
+      "type": "PERSON",
+      "text": "Sathish Shivaprasad"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "04/01/1997"
+    },
+    {
+      "type": "IN_AADHAAR",
+      "text": "7430 3911 7183"
+    },
+    {
+      "type": "IN_PAN",
+      "text": "TDMPR2705I"
+    },
+    {
+      "type": "PHONE",
+      "text": "+91 93834 65787"
+    },
+    {
+      "type": "EMAIL",
+      "text": "vikas.gupta@yahoo.com"
+    },
+    {
+      "type": "IN_BANK_ACCOUNT",
+      "text": "473829973763"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "ICIC0539131"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "vikas675@okaxis"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "#9642, 3609 Cross, 118 Main, Bengaluru, Bengaluru Urban"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "580500"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Karnataka"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "564927"
+    },
+    {
+      "type": "PERSON",
+      "text": "Chithra Parameshwaran"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "23/04/2003"
+    },
+    {
+      "type": "IN_AADHAAR",
+      "text": "3565 9695 7941"
+    },
+    {
+      "type": "IN_PAN",
+      "text": "JMOPT9339L"
+    },
+    {
+      "type": "PHONE",
+      "text": "+91 80553 62917"
+    },
+    {
+      "type": "EMAIL",
+      "text": "vikas.kumar47@outlook.com"
+    },
+    {
+      "type": "IN_BANK_ACCOUNT",
+      "text": "78821651192"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "CBIN0150378"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "suresh.reddy853@paytm"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "TC 9162/3675, Beach Road, Palakkad, Kerala"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "685169"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Kerala"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "692320"
+    },
+    {
+      "type": "PERSON",
+      "text": "Shankar Seetaramaiah"
+    },
+    {
+      "type": "IN_DOB",
+      "text": "04/07/1974"
+    },
+    {
+      "type": "IN_AADHAAR",
+      "text": "2618 4648 7609"
+    },
+    {
+      "type": "IN_PAN",
+      "text": "ZRJPO6410J"
+    },
+    {
+      "type": "PHONE",
+      "text": "+91 90363 24286"
+    },
+    {
+      "type": "EMAIL",
+      "text": "krishna200@yahoo.com"
+    },
+    {
+      "type": "IN_BANK_ACCOUNT",
+      "text": "906072772365"
+    },
+    {
+      "type": "IN_IFSC",
+      "text": "IOBA0479248"
+    },
+    {
+      "type": "IN_UPI_ID",
+      "text": "gopi.yadav@okicici"
+    },
+    {
+      "type": "ADDRESS",
+      "text": "Plot No. 1429, Karimnagar, Nizamabad"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "509738"
+    },
+    {
+      "type": "LOCATION",
+      "text": "Telangana"
+    },
+    {
+      "type": "IN_PIN_CODE",
+      "text": "506765"
+    }
+  ],
+  "not": [
+    {
+      "text": "KYC CUSTOMER VERIFICATION STATEMENT"
+    },
+    {
+      "text": "Record #1"
+    },
+    {
+      "text": "Gender"
+    }
+  ]
+}

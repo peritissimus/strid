@@ -1,0 +1,24 @@
+PUBLIC BENCHMARK SAMPLES (somukandula/maskara-indian-pii-200k)
+
+Customer Vipin S. here. Reach me at 07526184866 or vipin.s258@icloud.com.
+
+Shweta D. can be reached at 08817679924 or shweta.d@example.com. UPI: shweta.d@okbaroda
+
+Date of birth: 3 January 1982
+
+Passport No: R9012631
+
+My passport number is P4073923
+
+Registration GJ 31 NG 0008
+
+Name: Manish Hegde
+PAN: BSCEC6139K
+DOB: 03-07-2001
+
+Use card 6907 9304 0143 7578
+
+Credit card 3748860136171723
+
+Name  :  Rashmi P.
+Aadhaar  :  9744 2366 1541

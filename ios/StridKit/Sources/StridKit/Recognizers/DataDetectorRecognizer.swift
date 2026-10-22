@@ -26,6 +26,13 @@ public struct DataDetectorRecognizer: Recognizer {
     static func plausiblePhone(_ s: String) -> Bool {
         let digits = s.filter(\.isNumber)
         let trimmed = s.trimmingCharacters(in: .whitespaces)
+        // Two groups of digits inside a 10-digit number are printed 5+5 ("98765 43210"); a
+        // 6+4 or 7+3 split is two table cells ("251839 3421") that happen to add up to ten.
+        let groups = trimmed.split(whereSeparator: { $0 == " " || $0 == "-" }).filter { !$0.isEmpty }
+        if digits.count == 10, groups.count == 2, !(groups[0].count == 5 && groups[1].count == 5) { return false }
+        if digits.count == 10, groups.count > 2 { return false }
+        // A mobile number starts with 6-9; a landline carries its STD code and a trunk 0.
+        if digits.count == 10, let f = digits.first, !"6789".contains(f) { return false }
         switch digits.count {
         case 10: return true
         case 11: return digits.hasPrefix("0")
