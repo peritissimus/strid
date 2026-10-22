@@ -208,7 +208,7 @@ struct HomeView: View {
                                                     }
                                                     .onEnded { _ in sweepSelects = nil })
                                     }
-                                    RecordCard(record: r)
+                                    RecordCard(record: r).frame(maxWidth: .infinity)
                                 }
                                 .contentShape(Rectangle())
                                 .onTapGesture {
@@ -446,7 +446,9 @@ struct RecordCard: View {
                 }
                 dots
             }
-            .layoutPriority(1)
+            // No layoutPriority here: it would let a long title widen the card
+            // past the row (visible once the selection tick shares the row).
+            // The title truncates in the middle instead.
             Spacer(minLength: 0)
             Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.ink5)
         }
