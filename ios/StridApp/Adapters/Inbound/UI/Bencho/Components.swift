@@ -472,6 +472,8 @@ struct Badge: View {
 struct SwipeToDelete<Content: View>: View {
     let id: UUID
     @Binding var openID: UUID?
+    /// False (selection mode) ignores drags entirely.
+    var enabled = true
     let onDelete: () -> Void
     @ViewBuilder let content: () -> Content
 
@@ -507,11 +509,11 @@ struct SwipeToDelete<Content: View>: View {
                     DragGesture(minimumDistance: 24, coordinateSpace: .local)
                         .updating($drag) { v, state, _ in
                             // Horizontal intent only; a vertical drag belongs to the scroll view.
-                            guard abs(v.translation.width) > abs(v.translation.height) else { return }
+                            guard enabled, abs(v.translation.width) > abs(v.translation.height) else { return }
                             state = v.translation.width
                         }
                         .onEnded { v in
-                            guard abs(v.translation.width) > abs(v.translation.height) else { return }
+                            guard enabled, abs(v.translation.width) > abs(v.translation.height) else { return }
                             let open = isOpen ? v.translation.width < revealWidth / 2 : v.translation.width < -revealWidth / 2
                             withAnimation(Theme.snappy) { openID = open ? id : nil }
                         })

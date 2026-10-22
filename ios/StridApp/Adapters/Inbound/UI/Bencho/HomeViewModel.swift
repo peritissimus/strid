@@ -326,6 +326,14 @@ final class HomeViewModel {
         toasts.show("Deleted")
     }
 
+    /// Deletes several records in one go, with one reload and one toast.
+    func delete(ids: Set<UUID>) async {
+        for id in ids { try? await repository.delete(id: id) }
+        if let s = selected, ids.contains(s.id) { selected = nil }
+        await load()
+        toasts.show(ids.count == 1 ? "Deleted" : "Deleted \(ids.count) items")
+    }
+
     /// Rebuilds the original file from a reversible record.
     ///
     /// Returns the restored file URL for sharing, or `nil` on failure (wrong

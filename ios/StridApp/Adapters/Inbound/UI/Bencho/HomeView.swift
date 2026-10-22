@@ -42,6 +42,11 @@ struct HomeView: View {
     @State private var swipeOpen: UUID?
     /// Record awaiting the delete confirmation from a swipe or long-press.
     @State private var pendingDelete: RedactionRecord?
+    /// Selection mode: tapping a card ticks it instead of opening it.
+    @State private var selecting = false
+    @State private var selection: Set<UUID> = []
+    /// Set when the "Delete N" bar is tapped; cleared by the dialog.
+    @State private var confirmBatchDelete = false
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -51,7 +56,7 @@ struct HomeView: View {
                 Theme.bg.ignoresSafeArea()
                 content
                 BottomScrim()
-                floatingBar
+                if selecting { selectionBar } else { floatingBar }
                 // Lifted above the floating bar.
                 ToastStack(center: vm.toasts).padding(.bottom, 78)
                 // Always mounted; opacity is a fixed transform of `isWorking`, so the
@@ -116,6 +121,13 @@ struct HomeView: View {
                 pendingDelete = nil
             }
         }
+        .confirmationDialog("Delete \(selection.count) redaction\(selection.count == 1 ? "" : "s")?", isPresented: $confirmBatchDelete, titleVisibility: .visible) {
+            Button("Delete originals and redacted copies", role: .destructive) {
+                let ids = selection
+                endSelecting()
+                Task { await vm.delete(ids: ids) }
+            }
+        }
         .sheet(isPresented: $vm.showProfile) { ProfileView(store: vm.profiles) }
         .sheet(item: $vm.review) { rv in
             ReviewView(state: rv, profile: vm.profiles.profile,
@@ -158,19 +170,35 @@ struct HomeView: View {
                         // Enumerated purely to keep a stable element id; the
                         // index itself is unused.
                         ForEach(Array(vm.filtered.enumerated()), id: \.element.id) { i, r in
-                            SwipeToDelete(id: r.id, openID: $swipeOpen, onDelete: { pendingDelete = r }) {
+                            SwipeToDelete(id: r.id, openID: $swipeOpen, enabled: !selecting, onDelete: { pendingDelete = r }) {
                                 // A tap gesture, not a NavigationLink: a button fires on
                                 // touch-up even after a sideways drag, so every swipe would
                                 // also open the record. A tap fails once the finger moves.
-                                RecordCard(record: r)
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        if swipeOpen != nil { withAnimation(Theme.snappy) { swipeOpen = nil } }
-                                        else { Haptic.tap(); path.append(r) }
+                                HStack(spacing: 12) {
+                                    if selecting {
+                                        let on = selection.contains(r.id)
+                                        Image(systemName: on ? "checkmark.circle.fill" : "circle")
+                                            .font(.system(size: 22, weight: .medium))
+                                            .foregroundStyle(on ? Theme.ok : Theme.ink5)
+                                            .transition(.scale.combined(with: .opacity))
                                     }
-                                    .contextMenu {
-                                        Button(role: .destructive) { pendingDelete = r } label: { Label("Delete", systemImage: "trash") }
-                                    }
+                                    RecordCard(record: r)
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    if selecting {
+                                        Haptic.tap()
+                                        withAnimation(Theme.quick) {
+                                            if selection.contains(r.id) { selection.remove(r.id) } else { selection.insert(r.id) }
+                                        }
+                                    } else if swipeOpen != nil {
+                                        withAnimation(Theme.snappy) { swipeOpen = nil }
+                                    } else { Haptic.tap(); path.append(r) }
+                                }
+                                .contextMenu {
+                                    Button { beginSelecting(with: r.id) } label: { Label("Select", systemImage: "checkmark.circle") }
+                                    Button(role: .destructive) { pendingDelete = r } label: { Label("Delete", systemImage: "trash") }
+                                }
                             }
                             // New cards rise in from the bottom; removed cards just fade.
                             .transition(.asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .opacity))
@@ -236,18 +264,81 @@ struct HomeView: View {
 
     /// Horizontal row of kind-filter pills. Scrolls in case of narrow widths.
     private var filters: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                ForEach(HomeViewModel.Filter.allCases) { f in
-                    Button {
-                        Haptic.tap()
-                        withAnimation(Theme.snappy) { vm.filter = f }
-                    } label: { Text(f.rawValue) }
-                    .buttonStyle(GlassPillStyle(active: vm.filter == f))
+        HStack(spacing: 8) {
+            if selecting {
+                // Everything currently listed, so "Select all" respects the filter.
+                let all = Set(vm.filtered.map(\.id))
+                let allOn = !all.isEmpty && all.isSubset(of: selection)
+                Button {
+                    Haptic.tap()
+                    withAnimation(Theme.quick) { if allOn { selection.subtract(all) } else { selection.formUnion(all) } }
+                } label: { Text(allOn ? "Deselect all" : "Select all") }
+                .buttonStyle(GlassPillStyle())
+                Text("\(selection.count) selected").font(Theme.meta()).foregroundStyle(Theme.ink4)
+                    .contentTransition(.numericText())
+                    .animation(Theme.quick, value: selection.count)
+                Spacer()
+                Button { endSelecting() } label: { Text("Done") }
+                    .buttonStyle(GlassPillStyle(active: true))
+            } else {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(HomeViewModel.Filter.allCases) { f in
+                            Button {
+                                Haptic.tap()
+                                withAnimation(Theme.snappy) { vm.filter = f }
+                            } label: { Text(f.rawValue) }
+                            .buttonStyle(GlassPillStyle(active: vm.filter == f))
+                        }
+                    }
                 }
+                .scrollIndicators(.hidden)
+                Button { beginSelecting() } label: { Text("Select") }
+                    .buttonStyle(GlassPillStyle())
             }
         }
-        .scrollIndicators(.hidden)
+    }
+
+    private func beginSelecting(with id: UUID? = nil) {
+        Haptic.tap()
+        withAnimation(Theme.snappy) {
+            swipeOpen = nil
+            selection = id.map { [$0] } ?? []
+            selecting = true
+        }
+    }
+
+    private func endSelecting() {
+        Haptic.tap()
+        withAnimation(Theme.snappy) { selecting = false; selection = [] }
+    }
+
+    // MARK: Selection bar
+
+    /// Replaces the floating bar while selecting: one destructive pill.
+    private var selectionBar: some View {
+        Button {
+            guard !selection.isEmpty else { return }
+            Haptic.tap()
+            confirmBatchDelete = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "trash").font(.system(size: 14, weight: .semibold))
+                Text(selection.isEmpty ? "Select items to delete" : "Delete \(selection.count) item\(selection.count == 1 ? "" : "s")")
+                    .font(Theme.label(15))
+                    .contentTransition(.numericText())
+            }
+            .foregroundStyle(selection.isEmpty ? Theme.ink4 : Theme.ink)
+            .padding(.horizontal, 22).padding(.vertical, 14)
+            .background(selection.isEmpty ? Theme.surface2 : Theme.guide.opacity(0.85), in: Capsule())
+            .overlay(Capsule().strokeBorder(Theme.edge, lineWidth: 0.5))
+        }
+        .buttonStyle(PressableStyle())
+        .disabled(selection.isEmpty)
+        .animation(Theme.quick, value: selection.count)
+        .floating()
+        .padding(.bottom, 4)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
     // MARK: Floating bar
