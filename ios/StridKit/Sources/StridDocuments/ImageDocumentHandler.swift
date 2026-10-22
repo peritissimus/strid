@@ -72,7 +72,13 @@ public struct ImageDocumentHandler: DocumentHandler {
     ///     that tokens stay consistent across all pages of a PDF.
     /// - Returns: The redacted bitmap and the entities that were boxed.
     static func redact(image: CGImage, engine: StridEngine, policy: RedactionPolicy = .default, tokens: inout TokenMap?) throws -> (CGImage, [PIIEntity]) {
-        let page = try OCR.recognise(image)
+        try redact(image: image, page: OCR.recognise(image), codes: Barcodes.detect(in: image), engine: engine, policy: policy, tokens: &tokens)
+    }
+
+    /// Detection and painting for a page whose OCR and barcode passes have already run. The
+    /// PDF handler recognises several pages concurrently and then calls this serially, because
+    /// the token map and the engine are not shared across threads.
+    static func redact(image: CGImage, page: OCRPage, codes: [CGRect], engine: StridEngine, policy: RedactionPolicy = .default, tokens: inout TokenMap?) throws -> (CGImage, [PIIEntity]) {
         var entities = engine.detect(in: page.text, policy: policy)
         let size = CGSize(width: image.width, height: image.height)
         var boxes: [Box] = []
@@ -98,7 +104,6 @@ public struct ImageDocumentHandler: DocumentHandler {
             }
         }
         // QR codes and barcodes: boxed whole, never decoded (see `Barcodes`).
-        let codes = Barcodes.detect(in: image)
         boxes += codes.map { Box(rect: $0, label: nil) }
         return (Raster.blackout(image, boxes: boxes), entities + Barcodes.entities(for: codes, in: page.text))
     }

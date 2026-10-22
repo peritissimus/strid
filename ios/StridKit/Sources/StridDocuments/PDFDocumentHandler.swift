@@ -16,6 +16,7 @@
 //
 import CoreGraphics
 import Foundation
+import ImageIO
 import PDFKit
 import StridKit
 
@@ -148,59 +149,95 @@ public struct PDFDocumentHandler: DocumentHandler {
         var warnings = Self.inspect(doc, options: options)
 
         var all: [PIIEntity] = []
-        var pageImages: [(CGImage, CGRect)] = []
         var ocrPages = 0
         var tokens: TokenMap? = options.reversible ? TokenMap() : nil
+        let timing = Timing()
 
-        for i in 0..<doc.pageCount {
-            guard let page = doc.page(at: i) else { continue }
-            let box = page.bounds(for: .mediaBox)
-            let raster = render(page, box: box)
-
-            let text = page.string ?? ""
-            let useText = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                && (!options.ocrFallback || Self.textLayerLooksUsable(text))
-
-            if useText {
-                let entities = engine.detect(in: text, policy: options.policy)
-                let ns = text as NSString
-                var boxes: [Box] = []
-                for e in entities {
-                    let nsRange = NSRange(e.range, in: text)
-                    // Guard against ranges PDFKit cannot resolve (e.g. an entity that
-                    // `extendAcrossWraps` grew over a newline PDFKit does not count).
-                    guard nsRange.location != NSNotFound, nsRange.location + nsRange.length <= ns.length,
-                          let sel = page.selection(for: nsRange) else { continue }
-                    let label = tokens != nil ? tokens!.token(for: e) : nil
-                    // One box per visual line so a wrapped entity gets two tight boxes, not one
-                    // huge rectangle spanning the gap.
-                    for line in sel.selectionsByLine() {
-                        let r = line.bounds(for: page)
-                        boxes.append(Box(rect: CGRect(
-                            x: (r.minX - box.minX) * scale,
-                            y: (box.maxY - r.maxY) * scale,
-                            width: r.width * scale,
-                            height: r.height * scale
-                        ), label: label))
+        // Pages are rasterised, painted and written one at a time. Holding every page bitmap
+        // until the end costs ~18 MB per A4 page at scale 3, which is over a gigabyte for an
+        // 80-page statement and more than an iPhone will allow.
+        let writer = try PageWriter(url: output, source: doc, options: options)
+        // Vision work (OCR, barcode search) is the cost on scanned pages and runs on the GPU and
+        // Neural Engine, so a window of pages is recognised concurrently; detection, token
+        // numbering, painting and writing then happen in page order on this thread.
+        let window = max(1, min(4, ProcessInfo.processInfo.activeProcessorCount))
+        var start = 0
+        while start < doc.pageCount {
+            let end = min(doc.pageCount, start + window)
+            var batch: [(index: Int, page: PDFPage, box: CGRect, raster: CGImage, text: String, useText: Bool)] = []
+            for i in start..<end {
+                guard let page = doc.page(at: i) else { continue }
+                let box = page.bounds(for: .mediaBox)
+                let raster = timing.measure("render") { render(page, box: box) }
+                let text = page.string ?? ""
+                let useText = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    && (!options.ocrFallback || Self.textLayerLooksUsable(text))
+                batch.append((i, page, box, raster, text, useText))
+            }
+            // Concurrent Vision passes, one slot per page in the window.
+            var ocr = [Result<OCRPage, Error>?](repeating: nil, count: batch.count)
+            var codes = [[CGRect]](repeating: [], count: batch.count)
+            timing.measure("vision") {
+                ocr.withUnsafeMutableBufferPointer { ocrBuf in
+                    codes.withUnsafeMutableBufferPointer { codeBuf in
+                        DispatchQueue.concurrentPerform(iterations: batch.count) { k in
+                            let item = batch[k]
+                            codeBuf[k] = Barcodes.detect(in: item.raster)
+                            if !item.useText { ocrBuf[k] = Result { try OCR.recognise(item.raster) } }
+                        }
                     }
                 }
-                // Codes drawn or embedded on a text-layer page (e-Aadhaar, e-PAN) are boxed too.
-                let codes = Barcodes.detect(in: raster)
-                boxes += codes.map { Box(rect: $0, label: nil) }
-                all += entities + Barcodes.entities(for: codes, in: text)
-                pageImages.append((Raster.blackout(raster, boxes: boxes, padding: 1.5 * scale), box))
-            } else {
-                ocrPages += 1
-                let (img, entities) = try ImageDocumentHandler.redact(image: raster, engine: engine, policy: options.policy, tokens: &tokens)
-                all += entities
-                pageImages.append((img, box))
             }
+            for (k, item) in batch.enumerated() {
+                let (page, box, raster, text) = (item.page, item.box, item.raster, item.text)
+                if item.useText {
+                    let entities = timing.measure("detect") { engine.detect(in: text, policy: options.policy) }
+                    let ns = text as NSString
+                    var boxes: [Box] = []
+                    timing.measure("geometry") {
+                        for e in entities {
+                            let nsRange = NSRange(e.range, in: text)
+                            // Guard against ranges PDFKit cannot resolve (e.g. an entity that
+                            // `extendAcrossWraps` grew over a newline PDFKit does not count).
+                            guard nsRange.location != NSNotFound, nsRange.location + nsRange.length <= ns.length,
+                                  let sel = page.selection(for: nsRange) else { continue }
+                            let label = tokens != nil ? tokens!.token(for: e) : nil
+                            // One box per visual line so a wrapped entity gets two tight boxes, not one
+                            // huge rectangle spanning the gap.
+                            for line in sel.selectionsByLine() {
+                                let r = line.bounds(for: page)
+                                boxes.append(Box(rect: CGRect(
+                                    x: (r.minX - box.minX) * scale,
+                                    y: (box.maxY - r.maxY) * scale,
+                                    width: r.width * scale,
+                                    height: r.height * scale
+                                ), label: label))
+                            }
+                        }
+                    }
+                    // Codes drawn or embedded on a text-layer page (e-Aadhaar, e-PAN) are boxed too.
+                    boxes += codes[k].map { Box(rect: $0, label: nil) }
+                    all += entities + Barcodes.entities(for: codes[k], in: text)
+                    let painted = timing.measure("blackout") { Raster.blackout(raster, boxes: boxes, padding: 1.5 * scale) }
+                    try timing.measure("write") { try writer.add(painted, box: box) }
+                } else {
+                    ocrPages += 1
+                    let recognised = try ocr[k]!.get()
+                    let (img, entities) = try timing.measure("ocr") {
+                        try ImageDocumentHandler.redact(image: raster, page: recognised, codes: codes[k], engine: engine, policy: options.policy, tokens: &tokens)
+                    }
+                    all += entities
+                    try timing.measure("write") { try writer.add(img, box: box) }
+                }
+            }
+            start = end
         }
         if ocrPages > 0 {
             warnings.append("\(ocrPages) of \(doc.pageCount) page(s) had no usable text layer and were processed with OCR.")
         }
 
-        try write(pages: pageImages, to: output, source: doc, options: options)
+        timing.measure("close") { writer.close() }
+        timing.report(pages: doc.pageCount)
         var report = RedactionReport(pages: doc.pageCount, entities: all, warnings: warnings)
         report.tokens = tokens
         return report
@@ -227,7 +264,7 @@ public struct PDFDocumentHandler: DocumentHandler {
         return ctx.makeImage()!
     }
 
-    /// Assembles the redacted page bitmaps into a new PDF via CoreGraphics.
+    /// Streams redacted page bitmaps into a new PDF via CoreGraphics, one page at a time.
     ///
     /// Each page keeps its original point size (the bitmap is drawn to fill the media box, so the
     /// output has the same dimensions as the input regardless of `scale`). Document-level
@@ -235,25 +272,66 @@ public struct PDFDocumentHandler: DocumentHandler {
     /// password (128-bit RC4/AES as CoreGraphics chooses) only when `keepEncryption` is set and
     /// a password is known. The creator is stamped as "Strid".
     ///
-    /// - Throws: `DocumentRedactionError.writeFailed` if the consumer or context cannot be created.
-    private func write(pages: [(CGImage, CGRect)], to url: URL, source: PDFDocument, options: DocumentOptions) throws {
-        var aux: [CFString: Any] = [kCGPDFContextCreator: "Strid"]
-        if source.isEncrypted, options.keepEncryption, let pw = options.password {
-            aux[kCGPDFContextUserPassword] = pw
-            aux[kCGPDFContextOwnerPassword] = pw
-            aux[kCGPDFContextEncryptionKeyLength] = 128
+    /// Bitmaps are handed to the PDF context as JPEG data so the page is stored with DCT
+    /// compression (the context passes JPEG-encoded images through unchanged) instead of being
+    /// deflated as raw RGBA, which is both slower and several times larger.
+    final class PageWriter {
+        private let pdf: CGContext
+        private let quality: CGFloat
+
+        /// - Throws: `DocumentRedactionError.writeFailed` if the consumer or context cannot be created.
+        init(url: URL, source: PDFDocument, options: DocumentOptions, quality: CGFloat = 0.82) throws {
+            var aux: [CFString: Any] = [kCGPDFContextCreator: "Strid"]
+            if source.isEncrypted, options.keepEncryption, let pw = options.password {
+                aux[kCGPDFContextUserPassword] = pw
+                aux[kCGPDFContextOwnerPassword] = pw
+                aux[kCGPDFContextEncryptionKeyLength] = 128
+            }
+            if !source.allowsCopying { aux[kCGPDFContextAllowsCopying] = false }
+            if !source.allowsPrinting { aux[kCGPDFContextAllowsPrinting] = false }
+            guard let consumer = CGDataConsumer(url: url as CFURL),
+                  let ctx = CGContext(consumer: consumer, mediaBox: nil, aux as CFDictionary)
+            else { throw DocumentRedactionError.writeFailed(url) }
+            pdf = ctx
+            self.quality = quality
         }
-        if !source.allowsCopying { aux[kCGPDFContextAllowsCopying] = false }
-        if !source.allowsPrinting { aux[kCGPDFContextAllowsPrinting] = false }
-        guard let consumer = CGDataConsumer(url: url as CFURL),
-              let pdf = CGContext(consumer: consumer, mediaBox: nil, aux as CFDictionary)
-        else { throw DocumentRedactionError.writeFailed(url) }
-        for (image, box) in pages {
+
+        func add(_ image: CGImage, box: CGRect) throws {
             var mediaBox = CGRect(origin: .zero, size: box.size)
             pdf.beginPage(mediaBox: &mediaBox)
-            pdf.draw(image, in: mediaBox)
+            pdf.draw(Self.jpegBacked(image, quality: quality) ?? image, in: mediaBox)
             pdf.endPage()
         }
-        pdf.closePDF()
+
+        func close() { pdf.closePDF() }
+
+        /// The same pixels as a CGImage whose data provider is a JPEG stream.
+        static func jpegBacked(_ image: CGImage, quality: CGFloat) -> CGImage? {
+            let data = NSMutableData()
+            guard let dest = CGImageDestinationCreateWithData(data, "public.jpeg" as CFString, 1, nil) else { return nil }
+            CGImageDestinationAddImage(dest, image, [kCGImageDestinationLossyCompressionQuality: quality] as CFDictionary)
+            guard CGImageDestinationFinalize(dest), let provider = CGDataProvider(data: data) else { return nil }
+            return CGImage(jpegDataProviderSource: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+        }
+    }
+
+    /// Per-phase wall-clock totals, printed to stderr when `STRID_TIMING` is set.
+    final class Timing {
+        private var totals: [String: Double] = [:]
+        private let enabled = ProcessInfo.processInfo.environment["STRID_TIMING"] != nil
+
+        func measure<T>(_ phase: String, _ body: () throws -> T) rethrows -> T {
+            guard enabled else { return try body() }
+            let t = CFAbsoluteTimeGetCurrent()
+            defer { totals[phase, default: 0] += CFAbsoluteTimeGetCurrent() - t }
+            return try body()
+        }
+
+        func report(pages: Int) {
+            guard enabled else { return }
+            let all = totals.values.reduce(0, +)
+            let lines = totals.sorted { $0.value > $1.value }.map { String(format: "  %-9@ %6.2fs", $0.key as NSString, $0.value) }
+            FileHandle.standardError.write(("timing for \(pages) pages, \(String(format: "%.2f", all))s total:\n" + lines.joined(separator: "\n") + "\n").data(using: .utf8)!)
+        }
     }
 }
