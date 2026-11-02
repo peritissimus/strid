@@ -18,6 +18,10 @@ struct ContentView: View {
         // `HomeView` stores the view model in `@State`, so SwiftUI keeps the
         // instance created on the first evaluation of this body for the
         // lifetime of the view.
+        #if os(macOS)
+        MacRootView(vm: DIContainer.shared.makeHomeViewModel())
+        #else
         HomeView(vm: DIContainer.shared.makeHomeViewModel())
+        #endif
     }
 }

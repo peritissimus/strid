@@ -19,10 +19,23 @@ struct StridApp: App {
         WindowGroup {
             ContentView()
         }
-        // On macOS give the window a tall, phone-like default so the layout
-        // designed for iOS reads well without resizing.
+        // macOS gets a sidebar + detail window (see `MacRootView`).
         #if os(macOS)
-        .defaultSize(width: 520, height: 900)
+        .defaultSize(width: 1120, height: 760)
+        .windowToolbarStyle(.unifiedCompact)
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                Button("Open…") { NotificationCenter.default.post(name: .stridOpenFile, object: nil) }
+                    .keyboardShortcut("o", modifiers: .command)
+            }
+        }
         #endif
     }
 }
+
+#if os(macOS)
+extension Notification.Name {
+    /// Posted by the File > Open… menu item; `MacRootView` presents the importer.
+    static let stridOpenFile = Notification.Name("strid.openFile")
+}
+#endif

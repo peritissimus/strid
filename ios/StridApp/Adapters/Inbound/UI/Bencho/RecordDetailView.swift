@@ -23,6 +23,10 @@ struct RecordDetailView: View {
     /// Shared home view model for restore, delete, toasts and the one-time key.
     @Bindable var vm: HomeViewModel
 
+    /// True when shown in the Mac window's detail pane: no back button, and
+    /// a delete clears the selection instead of popping a stack.
+    var embedded = false
+
     /// Pops this screen (back button, after delete).
     @Environment(\.dismiss) private var dismiss
 
@@ -53,33 +57,8 @@ struct RecordDetailView: View {
     @State private var appeared = false
 
     var body: some View {
-        // Bottom-aligned ZStack so the action row and toasts float over the
-        // scrolling content.
-        ZStack(alignment: .bottom) {
-            Theme.bg.ignoresSafeArea()
-            ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    topBar
-                    preview
-                    summary
-                    // Key card only makes sense when a vault exists.
-                    if record.reversible { keyCard }
-                    // Engine warnings (e.g. OCR fallback used) are optional.
-                    if !record.warnings.isEmpty { notes }
-                    // Room so the last card can scroll above the floating actions.
-                    Spacer(minLength: 100)
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 10)
-                // Entrance: content fades in and rises 12pt once `appeared` flips.
-                .opacity(appeared ? 1 : 0)
-                .offset(y: appeared ? 0 : 12)
-            }
-            .scrollIndicators(.hidden)
-            BottomScrim()
-            actions
-            // Lifted above the action row.
-            ToastStack(center: vm.toasts).padding(.bottom, 78)
+        Group {
+            if embedded { paneLayout } else { stackLayout }
         }
         // Custom top bar replaces the system navigation bar on iOS.
         .hideNavigationBar()
@@ -100,26 +79,109 @@ struct RecordDetailView: View {
         // Delete removes both files, then pops back to the home list.
         .confirmationDialog("Delete this redaction?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete original and redacted copy", role: .destructive) {
-                Task { await vm.delete(record); dismiss() }
+                Task { await vm.delete(record); if !embedded { dismiss() } }
+            }
+        }
+    }
+
+    // MARK: Layouts
+
+    /// Phone layout: one scrolling column with the preview on top and the
+    /// action row floating over the bottom edge.
+    private var stackLayout: some View {
+        // Bottom-aligned ZStack so the action row and toasts float over the
+        // scrolling content.
+        ZStack(alignment: .bottom) {
+            Theme.bg.ignoresSafeArea()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    topBar
+                    preview.frame(height: 440)
+                    summary
+                    // Key card only makes sense when a vault exists.
+                    if record.reversible { keyCard }
+                    // Engine warnings (e.g. OCR fallback used) are optional.
+                    if !record.warnings.isEmpty { notes }
+                    // Room so the last card can scroll above the floating actions.
+                    Spacer(minLength: 100)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                // Entrance: content fades in and rises 12pt once `appeared` flips.
+                .opacity(appeared ? 1 : 0)
+                .offset(y: appeared ? 0 : 12)
+            }
+            .scrollIndicators(.hidden)
+            BottomScrim()
+            actions
+            // Lifted above the action row.
+            ToastStack(center: vm.toasts).padding(.bottom, 78)
+        }
+    }
+
+    /// Mac pane layout: the page fills the left, and a fixed inspector column
+    /// on the right carries the title, the side toggle, the summary, the key
+    /// card, the notes and the actions. Nothing floats; the window is wide
+    /// enough to lay things side by side.
+    private var paneLayout: some View {
+        HStack(spacing: 0) {
+            preview
+                .padding(20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Rectangle().fill(Theme.edge).frame(width: 0.5)
+            VStack(alignment: .leading, spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 14) {
+                        TopBar(title: record.name,
+                               subtitle: "\(record.kindLabel) · \(record.pages) page\(record.pages == 1 ? "" : "s") · \(record.createdAt.formatted(.dateTime.day().month().hour().minute()))")
+                        SegmentedPill(options: [(Side.redacted, "Redacted"), (Side.original, "Original")], selection: $side)
+                            .frame(maxWidth: .infinity)
+                        summary
+                        if record.reversible { keyCard }
+                        if !record.warnings.isEmpty { notes }
+                    }
+                    .padding(16)
+                }
+                .scrollIndicators(.hidden)
+                Rectangle().fill(Theme.edge).frame(height: 0.5)
+                paneActions.padding(16)
+            }
+            .frame(width: 340)
+            .background(Theme.surface)
+        }
+        .background(Theme.bg)
+        .opacity(appeared ? 1 : 0)
+        .overlay(alignment: .bottom) { ToastStack(center: vm.toasts).padding(.bottom, 24) }
+    }
+
+    /// Inspector footer: Share redacted full width, then the hand-offs and
+    /// delete in a row beneath it.
+    private var paneActions: some View {
+        VStack(spacing: 10) {
+            Button { Haptic.tap(); shareURL = record.outputURL } label: {
+                HStack(spacing: 8) { Image(systemName: "square.and.arrow.up").font(.system(size: 14, weight: .semibold)); Text("Share redacted") }
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(PrimaryPillStyle())
+            HStack(spacing: 10) {
+                ForEach(Assistant.allCases) { a in
+                    AssistantButton(assistant: a) { handOff(to: a) }.help("Copy for \(a.name)")
+                }
+                Spacer()
+                RoundIconButton(symbol: "trash", label: "Delete", size: 46) { confirmDelete = true }
+                    .help("Delete original and redacted copy")
             }
         }
     }
 
     // MARK: Pieces
 
-    /// Round back button, name, and the side toggle.
+    /// Back button (not when embedded), name with the file facts, and the side toggle.
     private var topBar: some View {
-        HStack(spacing: 12) {
-            Button { dismiss() } label: {
-                Image(systemName: "chevron.left").font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Theme.ink).frame(width: 40, height: 40)
-                    .background(Theme.card, in: Circle())
-            }.buttonStyle(PressableStyle())
-            Text(record.name).font(Theme.title()).tracking(-0.2).foregroundStyle(Theme.ink)
-                .lineLimit(1).truncationMode(.middle)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        TopBar(title: record.name,
+               subtitle: "\(record.kindLabel) · \(record.pages) page\(record.pages == 1 ? "" : "s")",
+               leading: embedded ? nil : .back, onLeading: { dismiss() }) {
             SegmentedPill(options: [(Side.redacted, "Redacted"), (Side.original, "Original")], selection: $side)
-                .fixedSize()
         }
     }
 
@@ -138,7 +200,6 @@ struct RecordDetailView: View {
                 .opacity(side == .redacted ? 1 : 0)
                 .allowsHitTesting(side == .redacted)
         }
-        .frame(height: 440)
         .clipShape(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
         .overlay(alignment: .topLeading) {
@@ -185,8 +246,10 @@ struct RecordDetailView: View {
             }
             // File facts live here rather than in the header so the title
             // and the side toggle have the full width. "PDF · 3 pages · 12 Mar 14:05"
-            Text("\(record.kindLabel) · \(record.pages) page\(record.pages == 1 ? "" : "s") · \(record.createdAt, format: .dateTime.day().month().hour().minute())")
-                .font(Theme.meta()).foregroundStyle(Theme.ink4)
+            if !embedded {
+                Text("\(record.kindLabel) · \(record.pages) page\(record.pages == 1 ? "" : "s") · \(record.createdAt, format: .dateTime.day().month().hour().minute())")
+                    .font(Theme.meta()).foregroundStyle(Theme.ink4)
+            }
             if record.total == 0 {
                 Text("Nothing personal found. The file was copied through unchanged.")
                     .font(Theme.body()).lineSpacing(4).foregroundStyle(Theme.ink3)
@@ -236,11 +299,13 @@ struct RecordDetailView: View {
                 Text("The key was shown when this file was redacted. Strid does not keep it.")
                     .font(Theme.body()).lineSpacing(4).foregroundStyle(Theme.ink3)
             }
-            HStack(spacing: 8) {
-                Button { showRestore = true } label: { Label("Restore original", systemImage: "arrow.uturn.backward") }
+            // Side by side on the phone; stacked in the narrow Mac inspector.
+            let layout = embedded ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8)) : AnyLayout(HStackLayout(spacing: 8))
+            layout {
+                Button { showRestore = true } label: { Label("Restore original", systemImage: "arrow.uturn.backward").lineLimit(1) }
                     .buttonStyle(GlassPillStyle())
                 if let v = record.vaultURL {
-                    Button { shareURL = v } label: { Label("Share vault", systemImage: "shippingbox") }
+                    Button { shareURL = v } label: { Label("Share vault", systemImage: "shippingbox").lineLimit(1) }
                         .buttonStyle(GlassPillStyle())
                 }
             }

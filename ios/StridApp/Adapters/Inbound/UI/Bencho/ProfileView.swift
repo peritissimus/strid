@@ -43,6 +43,9 @@ struct ProfileView: View {
             .scrollDismissesKeyboard(.interactively)
         }
         .preferredColorScheme(.dark)
+        #if os(macOS)
+        .frame(minWidth: 520, idealWidth: 560, minHeight: 640, idealHeight: 760)
+        #endif
     }
 
     private var profile: Binding<RedactionProfile> { $store.profile }
@@ -50,20 +53,7 @@ struct ProfileView: View {
     // MARK: Pieces
 
     private var header: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Your data").font(Theme.title()).tracking(-0.2).foregroundStyle(Theme.ink)
-                Text("What Strid treats as private").font(Theme.meta()).foregroundStyle(Theme.ink4)
-            }
-            Spacer()
-            Button { Haptic.tap(); dismiss() } label: {
-                Image(systemName: "xmark").font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Theme.ink).frame(width: 36, height: 36)
-                    .background(Theme.card, in: Circle())
-            }
-            .buttonStyle(PressableStyle())
-            .accessibilityLabel("Close")
-        }
+        TopBar(title: "Your data", subtitle: "What Strid treats as private", leading: .close, onLeading: { dismiss() })
     }
 
     private var reviewCard: some View {

@@ -85,38 +85,8 @@ struct HomeView: View {
         .onChange(of: vm.selected) { _, new in
             if let new { path = [new] }
         }
-        // "Open in Strid" from other apps / Files.
-        .onOpenURL { url in vm.redact(url: url) }
-        // Files app. `fileImporter` with a single-URL result variant.
-        .fileImporter(isPresented: $showFiles, allowedContentTypes: Self.importTypes) { result in
-            if case .success(let url) = result { vm.redact(url: url) }
-        }
-        // Photos picker: load the bytes, write them to a temp file with the
-        // right extension so DocumentKind can detect it, then redact. The
-        // selection is cleared afterwards so the same photo can be re-picked.
-        .onChange(of: photoItem) { _, item in
-            guard let item else { return }
-            Task {
-                if let data = try? await item.loadTransferable(type: Data.self) {
-                    let ext = (item.supportedContentTypes.first?.preferredFilenameExtension) ?? "jpg"
-                    let tmp = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension(ext)
-                    try? data.write(to: tmp)
-                    vm.redact(url: tmp, name: "Photo")
-                }
-                photoItem = nil
-            }
-        }
-        #if os(iOS)
-        // Camera scanner. VisionKit is iOS-only; the cover is dismissed by
-        // the completion before the file is handed to the view model.
-        .fullScreenCover(isPresented: $showScanner) {
-            DocumentScannerView { url in
-                showScanner = false
-                if let url { vm.redact(url: url, name: "Scan") }
-            }
-            .ignoresSafeArea()
-        }
-        #endif
+        .intakeFlows(vm: vm, showFiles: $showFiles, showScanner: $showScanner, photoItem: $photoItem)
+        // Delete confirmations from a swipe, a long-press or the selection bar.
         // Profile and review sheets. The review sheet cannot be swiped away
         // without a decision because a temp copy of the original is waiting.
         .confirmationDialog("Delete this redaction?", isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } }), titleVisibility: .visible) {
@@ -131,21 +101,6 @@ struct HomeView: View {
                 endSelecting()
                 Task { await vm.delete(ids: ids) }
             }
-        }
-        .sheet(isPresented: $vm.showProfile) { ProfileView(store: vm.profiles) }
-        .sheet(item: $vm.review) { rv in
-            ReviewView(state: rv, profile: vm.profiles.profile,
-                       onConfirm: { d, x in vm.confirmReview(disabled: d, excluded: x) },
-                       onCancel: { vm.cancelReview() })
-            .interactiveDismissDisabled()
-        }
-        // Password prompt for encrypted PDFs. Cancel drops the pending request.
-        .alert("PDF is locked", isPresented: $vm.showingPasswordPrompt) {
-            SecureField("Password", text: $vm.passwordInput)
-            Button("Open") { vm.submitPassword() }
-            Button("Cancel", role: .cancel) { vm.pendingPasswordRequest = nil }
-        } message: {
-            Text("Enter the password the bank gave you. It is used once and never stored.")
         }
     }
 
@@ -249,49 +204,12 @@ struct HomeView: View {
         .scrollIndicators(.hidden)
     }
 
-    /// Wordmark and reversible toggle.
+    /// Wordmark, reversible toggle and profile button on the shared bar.
     private var header: some View {
-        HStack {
-            Text("Strid").font(Theme.display(34)).tracking(-0.7).foregroundStyle(Theme.ink)
-            Spacer()
-            reversibleToggle
-            profileButton
+        TopBar(title: "Strid", display: true) {
+            ReversibleToggle(vm: vm)
+            ProfileButton(vm: vm)
         }
-    }
-
-    /// Round button opening the "Your data" sheet. The symbol fills once the
-    /// profile holds any terms, as a hint that rules are in force.
-    private var profileButton: some View {
-        Button {
-            Haptic.tap()
-            vm.showProfile = true
-        } label: {
-            Image(systemName: vm.profiles.profile.alwaysRedact.isEmpty ? "person.crop.circle" : "person.crop.circle.fill")
-                .font(.system(size: 17, weight: .medium))
-                .foregroundStyle(Theme.ink)
-                .frame(width: 36, height: 36)
-                .background(Theme.card, in: Circle())
-        }
-        .buttonStyle(PressableStyle())
-        .accessibilityLabel("Your data")
-    }
-
-    /// Glass pill that flips `vm.reversible`. Filled key = reversible (a
-    /// vault will be written), outline key = permanent. The symbol swap is
-    /// animated with a replace effect.
-    private var reversibleToggle: some View {
-        Button {
-            Haptic.tap()
-            withAnimation(Theme.snappy) { vm.reversible.toggle() }
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: vm.reversible ? "key.fill" : "key")
-                    .font(.system(size: 11, weight: .semibold))
-                    .contentTransition(.symbolEffect(.replace))
-                Text(vm.reversible ? "Reversible" : "Permanent").font(Theme.label())
-            }
-        }
-        .buttonStyle(GlassPillStyle(active: vm.reversible))
     }
 
     /// Horizontal row of kind-filter pills. Scrolls in case of narrow widths.
@@ -380,18 +298,7 @@ struct HomeView: View {
     private var floatingBar: some View {
         HStack(spacing: 10) {
             Menu {
-                Button { showFiles = true } label: { Label("Files", systemImage: "folder") }
-                #if os(iOS)
-                Button { showScanner = true } label: { Label("Scan with camera", systemImage: "doc.viewfinder") }
-                #endif
-                Button {
-                    // Whitespace-only clipboard counts as empty.
-                    if let s = PasteboardHelper.getString(), !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        vm.redact(text: s)
-                    } else {
-                        vm.toasts.show("Clipboard is empty")
-                    }
-                } label: { Label("Paste text", systemImage: "doc.on.clipboard") }
+                IntakeMenuItems(vm: vm, showFiles: $showFiles, showScanner: $showScanner)
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "plus").font(.system(size: 15, weight: .semibold))
@@ -552,6 +459,132 @@ extension View {
         #else
         self
         #endif
+    }
+}
+
+// MARK: - Shared intake pieces (home screen and the Mac window)
+
+/// The intake options behind the "Redact" button: Files, the camera on iOS,
+/// and the clipboard. Used by the floating menu on iOS and the toolbar
+/// menu on macOS.
+struct IntakeMenuItems: View {
+    let vm: HomeViewModel
+    @Binding var showFiles: Bool
+    @Binding var showScanner: Bool
+    var body: some View {
+        Button { showFiles = true } label: { Label("Files", systemImage: "folder") }
+        #if os(iOS)
+        Button { showScanner = true } label: { Label("Scan with camera", systemImage: "doc.viewfinder") }
+        #endif
+        Button {
+            // Whitespace-only clipboard counts as empty.
+            if let s = PasteboardHelper.getString(), !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                vm.redact(text: s)
+            } else {
+                vm.toasts.show("Clipboard is empty")
+            }
+        } label: { Label("Paste text", systemImage: "doc.on.clipboard") }
+    }
+}
+
+/// Glass pill that flips `vm.reversible`. Filled key = reversible (a vault
+/// will be written), outline key = permanent. The symbol swap is animated
+/// with a replace effect.
+struct ReversibleToggle: View {
+    @Bindable var vm: HomeViewModel
+    var body: some View {
+        Button {
+            Haptic.tap()
+            withAnimation(Theme.snappy) { vm.reversible.toggle() }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: vm.reversible ? "key.fill" : "key")
+                    .font(.system(size: 11, weight: .semibold))
+                    .contentTransition(.symbolEffect(.replace))
+                Text(vm.reversible ? "Reversible" : "Permanent").font(Theme.label())
+            }
+        }
+        .buttonStyle(GlassPillStyle(active: vm.reversible))
+    }
+}
+
+/// Round button opening the "Your data" sheet. The symbol fills once the
+/// profile holds any terms, as a hint that rules are in force.
+struct ProfileButton: View {
+    @Bindable var vm: HomeViewModel
+    var body: some View {
+        RoundIconButton(symbol: vm.profiles.profile.alwaysRedact.isEmpty ? "person.crop.circle" : "person.crop.circle.fill",
+                        label: "Your data") { vm.showProfile = true }
+    }
+}
+
+/// Every presentation an intake can lead to, attached once per root view:
+/// the Files importer, the Photos selection, the camera cover on iOS, the
+/// "Open in Strid" URL, the profile and review sheets, and the PDF password
+/// prompt. Both `HomeView` and `MacRootView` apply it so the two roots stay
+/// in step.
+struct IntakeFlows: ViewModifier {
+    @Bindable var vm: HomeViewModel
+    @Binding var showFiles: Bool
+    @Binding var showScanner: Bool
+    @Binding var photoItem: PhotosPickerItem?
+
+    func body(content: Content) -> some View {
+        content
+            // "Open in Strid" from other apps / Files.
+            .onOpenURL { url in vm.redact(url: url) }
+        // Files app. `fileImporter` with a single-URL result variant.
+            .fileImporter(isPresented: $showFiles, allowedContentTypes: HomeView.importTypes) { result in
+            if case .success(let url) = result { vm.redact(url: url) }
+        }
+        // Photos picker: load the bytes, write them to a temp file with the
+        // right extension so DocumentKind can detect it, then redact. The
+        // selection is cleared afterwards so the same photo can be re-picked.
+            .onChange(of: photoItem) { _, item in
+            guard let item else { return }
+            Task {
+                if let data = try? await item.loadTransferable(type: Data.self) {
+                    let ext = (item.supportedContentTypes.first?.preferredFilenameExtension) ?? "jpg"
+                    let tmp = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension(ext)
+                    try? data.write(to: tmp)
+                    vm.redact(url: tmp, name: "Photo")
+                }
+                photoItem = nil
+            }
+        }
+        #if os(iOS)
+        // Camera scanner. VisionKit is iOS-only; the cover is dismissed by
+        // the completion before the file is handed to the view model.
+            .fullScreenCover(isPresented: $showScanner) {
+            DocumentScannerView { url in
+                showScanner = false
+                if let url { vm.redact(url: url, name: "Scan") }
+            }
+            .ignoresSafeArea()
+        }
+        #endif
+
+        .sheet(isPresented: $vm.showProfile) { ProfileView(store: vm.profiles) }
+            .sheet(item: $vm.review) { rv in
+            ReviewView(state: rv, profile: vm.profiles.profile,
+                       onConfirm: { d, x in vm.confirmReview(disabled: d, excluded: x) },
+                       onCancel: { vm.cancelReview() })
+            .interactiveDismissDisabled()
+        }
+            // Password prompt for encrypted PDFs. Cancel drops the pending request.
+            .alert("PDF is locked", isPresented: $vm.showingPasswordPrompt) {
+            SecureField("Password", text: $vm.passwordInput)
+            Button("Open") { vm.submitPassword() }
+            Button("Cancel", role: .cancel) { vm.pendingPasswordRequest = nil }
+        } message: {
+            Text("Enter the password the bank gave you. It is used once and never stored.")
+        }
+    }
+}
+
+extension View {
+    func intakeFlows(vm: HomeViewModel, showFiles: Binding<Bool>, showScanner: Binding<Bool>, photoItem: Binding<PhotosPickerItem?>) -> some View {
+        modifier(IntakeFlows(vm: vm, showFiles: showFiles, showScanner: showScanner, photoItem: photoItem))
     }
 }
 

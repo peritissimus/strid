@@ -432,6 +432,84 @@ struct AssistantButton: View {
     }
 }
 
+// MARK: - Top bar
+
+/// Round glass icon button, the one shape every top bar uses for back,
+/// close and the profile: 36pt, hairline edge, press feedback.
+struct RoundIconButton: View {
+    let symbol: String
+    let label: String
+    var size: CGFloat = 36
+    var filled = false
+    let action: () -> Void
+    var body: some View {
+        Button {
+            Haptic.tap()
+            action()
+        } label: {
+            Image(systemName: symbol)
+                .font(.system(size: size * 0.4, weight: .semibold))
+                .foregroundStyle(Theme.ink)
+                .frame(width: size, height: size)
+                .background(filled ? Theme.cardHi : Theme.card, in: Circle())
+                .overlay(Circle().strokeBorder(Theme.edge, lineWidth: 0.5))
+                .contentShape(Circle())
+        }
+        .buttonStyle(PressableStyle())
+        .accessibilityLabel(label)
+    }
+}
+
+/// The screen header every Bencho screen shares: an optional leading round
+/// button (back or close), a title with an optional one-line subtitle, and
+/// trailing controls. One height (44pt) and one rhythm, so the eye lands in
+/// the same place on the home list, a record, the review sheet and the
+/// profile. The home screen passes `display: true` for the wordmark.
+struct TopBar<Trailing: View>: View {
+    enum Leading { case back, close }
+
+    let title: String
+    var subtitle: String? = nil
+    var display = false
+    var leading: Leading? = nil
+    var onLeading: () -> Void = {}
+    @ViewBuilder var trailing: () -> Trailing
+
+    init(title: String, subtitle: String? = nil, display: Bool = false, leading: Leading? = nil,
+         onLeading: @escaping () -> Void = {}, @ViewBuilder trailing: @escaping () -> Trailing = { EmptyView() }) {
+        self.title = title
+        self.subtitle = subtitle
+        self.display = display
+        self.leading = leading
+        self.onLeading = onLeading
+        self.trailing = trailing
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            if let leading {
+                RoundIconButton(symbol: leading == .back ? "chevron.left" : "xmark",
+                                label: leading == .back ? "Back" : "Close", action: onLeading)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(display ? Theme.display(30) : Theme.title())
+                    .tracking(display ? -0.6 : -0.2)
+                    .foregroundStyle(Theme.ink)
+                    .lineLimit(1).truncationMode(.middle)
+                if let subtitle {
+                    Text(subtitle).font(Theme.meta()).foregroundStyle(Theme.ink4)
+                        .lineLimit(1).truncationMode(.middle)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 8) { trailing() }
+                .fixedSize()
+        }
+        .frame(minHeight: 44)
+    }
+}
+
 // MARK: - Misc
 
 /// Uppercase, tracked, monospaced caption used as a card section heading

@@ -64,6 +64,9 @@ struct ReviewView: View {
             actions
         }
         .preferredColorScheme(.dark)
+        #if os(macOS)
+        .frame(minWidth: 520, idealWidth: 560, minHeight: 640, idealHeight: 760)
+        #endif
         .onAppear {
             disabled = Set(PIIEntityType.allCases).filter { !profile.isEnabled($0) }
         }
@@ -95,21 +98,7 @@ struct ReviewView: View {
     // MARK: Pieces
 
     private var header: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Review").font(Theme.title()).tracking(-0.2).foregroundStyle(Theme.ink)
-                Text("\(state.request.displayName) · \(totalCount) found").font(Theme.meta()).foregroundStyle(Theme.ink4)
-                    .lineLimit(1).truncationMode(.middle)
-            }
-            Spacer()
-            Button { Haptic.tap(); onCancel() } label: {
-                Image(systemName: "xmark").font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Theme.ink).frame(width: 36, height: 36)
-                    .background(Theme.card, in: Circle())
-            }
-            .buttonStyle(PressableStyle())
-            .accessibilityLabel("Cancel")
-        }
+        TopBar(title: "Review", subtitle: "\(state.request.displayName) · \(totalCount) found", leading: .close, onLeading: onCancel)
     }
 
     /// Everything / Personal only / Custom. Custom is a label, not a button:
