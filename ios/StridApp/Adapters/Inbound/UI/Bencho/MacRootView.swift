@@ -127,6 +127,16 @@ struct MacRootView: View {
                 .focusEffectDisabled()
                 .onDeleteCommand { pendingDelete = vm.selected }
             }
+            Rectangle().fill(Theme.edge).frame(height: 0.5)
+            // Mode lives with the list, not in the title bar: it is a setting
+            // for the next job, and the sidebar is where jobs start.
+            HStack {
+                ReversibleToggle(vm: vm)
+                Spacer()
+                Text(vm.reversible ? "A vault is kept for undo" : "No vault, no undo")
+                    .font(Theme.meta()).foregroundStyle(Theme.ink4)
+            }
+            .padding(.horizontal, 16).padding(.vertical, 12)
         }
         .background(Theme.surface)
         .overlay(alignment: .trailing) { Rectangle().fill(Theme.edge).frame(width: 0.5) }
@@ -170,8 +180,7 @@ struct MacRootView: View {
 
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-        ToolbarItemGroup(placement: .primaryAction) {
-            ReversibleToggle(vm: vm)
+        ToolbarItem(placement: .primaryAction) {
             Menu {
                 IntakeMenuItems(vm: vm, showFiles: $showFiles, showScanner: $showScanner)
             } label: {
@@ -198,13 +207,13 @@ private struct SidebarRow: View {
     var body: some View {
         HStack(spacing: 10) {
             ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Theme.surface3)
-                Image(systemName: record.symbol).font(.system(size: 15)).foregroundStyle(Theme.ink2)
+                RoundedRectangle(cornerRadius: 10, style: .continuous).fill(selected ? Theme.cardHi : Theme.surface3)
+                Image(systemName: record.symbol).font(.system(size: 15)).foregroundStyle(selected ? Theme.ink : Theme.ink3)
             }
             .frame(width: 38, height: 38)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text(record.name).font(Theme.label(14)).foregroundStyle(Theme.ink)
+                    Text(record.name).font(Theme.label(14)).foregroundStyle(selected ? Theme.ink : Theme.ink2)
                         .lineLimit(1).truncationMode(.middle)
                     if record.reversible { Image(systemName: "key.fill").font(.system(size: 9, weight: .bold)).foregroundStyle(Theme.ink4) }
                 }
@@ -218,8 +227,8 @@ private struct SidebarRow: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 8).padding(.vertical, 6)
-        .background(selected ? Theme.card : .clear, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(selected ? Theme.edge : .clear, lineWidth: 0.5))
+        .background(selected ? Theme.cardHi : .clear, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(selected ? Color.white.opacity(0.14) : .clear, lineWidth: 0.5))
         .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }

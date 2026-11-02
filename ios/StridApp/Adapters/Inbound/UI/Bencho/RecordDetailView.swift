@@ -203,12 +203,13 @@ struct RecordDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
         .overlay(alignment: .topLeading) {
-            // Green for the safe copy, ember for the sensitive original.
-            ZStack(alignment: .leading) {
+            // Green for the safe copy, ember for the sensitive original. In the
+            // Mac pane the inspector toggle already names the side.
+            if embedded { EmptyView() } else { ZStack(alignment: .leading) {
                 sideBadge("REDACTED", tint: Theme.ok).opacity(side == .redacted ? 1 : 0)
                 sideBadge("ORIGINAL", tint: Theme.ember).opacity(side == .original ? 1 : 0)
             }
-            .padding(12)
+            .padding(12) }
         }
         // Same spring as the segmented thumb, so the flip is one move.
         .animation(Theme.snappy, value: side)
