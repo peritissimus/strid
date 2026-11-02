@@ -19,14 +19,17 @@ struct DocumentPreview: View {
     let url: URL
     /// Decides which renderer to use.
     let kind: RedactionRecord.Kind
+    /// Panel colour behind the pages. The phone card uses the raised
+    /// surface; the Mac pane draws pages straight on the black canvas.
+    var background: Color = Theme.surface
 
     var body: some View {
         ZStack {
             // Opaque surface behind every renderer so transparent PDFs and
             // letterboxed images sit on the same dark panel.
-            Theme.surface
+            background
             switch kind {
-            case .pdf: PDFKitView(url: url)
+            case .pdf: PDFKitView(url: url, background: background)
             case .image: ImageFileView(url: url)
             // Word files are shown as extracted text, not laid-out pages.
             case .text, .docx: TextFileView(url: url)
@@ -61,12 +64,13 @@ import UIKit
 /// UIKit `PDFView` wrapper configured for continuous vertical paging.
 struct PDFKitView: UIViewRepresentable {
     let url: URL
+    var background: Color = Theme.surface
     func makeUIView(context: Context) -> PDFView {
         let v = PDFView()
         // Fit page width to the card; user can still pinch-zoom.
         v.autoScales = true
         v.displayMode = .singlePageContinuous
-        v.backgroundColor = UIColor(Theme.surface)
+        v.backgroundColor = UIColor(background)
         // Page shadows look wrong on a black panel.
         v.pageShadowsEnabled = false
         return v
@@ -99,11 +103,15 @@ import AppKit
 /// page-shadow flag, which has no AppKit counterpart here.
 struct PDFKitView: NSViewRepresentable {
     let url: URL
+    var background: Color = Theme.surface
     func makeNSView(context: Context) -> PDFView {
         let v = PDFView()
         v.autoScales = true
         v.displayMode = .singlePageContinuous
-        v.backgroundColor = NSColor(Theme.surface)
+        v.backgroundColor = NSColor(background)
+        // Room around the pages so they read as sheets on the canvas, not
+        // as a fill of it.
+        v.pageBreakMargins = NSEdgeInsets(top: 24, left: 32, bottom: 24, right: 32)
         return v
     }
     /// Only reload when the URL changes, preserving scroll position.

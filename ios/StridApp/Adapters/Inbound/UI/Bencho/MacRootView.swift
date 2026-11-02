@@ -26,7 +26,7 @@ struct MacRootView: View {
     var body: some View {
         NavigationSplitView {
             sidebar
-                .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 400)
+                .navigationSplitViewColumnWidth(min: 250, ideal: 270, max: 340)
                 .toolbar(removing: .sidebarToggle)
         } detail: {
             detail

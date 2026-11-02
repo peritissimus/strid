@@ -126,7 +126,6 @@ struct RecordDetailView: View {
     private var paneLayout: some View {
         HStack(spacing: 0) {
             preview
-                .padding(20)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             Rectangle().fill(Theme.edge).frame(width: 0.5)
             VStack(alignment: .leading, spacing: 0) {
@@ -192,16 +191,20 @@ struct RecordDetailView: View {
     /// reload: no blank frame while the new file decodes, and each side
     /// keeps its own scroll position. The badges work the same way.
     private var preview: some View {
-        ZStack {
-            DocumentPreview(url: record.inputURL, kind: record.kind)
+        // Rounded card on the phone; edge to edge on the black canvas in
+        // the Mac pane.
+        let radius: CGFloat = embedded ? 0 : Theme.radiusCard
+        let panel = embedded ? Theme.bg : Theme.surface
+        return ZStack {
+            DocumentPreview(url: record.inputURL, kind: record.kind, background: panel)
                 .opacity(side == .original ? 1 : 0)
                 .allowsHitTesting(side == .original)
-            DocumentPreview(url: record.outputURL, kind: record.kind)
+            DocumentPreview(url: record.outputURL, kind: record.kind, background: panel)
                 .opacity(side == .redacted ? 1 : 0)
                 .allowsHitTesting(side == .redacted)
         }
-        .clipShape(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: Theme.radiusCard, style: .continuous).strokeBorder(Theme.edge, lineWidth: 0.5))
+        .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: radius, style: .continuous).strokeBorder(embedded ? .clear : Theme.edge, lineWidth: 0.5))
         .overlay(alignment: .topLeading) {
             // Green for the safe copy, ember for the sensitive original. In the
             // Mac pane the inspector toggle already names the side.
